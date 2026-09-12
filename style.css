@@ -1,0 +1,3118 @@
+@charset "UTF-8";
+/* ==========================================================================
+🎨 PROJET PÉDAGOGIQUE : STYLE & APPARENCE (style.css)
+==========================================================================
+🧒 GUIDE FACILE À COMPRENDRE (MÊME POUR UN ENFANT OU UN DÉBUTANT) :
+
+1. À QUOI SERT CE FICHIER "style.css" ?
+   Imagine que le fichier HTML a construit une maison avec des murs gris.
+   Ce fichier CSS est le DÉCORATEUR et le PEINTRE :
+   - Il peint les murs en noir minéral noble et doré historique.
+   - Il arrondit les coins des boutons pour qu'ils soient agréables au toucher.
+   - Il fait briller les éléments quand on passe la souris dessus.
+   - Il range les boutons bien droits (les uns à côté des autres ou les uns sous les autres).
+
+2. LES MOTS MAGIQUES DU CSS EXPLIQUÉS TRÈS SIMPLEMENT :
+   - "color" : la couleur du texte (comme un feutre de couleur).
+   - "background" : la couleur du fond (la couleur de la feuille de papier).
+   - "border" : le contour dessiné autour d'un objet (comme un cadre photo).
+   - "border-radius" : arrondit les angles (6px = un petit arrondi très doux).
+   - "display: flex" : range les objets en ligne ou en colonne comme des soldats bien alignés.
+   - "position: absolute" : colle un élément à un endroit très précis sur l'écran (comme un autocollant).
+   - "backdrop-filter: blur(16px)" : effet de verre dépoli (comme regarder à travers une vitre embuée).
+   - "transition: all 0.25s" : rend les animations toutes douces quand on clique ou survole un bouton.
+   - "@media (max-width: ...)" : règles intelligentes qui changent la taille selon qu'on est sur PC ou Smartphone !
+========================================================================== */
+
+/* ==========================================================================
+1. VARIABLES GLOBALES CSS (:root) & RESET GÉNÉRAL
+==========================================================================
+Les variables CSS (commençant par --) sont comme des tiroirs magiques avec une étiquette :
+on y range une couleur une seule fois (ex: notre doré historique --accent-gold),
+et on peut la réutiliser sur 100 boutons différents sans jamais se tromper ! */
+:root {
+/* Nuances minérales et charbon historique (ton sobre muséal et archives) */
+--bg-dark: #121417;
+--bg-card: rgba(25, 28, 34, 0.85);
+--bg-sidebar: rgba(18, 20, 25, 0.96);
+--sidebar-border: rgba(197, 160, 89, 0.22);
+
+/* Palette bronze / laiton vieilli commémoratif (aspect archive noble, non criard) */
+--accent-gold: #c5a059;
+--accent-gold-bright: #dfbe7a;
+--accent-gold-glow: rgba(197, 160, 89, 0.2);
+
+/* Hiérarchie de couleurs pour le texte (blanc ivoire / parchemin doux au gris minéral) */
+--text-main: #f4efe6;
+--text-muted: #9e9a91;
+--text-dim: #6d6a62;
+--hover-bg: rgba(197, 160, 89, 0.12);
+
+/* Définition des polices typographiques équilibrées et lisibles */
+--font-serif: 'Lora', Georgia, serif;                    /* Titres historiques calmes et lisibles */
+--font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; /* Corps de texte et UI neutre */
+}
+
+/* Remise à zéro universelle (Universal CSS Reset) :
+- box-sizing: border-box : garantit que les 'padding' et bordures ne dépassent
+jamais de la largeur totale spécifiée pour une boîte.
+- margin: 0, padding: 0 : supprime les marges par défaut des navigateurs. */
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+
+/* Balise <body> :
+- Occupe 100% de la hauteur et largeur visibles (100vh / 100dvh)
+- overflow: hidden : bloque tout défilement global non désiré
+- -webkit-tap-highlight-color: transparent : supprime le rectangle bleu sur mobile au tap */
+body { 
+font-family: var(--font-sans);
+height: 100vh;
+height: 100dvh; /* dvh = dynamic viewport height pour smartphones avec barre d'adresse rétractable */
+width: 100vw;
+overflow: hidden; 
+background-color: var(--bg-dark);
+color: var(--text-main);
+-webkit-font-smoothing: antialiased;
+touch-action: manipulation;
+-webkit-tap-highlight-color: transparent;
+}
+
+/* ==========================================================================
+2. PAGE D'ACCUEIL IMMERSIVE (#landing)
+==========================================================================
+Présente une photographie aérienne haute définition de Lyon et de ses alentours
+(vue d'ensemble de la métropole : Presqu'île, Rhône, Saône, Fourvière, etc.).
+Un filtre sombre opaque combiné (dégradé radial + linéaire) est superposé à l'image
+afin que les textes dorés et les cartes de sélection ressortent avec un contraste
+parfait, tout en laissant transparaître les contours emblématiques de la ville. */
+
+#landing {
+position: absolute; 
+inset: 0; /* Équivaut à top: 0; right: 0; bottom: 0; left: 0; */
+width: 100%; 
+height: 100vh;
+height: 100dvh;
+overflow-y: auto; /* Permet le défilement si l'écran est petit */
+-webkit-overflow-scrolling: touch;
+
+/* Superposition de 3 couches de fond (du premier au dernier plan) :
+1. radial-gradient : effet de vignette (plus clair au centre à 0.68, plus sombre sur les bords à 0.94)
+2. linear-gradient : filtre vertical opaque (0.75 à 0.88) assurant un contraste optimal pour la lecture
+3. url('images/fond_lyon.jpg') : la photographie aérienne de Lyon et de ses environs */
+background: 
+radial-gradient(circle at center, rgba(14, 17, 24, 0.50) 0%, rgba(10, 12, 18, 0.94) 100%),
+linear-gradient(rgba(12, 14, 20, 0.75), rgba(12, 14, 20, 0.65)),
+url('images/fond_lyon.jpg') no-repeat center center/cover;
+background-attachment: fixed; /* Effet de profondeur visuelle */
+
+display: flex; 
+flex-direction: column; 
+justify-content: flex-start; 
+align-items: center; 
+z-index: 2000; /* Positionné au-dessus de la carte lors de l'ouverture */
+padding: max(20px, env(safe-area-inset-top)) 16px max(30px, env(safe-area-inset-bottom)) 16px;
+}
+
+/* Conteneur intérieur centré de la page d'accueil */
+.landing-content {
+max-width: 1080px;
+width: 100%;
+display: flex;
+flex-direction: column;
+align-items: center;
+text-align: center;
+margin: auto 0;
+padding: 10px 0;
+animation: fadeIn 0.8s ease-out; /* Effet d'apparition en douceur */
+}
+
+/* Petit macaron commémoratif en haut du titre */
+.landing-badge {
+display: inline-block;
+font-size: 0.8rem;
+font-weight: 700;
+letter-spacing: 3px;
+text-transform: uppercase;
+color: var(--accent-gold);
+background: rgba(197, 160, 89, 0.12);
+border: 1px solid var(--sidebar-border);
+padding: 6px 16px;
+border-radius: 4px;
+margin-bottom: 16px;
+}
+
+/* Grand titre de la page d'accueil */
+#landing h1 { 
+font-family: var(--font-serif);
+/* clamp(min, préféré, max) : taille de police fluide s'adaptant à tous les écrans */
+font-size: clamp(1.8rem, 4.2vw, 3.2rem); 
+font-weight: 700;
+letter-spacing: 1.5px;
+color: #ffffff;
+text-shadow: 0 4px 20px rgba(0, 0, 0, 0.7); 
+margin-bottom: 10px;
+}
+
+/* Sous-titre descriptif */
+.landing-subtitle {
+font-size: clamp(0.9rem, 1.6vw, 1.15rem);
+color: var(--text-muted);
+max-width: 650px;
+line-height: 1.55;
+margin-bottom: clamp(24px, 3.5vh, 40px);
+}
+
+/* ==========================================================================
+3. GRILLE DES CARTES DE SÉLECTION (.buttons-container & .img-btn)
+==========================================================================
+Organise les 4 grandes cartes de sélection.
+Sur mobile, elles s'empilent verticalement en 1 colonne.
+Sur grand écran, les Media Queries à la fin du fichier les réorganisent en 4 colonnes. */
+
+.buttons-container { 
+display: grid;
+grid-template-columns: 1fr; /* 1 seule colonne par défaut (mobile-first) */
+gap: 14px;                  /* Espacement de 14px entre chaque carte */
+width: 100%;
+max-width: 400px;           /* Largeur idéale sur smartphone */
+}
+
+/* Carte de sélection individuelle :
+- position: relative : permet à l'overlay textuel en position: absolute de s'aligner dessus
+- overflow: hidden : évite que l'image ne dépasse des coins arrondis lors du zoom au survol
+- cursor: pointer : indique clairement que l'élément est cliquable */
+.img-btn {
+position: relative;
+width: 100%; 
+height: 140px; 
+border-radius: 8px; 
+overflow: hidden; 
+cursor: pointer;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
+border: 1.5px solid var(--sidebar-border);
+transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+background-color: #1a1e29;
+}
+
+/* Image de fond de la carte :
+- object-fit: cover : redimensionne l'image pour remplir tout le cadre sans jamais l'étirer ni la déformer
+- filter: brightness(65%) grayscale(25%) : assombrit légèrement l'image pour mettre en avant le texte blanc */
+.img-btn img { 
+width: 100%; 
+height: 100%; 
+object-fit: cover; 
+object-position: center 25%;
+transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), filter 0.4s ease; 
+filter: brightness(65%) grayscale(25%);
+}
+
+/* Voile dégradé sombre superposé à l'image :
+Garantit que le texte blanc et le titre doré restent 100% lisibles quelle que soit l'image */
+.img-btn .btn-overlay {
+position: absolute;
+inset: 0;
+padding: 16px 20px;
+background: linear-gradient(0deg, rgba(10, 12, 18, 0.95) 0%, rgba(10, 12, 18, 0.45) 60%, transparent 100%);
+display: flex;
+flex-direction: column;
+justify-content: flex-end;
+align-items: flex-start;
+text-align: left;
+transition: all 0.3s ease;
+}
+
+/* Rôle du personnage (ex: "Unificateur des réseaux") */
+.img-btn .btn-role {
+font-size: 0.75rem;
+text-transform: uppercase;
+letter-spacing: 1px;
+color: var(--accent-gold);
+font-weight: 600;
+margin-bottom: 3px;
+}
+
+/* Nom du personnage en police noble Cinzel (ex: "Jean Moulin") */
+.img-btn .btn-label {
+font-family: var(--font-serif);
+font-size: 1.25rem;
+font-weight: 700;
+color: #ffffff;
+line-height: 1.2;
+}
+
+/* Invite d'action (ex: "Découvrir le parcours →") masquée au repos, révélée au survol */
+.img-btn .btn-action {
+font-size: 0.8rem;
+color: var(--text-muted);
+margin-top: 6px;
+opacity: 0;
+transform: translateY(6px);
+transition: all 0.3s ease;
+}
+
+/* Effets visuels interactifs au survol de la souris (Hover) :
+- Légère élévation de la carte (-5px)
+- Bordure dorée lumineuse et lueur d'ombre portée
+- Zoom doux de la photographie (scale 1.08) et passage en pleine couleur */
+.img-btn:hover { 
+transform: translateY(-5px); 
+border-color: var(--accent-gold);
+box-shadow: 0 16px 35px var(--accent-gold-glow); 
+}
+
+.img-btn:hover img { 
+transform: scale(1.08); 
+filter: brightness(85%) grayscale(0%);
+}
+
+.img-btn:hover .btn-action {
+opacity: 1;
+color: var(--accent-gold);
+transform: translateY(0);
+}
+
+/* ==========================================================================
+4. APPLICATION CARTOGRAPHIQUE & CARTE LEAFLET (#app, #map-wrapper, #map)
+==========================================================================
+Ce conteneur englobe toute l'interface après avoir quitté la page d'accueil :
+la carte interactive en plein écran et la barre latérale / tiroir. */
+
+#app { 
+display: none; /* Reste masqué au départ ; passé à 'display: flex' par JavaScript */
+height: 100vh; 
+height: 100dvh;
+width: 100%; 
+position: relative;
+overflow: hidden;
+}
+
+/* Conteneur de cadrage de la carte :
+Permet d'ancrer les boutons flottants en position: absolute par-dessus la carte */
+#map-wrapper {
+position: relative;
+width: 100%;
+height: 100%;
+overflow: hidden;
+}
+
+/* Élément HTML recevant le rendu cartographique Leaflet :
+La couleur de fond #e6e6e6 est calibrée sur la couleur dominante du fond Esri Gray
+pour éviter tout clignotement blanc pendant le chargement des tuiles réseau. */
+#map { 
+width: 100%; 
+height: 100%; 
+background: #e6e6e6; 
+}
+
+/* ==========================================================================
+HEADER ÉPURÉ AÉRIEN (#app-top-header / .app-header)
+==========================================================================
+Bandeau traversant effacé selon la demande : seuls le bouton Accueil et le titre flottent
+au-dessus de la carte en haut à gauche, libérant totalement la vue cartographique. */
+.app-header {
+position: absolute;
+top: max(14px, env(safe-area-inset-top));
+left: max(16px, env(safe-area-inset-left));
+z-index: 1002;
+display: flex;
+align-items: center;
+background: transparent;
+border: none;
+box-shadow: none;
+padding: 0;
+pointer-events: none;
+}
+
+.app-header::after {
+display: none;
+}
+
+.app-header-left {
+display: flex;
+align-items: center;
+gap: 12px;
+pointer-events: auto;
+}
+
+/* Titre contextuel pur (sans cadre ni fond, pour ne pas le confondre avec un bouton) */
+.header-context-title {
+font-family: var(--font-serif);
+font-size: 1.15rem;
+font-weight: 600;
+color: #ffffff;
+letter-spacing: 0.3px;
+padding-left: 12px;
+border-left: 2px solid var(--accent-gold);
+margin-left: 4px;
+white-space: nowrap;
+text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 0, 0, 0.75);
+transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Style commun des boutons d'action (angles sobres et moins arrondis) */
+.header-btn {
+background: linear-gradient(135deg, rgba(30, 34, 44, 0.85), rgba(18, 20, 26, 0.95));
+border: 1px solid var(--sidebar-border);
+color: var(--text-main);
+padding: 7px 14px;
+border-radius: 6px;
+font-family: var(--font-sans);
+font-size: 0.82rem;
+font-weight: 600;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 7px;
+transition: all 0.25s cubic-bezier(0.2, 0, 0.2, 1);
+touch-action: manipulation;
+white-space: nowrap;
+box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+user-select: none;
+}
+
+.header-btn:hover {
+border-color: var(--accent-gold);
+color: var(--accent-gold-bright);
+transform: translateY(-1px);
+box-shadow: 0 4px 16px var(--accent-gold-glow);
+}
+
+.header-btn .btn-icon {
+font-size: 1rem;
+line-height: 1;
+transition: transform 0.2s ease;
+}
+
+/* Bouton spécial "Retour accueil" : CLAIR EN MODE SOMBRE selon la demande */
+[data-theme="dark"] .header-btn.back-btn,
+body:not([data-theme="light"]) .header-btn.back-btn {
+  background: #ffffff !important; /* Couleur solide blanche unie claire en mode sombre sans dégradé */
+  background-image: none !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid var(--accent-gold) !important;
+  color: #121417 !important; /* Texte sombre lisible */
+  font-weight: 600;
+  border-radius: 6px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.header-btn.back-btn .btn-icon {
+  color: #8c6d2d !important;
+  font-size: 1.3rem;
+  margin-right: -2px;
+  line-height: 0.9;
+}
+
+.header-btn.back-btn:hover {
+  background: var(--accent-gold) !important; /* Couleur solide or unie pure sans dégradé */
+  background-image: none !important;
+  color: #121417 !important;
+  border-color: var(--accent-gold-bright) !important;
+  box-shadow: 0 4px 18px var(--accent-gold-glow) !important;
+}
+
+.header-btn.back-btn:hover .btn-icon {
+  color: #121417 !important;
+  transform: translateX(-3px);
+}
+
+/* ==========================================================================
+BOUTONS D'ACTION DU VOLET LATÉRAL (Carte historique & Fond de plan)
+========================================================================== */
+.sidebar-carte-historique-container {
+margin: 10px 0 14px 0;
+}
+
+/* Bouton "Carte historique" & action du volet : COULEUR SOLIDE PURE SANS DÉGRADÉ */
+.sidebar-action-btn {
+width: 100%;
+background: #1c202a; /* Couleur solide unie sombre sans dégradé */
+border: 1.5px solid var(--accent-gold);
+color: var(--accent-gold-bright);
+padding: 10px 16px;
+border-radius: 6px;
+font-family: var(--font-sans);
+font-size: 0.88rem;
+font-weight: 600;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+transition: all 0.25s cubic-bezier(0.2, 0, 0.2, 1);
+box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+user-select: none;
+touch-action: manipulation;
+}
+
+.sidebar-action-btn:hover {
+background: var(--accent-gold); /* Couleur solide or unie pure sans dégradé */
+color: #121417;
+border-color: var(--accent-gold-bright);
+box-shadow: 0 4px 18px var(--accent-gold-glow);
+transform: translateY(-1px);
+}
+
+.sidebar-justice-fond-section {
+margin: 10px 0 14px 0;
+padding: 12px 14px;
+background: rgba(0, 0, 0, 0.22);
+border: 1px solid var(--sidebar-border);
+border-radius: 8px;
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+/* Boîte d'information lorsque l'archive photographique est affichée en mode Justice */
+.justice-image-notice {
+margin: 14px 0;
+padding: 14px;
+background: rgba(197, 160, 89, 0.1);
+border: 1.2px solid var(--accent-gold);
+border-radius: 8px;
+display: flex;
+gap: 12px;
+align-items: flex-start;
+}
+
+.justice-image-notice .notice-icon {
+font-size: 1.4rem;
+line-height: 1;
+flex-shrink: 0;
+}
+
+.justice-image-notice .notice-text h4 {
+font-family: var(--font-serif);
+font-size: 0.92rem;
+color: var(--accent-gold-bright);
+margin-bottom: 6px;
+}
+
+.justice-image-notice .notice-text p {
+font-size: 0.8rem;
+color: var(--text-muted);
+line-height: 1.4;
+margin: 0;
+}
+
+/* Adaptation en Mode Clair pour l'en-tête et les boutons (COULEURS SOLIDES SANS DÉGRADÉ) */
+[data-theme="light"] .app-header {
+background: transparent;
+border: none;
+box-shadow: none;
+}
+
+[data-theme="light"] .header-context-title {
+color: #121417;
+border-left-color: var(--accent-gold);
+text-shadow: 0 1px 4px rgba(255, 255, 255, 0.95), 0 0 10px #ffffff;
+}
+
+/* Bouton spécial "Retour accueil" : SOMBRE EN MODE CLAIR selon la demande */
+[data-theme="light"] .header-btn.back-btn {
+  background: #121417 !important; /* Couleur solide noire unie sombre en mode clair sans dégradé */
+  background-image: none !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff !important; /* Texte blanc contrasté */
+  border-color: #000000 !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-theme="light"] .header-btn.back-btn .btn-icon {
+  color: var(--accent-gold-bright) !important;
+}
+
+[data-theme="light"] .header-btn.back-btn:hover {
+  background: var(--accent-gold) !important; /* Couleur solide dorée unie pure sans dégradé */
+  background-image: none !important;
+  color: #ffffff !important;
+  border-color: var(--accent-gold-bright) !important;
+}
+
+[data-theme="light"] .header-btn.back-btn:hover .btn-icon {
+  color: #ffffff !important;
+  transform: translateX(-3px);
+}
+
+[data-theme="light"] .sidebar-action-btn {
+background: #ffffff; /* Couleur solide blanche unie pure sans dégradé */
+color: #8c6d2d;
+border-color: var(--accent-gold);
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .sidebar-action-btn:hover {
+background: var(--accent-gold); /* Couleur solide dorée unie pure sans dégradé */
+color: #ffffff;
+box-shadow: 0 4px 16px rgba(197, 160, 89, 0.3);
+}
+
+[data-theme="light"] .sidebar-justice-fond-section {
+background: rgba(0, 0, 0, 0.04);
+}
+
+/* ==========================================================================
+INTERRUPTEUR VERTICAL CLAIR / SOMBRE (.theme-switch-wrapper)
+==========================================================================
+Positionné À GAUCHE DU ZOOM de la carte, de la MÊME TAILLE exacte (36px x 74px).
+- En Mode Clair (jour) : le boîtier est NOIR avec icônes contrastées.
+- En Mode Sombre (nuit) : le boîtier est BLANC avec icônes contrastées (vice-versa). */
+.theme-switch-wrapper.theme-switch-vertical {
+  position: absolute;
+  top: max(14px, env(safe-area-inset-top)) !important;
+  right: calc(max(14px, env(safe-area-inset-right)) + 44px) !important; /* À gauche du zoom avec un espacement régulier de 8px */
+  width: 36px !important; /* Même largeur exacte que les commandes de zoom */
+  height: 74px !important; /* Même hauteur exacte que le bloc zoom (2 x 36px + bordures) */
+  box-sizing: border-box !important;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  gap: 0;
+  user-select: none;
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Positionnement et dimensions unifiés des contrôles de zoom Leaflet */
+.leaflet-top.leaflet-right {
+  top: max(14px, env(safe-area-inset-top)) !important;
+  right: max(14px, env(safe-area-inset-right)) !important;
+}
+
+.leaflet-control-zoom {
+  margin: 0 !important;
+  border: 1.5px solid var(--sidebar-border) !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45) !important;
+  width: 36px !important;
+  height: 74px !important;
+  box-sizing: border-box !important;
+}
+
+.leaflet-control-zoom a {
+  background-color: var(--bg-sidebar) !important;
+  color: var(--accent-gold) !important;
+  border-color: var(--sidebar-border) !important;
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  font-size: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+/* En Mode Sombre : le switch est BLANC (vice-versa selon la demande) */
+[data-theme="dark"] .theme-switch-wrapper.theme-switch-vertical,
+body:not([data-theme="light"]) .theme-switch-wrapper.theme-switch-vertical {
+  background: #ffffff !important; /* Boîtier blanc */
+  border: 1.5px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* En Mode Clair : le switch est NOIR selon la demande */
+[data-theme="light"] .theme-switch-wrapper.theme-switch-vertical {
+background: #121417 !important; /* Boîtier noir */
+border: 1.5px solid #000000 !important;
+box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Boutons verticaux individuels (Soleil ☀️ en haut, Lune 🌙 en bas) */
+.theme-btn-vertical {
+width: 36px;
+height: 36px;
+display: flex;
+align-items: center;
+justify-content: center;
+background: transparent;
+border: none;
+cursor: pointer;
+font-size: 1.05rem;
+line-height: 1;
+transition: all 0.2s ease;
+padding: 0;
+margin: 0;
+}
+
+/* Séparateur entre le soleil et la lune */
+.theme-btn-vertical:first-child {
+border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+[data-theme="light"] .theme-btn-vertical:first-child {
+border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* En mode sombre (boîtier blanc) : couleurs des boutons */
+[data-theme="dark"] .theme-btn-vertical,
+.theme-btn-vertical {
+color: #121417;
+}
+
+[data-theme="dark"] .theme-btn-vertical:hover,
+.theme-btn-vertical:hover {
+background: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .theme-btn-vertical.active,
+.theme-btn-vertical.active {
+background: #f0f0f4;
+}
+
+/* En mode clair (boîtier noir) : couleurs des boutons */
+[data-theme="light"] .theme-btn-vertical {
+color: #ffffff;
+}
+
+[data-theme="light"] .theme-btn-vertical:hover {
+background: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="light"] .theme-btn-vertical.active {
+background: #000000;
+}
+
+.theme-switch-toggle input:checked + .slider-toggle {
+background-color: rgba(197, 160, 89, 0.88);
+border-color: var(--accent-gold);
+box-shadow: 0 0 10px var(--accent-gold-glow);
+}
+
+.theme-switch-toggle input:checked + .slider-toggle:before {
+transform: translateX(16px);
+background-color: #0c0e14;
+}
+
+/* ==========================================================================
+SÉLECTEUR DE FOND DE PLAN EN MODE JUSTICE (.fond-selector-wrapper)
+========================================================================== */
+.fond-selector-wrapper {
+position: relative;
+}
+
+.dropdown-arrow {
+font-size: 0.75rem;
+transition: transform 0.2s ease;
+}
+
+.fond-selector-wrapper.open .dropdown-arrow {
+transform: rotate(180deg);
+}
+
+.fond-selector-dropdown {
+position: absolute;
+top: calc(100% + 8px);
+right: 0;
+width: 290px;
+background: rgba(14, 17, 24, 0.98);
+backdrop-filter: blur(24px);
+-webkit-backdrop-filter: blur(24px);
+border: 1.5px solid rgba(197, 160, 89, 0.35);
+border-radius: 8px;
+padding: 8px;
+box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85);
+display: flex;
+flex-direction: column;
+gap: 5px;
+opacity: 0;
+pointer-events: none;
+transform: translateY(-8px) scale(0.96);
+transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+z-index: 1010;
+}
+
+.fond-selector-dropdown.open {
+opacity: 1;
+pointer-events: auto;
+transform: translateY(0) scale(1);
+}
+
+.sidebar-justice-fond-section .fond-selector-dropdown {
+width: 100%;
+left: 0;
+right: 0;
+}
+
+.fond-option {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 10px 12px;
+background: transparent;
+border: 1px solid transparent;
+border-radius: 6px;
+color: var(--text-main);
+cursor: pointer;
+text-align: left;
+transition: all 0.2s ease;
+width: 100%;
+}
+
+.fond-option:hover {
+background: rgba(197, 160, 89, 0.12);
+border-color: rgba(197, 160, 89, 0.25);
+}
+
+.fond-option.active {
+background: rgba(197, 160, 89, 0.22);
+border-color: var(--accent-gold);
+box-shadow: 0 0 12px var(--accent-gold-glow);
+}
+
+.fond-option .fond-icon {
+font-size: 1.25rem;
+flex-shrink: 0;
+}
+
+.fond-option .fond-info {
+display: flex;
+flex-direction: column;
+}
+
+.fond-option .fond-title {
+font-size: 0.82rem;
+font-weight: 600;
+color: #ffffff;
+}
+
+.fond-option.active .fond-title {
+color: var(--accent-gold-bright);
+}
+
+.fond-option .fond-sub {
+font-size: 0.7rem;
+color: var(--text-muted);
+}
+
+/* ==========================================================================
+FOND D'IMAGE DE LA CARTE (.map-image-background)
+==========================================================================
+Remplace les tuiles cartographiques par une photographie d'archive en fond de page. */
+.map-image-background {
+position: absolute;
+inset: 0;
+width: 100%;
+height: 100%;
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+z-index: 1;
+pointer-events: none;
+transition: opacity 0.35s ease, background-image 0.35s ease;
+}
+
+.map-image-background::after {
+content: '';
+position: absolute;
+inset: 0;
+background: radial-gradient(circle at center, rgba(12, 14, 20, 0.15) 0%, rgba(12, 14, 20, 0.65) 100%);
+pointer-events: none;
+}
+
+/* ==========================================================================
+5. VOILES D'ARRIÈRE-PLAN (Backdrop Overlays)
+==========================================================================
+Nappe sombre semi-transparente qui recouvre l'écran quand un tiroir ou un panneau s'ouvre.
+- pointer-events: none par défaut : permet de cliquer sur la carte quand le voile est invisible
+- pointer-events: auto quand .active est présent : intercepte le clic de l'utilisateur pour fermer la modale */
+.backdrop-overlay {
+position: fixed;
+inset: 0;
+background: rgba(6, 8, 12, 0.65);
+backdrop-filter: blur(5px);
+-webkit-backdrop-filter: blur(5px);
+z-index: 1001;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.backdrop-overlay.active {
+opacity: 1;
+pointer-events: auto;
+}
+
+/* ==========================================================================
+6. PANNEAUX FLOTTANTS & MODALES (.floating-panel)
+==========================================================================
+Boîtes de dialogue flottant par-dessus la carte (ex: Paramètres du fond Esri).
+Utilise un effet de verre dépoli moderne (Glassmorphism) avec ombres portées douces. */
+
+.floating-panel {
+position: absolute;
+top: 72px;
+left: max(16px, env(safe-area-inset-left));
+z-index: 1004;
+background: rgba(14, 17, 24, 0.96);
+backdrop-filter: blur(18px);
+-webkit-backdrop-filter: blur(18px);
+border: 1.5px solid var(--sidebar-border);
+border-radius: 8px;
+padding: 20px;
+width: 380px;
+max-width: calc(100vw - 32px);
+box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75);
+opacity: 0;
+pointer-events: none;
+transform: translateY(-10px) scale(0.97);
+transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* État ouvert : animation d'apparition douce et activation des clics */
+.floating-panel.open {
+opacity: 1;
+pointer-events: all;
+transform: translateY(0) scale(1);
+}
+
+/* En-tête de la modale avec titre et bouton de fermeture */
+.panel-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+border-bottom: 1px solid var(--sidebar-border);
+padding-bottom: 12px;
+margin-bottom: 14px;
+}
+
+.panel-title {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.panel-title h3 {
+font-family: var(--font-serif);
+font-size: 1.05rem;
+font-weight: 700;
+color: #ffffff;
+}
+
+/* Bouton de fermeture agrandi (Croix ✕) :
+- Dimensions confortables de 38px × 38px pour une manipulation facile au doigt sur mobile
+- Devient rouge au survol ou au toucher pour un repère visuel clair */
+.close-panel-btn {
+background: rgba(255, 255, 255, 0.08);
+border: 1px solid rgba(255, 255, 255, 0.15);
+color: #ffffff;
+font-size: 1.35rem; /* Grande croix bien visible */
+font-weight: 700;
+cursor: pointer;
+width: 38px;
+height: 38px;
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 6px;
+transition: all 0.2s ease;
+touch-action: manipulation;
+}
+
+.close-panel-btn:hover,
+.close-panel-btn:active {
+background: rgba(230, 57, 70, 0.85);
+border-color: #e63946;
+color: #ffffff;
+transform: scale(1.1);
+}
+
+.panel-intro {
+font-size: 0.82rem;
+color: var(--text-muted);
+margin-bottom: 14px;
+line-height: 1.4;
+}
+
+.panel-section-title {
+font-size: 0.78rem;
+text-transform: uppercase;
+letter-spacing: 1px;
+color: var(--accent-gold);
+font-weight: 700;
+display: block;
+margin-bottom: 10px;
+}
+
+/* ==========================================================================
+FENÊTRE FLOTTANTE D'IMAGE (.floating-image-panel)
+==========================================================================
+Permet d'afficher une photographie en grand format (vue aérienne de Lyon,
+panorama de Fourvière, Palais de Justice, portrait de résistant) par-dessus
+la carte interactive sans quitter la navigation. */
+
+.floating-image-panel {
+position: fixed !important;
+top: 50% !important;
+left: 50% !important;
+transform: translate(-50%, -50%) scale(0.95) !important;
+width: 600px;
+max-width: min(92vw, 650px);
+max-height: 86vh;
+display: flex;
+flex-direction: column;
+overflow: hidden;
+z-index: 1005 !important;
+border: 1.5px solid rgba(197, 160, 89, 0.4);
+box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), 0 0 30px rgba(197, 160, 89, 0.15);
+}
+
+.floating-image-panel.open {
+transform: translate(-50%, -50%) scale(1) !important;
+opacity: 1;
+pointer-events: all;
+}
+
+/* Corps défilable de la fenêtre d'image */
+.floating-image-body {
+display: flex;
+flex-direction: column;
+gap: 12px;
+overflow-y: auto;
+padding-right: 2px;
+}
+
+/* Barre d'onglets horizontaux pour basculer rapidement d'une image à une autre */
+.image-tabs-bar {
+display: flex;
+gap: 6px;
+overflow-x: auto;
+padding-bottom: 4px;
+scrollbar-width: thin;
+-webkit-overflow-scrolling: touch;
+}
+
+.img-tab-btn {
+background: rgba(255, 255, 255, 0.06);
+border: 1px solid rgba(255, 255, 255, 0.12);
+color: var(--text-muted);
+padding: 6px 12px;
+border-radius: 6px;
+font-size: 0.76rem;
+font-weight: 600;
+cursor: pointer;
+white-space: nowrap;
+transition: all 0.2s ease;
+touch-action: manipulation;
+}
+
+.img-tab-btn:hover {
+background: rgba(197, 160, 89, 0.15);
+border-color: var(--accent-gold);
+color: var(--text-main);
+}
+
+.img-tab-btn.active {
+background: var(--accent-gold);
+border-color: var(--accent-gold-bright);
+color: #0c0e14;
+font-weight: 700;
+box-shadow: 0 2px 10px rgba(197, 160, 89, 0.35);
+}
+
+/* Cadre protecteur et adaptatif de la photographie */
+.floating-image-container {
+position: relative;
+width: 100%;
+border-radius: 8px;
+overflow: hidden;
+border: 1px solid rgba(197, 160, 89, 0.25);
+background: #000000;
+display: flex;
+align-items: center;
+justify-content: center;
+min-height: 220px;
+max-height: 360px;
+box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+
+.floating-image-container img {
+width: 100%;
+height: 100%;
+max-height: 360px;
+object-fit: cover; /* Remplit élégamment le cadre sans déformer la photographie */
+display: block;
+transition: transform 0.3s ease;
+}
+
+.floating-image-container:hover img {
+transform: scale(1.02); /* Léger effet de zoom dynamique au survol */
+}
+
+/* Bandeau translucide d'information et légende au bas de la photo */
+.floating-image-overlay-caption {
+position: absolute;
+bottom: 0;
+left: 0;
+right: 0;
+background: linear-gradient(transparent, rgba(10, 12, 18, 0.88) 35%, rgba(10, 12, 18, 0.98) 100%);
+padding: 10px 14px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 10px;
+}
+
+.floating-image-overlay-caption span {
+font-size: 0.78rem;
+color: #e2e8f0;
+line-height: 1.35;
+font-weight: 500;
+}
+
+/* Bouton pour basculer en mode zoom agrandi plein écran */
+.btn-zoom-image {
+background: rgba(197, 160, 89, 0.2);
+border: 1px solid var(--accent-gold);
+color: var(--accent-gold-bright);
+padding: 4px 10px;
+border-radius: 6px;
+font-size: 0.72rem;
+font-weight: 700;
+cursor: pointer;
+white-space: nowrap;
+transition: all 0.2s ease;
+touch-action: manipulation;
+}
+
+.btn-zoom-image:hover, .btn-zoom-image:active {
+background: var(--accent-gold);
+color: #0c0e14;
+box-shadow: 0 0 10px var(--accent-gold-glow);
+}
+
+/* Mode agrandi / plein écran pour la fenêtre flottante d'image */
+.floating-image-panel.fullscreen {
+width: 94vw !important;
+max-width: 900px !important;
+max-height: 92vh !important;
+top: 50% !important;
+left: 50% !important;
+transform: translate(-50%, -50%) !important;
+z-index: 1005 !important;
+}
+
+.floating-image-panel.fullscreen .floating-image-container {
+max-height: 68vh;
+min-height: 380px;
+}
+
+.floating-image-panel.fullscreen .floating-image-container img {
+max-height: 68vh;
+object-fit: contain; /* En plein écran, on montre 100% de la photo sans rognage */
+}
+
+/* Liste des interrupteurs Lieux de Justice */
+.switches-list {
+display: flex;
+flex-direction: column;
+gap: 12px;
+margin-bottom: 16px;
+}
+
+.switch-item {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 10px 12px;
+background: var(--bg-card);
+border: 1px solid var(--sidebar-border);
+border-radius: 6px;
+cursor: pointer;
+transition: all 0.2s ease;
+}
+
+.switch-item:hover {
+border-color: rgba(197, 160, 89, 0.4);
+}
+
+.switch-visual {
+width: 36px;
+height: 36px;
+border-radius: 6px;
+background: rgba(255, 255, 255, 0.05);
+border: 1.5px solid var(--badge-color);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.1rem;
+flex-shrink: 0;
+}
+
+.switch-label-group {
+display: flex;
+flex-direction: column;
+gap: 2px;
+flex-grow: 1;
+}
+
+.switch-title {
+font-weight: 600;
+font-size: 0.88rem;
+color: var(--text-main);
+}
+
+.switch-desc {
+font-size: 0.72rem;
+color: var(--text-muted);
+line-height: 1.25;
+}
+
+/* Switch toggle styling */
+.toggle-slider-wrap {
+position: relative;
+display: inline-block;
+width: 44px;
+height: 24px;
+flex-shrink: 0;
+}
+
+.toggle-slider-wrap input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+
+.slider {
+position: absolute;
+inset: 0;
+cursor: pointer;
+background-color: #334155;
+border-radius: 24px;
+transition: 0.3s;
+}
+
+.slider:before {
+position: absolute;
+content: "";
+height: 18px;
+width: 18px;
+left: 3px;
+bottom: 3px;
+background-color: white;
+border-radius: 50%;
+transition: 0.3s;
+}
+
+.toggle-slider-wrap input:checked + .slider {
+background-color: var(--accent-gold);
+}
+
+.toggle-slider-wrap input:checked + .slider:before {
+transform: translateX(20px);
+}
+
+.panel-quick-actions {
+display: flex;
+justify-content: flex-end;
+gap: 10px;
+padding-top: 12px;
+border-top: 1px solid var(--sidebar-border);
+}
+
+.quick-act-btn {
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid var(--sidebar-border);
+color: var(--text-muted);
+padding: 6px 12px;
+border-radius: 8px;
+font-size: 0.75rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.2s ease;
+}
+
+.quick-act-btn:hover {
+color: var(--accent-gold);
+border-color: var(--accent-gold);
+background: var(--hover-bg);
+}
+
+/* ==========================================================================
+7. BOUTON FLOTTANT MOBILE (#menu-toggle)
+==========================================================================
+Bouton doré en forme de pilule flottant en bas de l'écran sur smartphone.
+- left: 50% + transform: translateX(-50%) : technique classique de centrage horizontal absolu
+- bottom: max(20px, env(safe-area-inset-bottom)) : respecte la barre d'accueil tactile de l'iPhone */
+#menu-toggle {
+position: absolute;
+bottom: max(20px, env(safe-area-inset-bottom));
+left: 50%;
+transform: translateX(-50%);
+background: linear-gradient(135deg, #1b1e26, #121417);
+color: var(--accent-gold-bright);
+border: 1px solid var(--accent-gold);
+padding: 10px 24px;
+border-radius: 6px;
+font-weight: 600;
+font-size: 0.92rem;
+letter-spacing: 0.6px;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+cursor: pointer;
+z-index: 1000;
+display: flex;
+align-items: center;
+justify-content: center;
+white-space: nowrap;
+transition: transform 0.25s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.2s ease, background 0.2s ease;
+touch-action: manipulation;
+}
+
+#menu-toggle:hover {
+background: var(--accent-gold);
+color: #121417;
+box-shadow: 0 0 16px var(--accent-gold-glow);
+}
+
+#menu-toggle:active {
+transform: translateX(-50%) scale(0.96);
+}
+
+/* État masqué sur smartphone */
+#menu-toggle.hidden {
+opacity: 0;
+pointer-events: none;
+transform: translateX(-50%) translateY(24px);
+display: none !important;
+}
+
+/* ==========================================================================
+8. BARRE LATÉRALE & TIROIR MOBILE (#sidebar)
+==========================================================================
+- Sur mobile : agit comme un tiroir inférieur (Bottom Sheet) qui coulisse
+depuis le bas (translateY(100%) au repos, translateY(0) ouvert).
+- Sur bureau (Desktop) : les Media Queries en fin de fichier le transforment
+en panneau latéral fixe de 440px sur la droite de l'écran. */
+
+#sidebar { 
+position: absolute;
+bottom: 0;
+left: 0;
+width: 100%;
+max-height: 84vh;
+max-height: 84dvh;
+background: var(--bg-sidebar); 
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+color: var(--text-main);
+padding: 6px 18px max(24px, env(safe-area-inset-bottom)) 18px; 
+box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.75); 
+border-top: 1.5px solid var(--sidebar-border);
+border-top-left-radius: 14px;
+border-top-right-radius: 14px;
+overflow-y: auto; 
+z-index: 1003; 
+display: flex; 
+flex-direction: column; 
+gap: 14px; 
+transform: translateY(100%); /* Masqué sous l'écran par défaut sur mobile */
+transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+-webkit-overflow-scrolling: touch;
+overscroll-behavior-y: contain; /* Empêche le défilement de la page arrière-plan */
+}
+
+/* Tiroir mobile en position ouverte */
+#sidebar.open {
+transform: translateY(0);
+}
+
+/* ==========================================================================
+POIGNÉE TACTILE DE GLISSEMENT MOBILE (.drawer-handle-zone)
+==========================================================================
+Zone dédiée pour poser son doigt et faire glisser le tiroir vers le bas (Swipe Down).
+- touch-action: none : indique au navigateur de ne pas intercepter les gestes natifs */
+.drawer-handle-zone {
+width: 100%;
+padding: 12px 0 14px 0;
+display: flex;
+justify-content: center;
+align-items: center;
+cursor: grab;
+touch-action: none;
+user-select: none;
+-webkit-user-select: none;
+}
+
+.drawer-handle-zone:active {
+cursor: grabbing;
+}
+
+/* La petite barre visuelle dorée de la poignée */
+.drawer-handle {
+width: 52px;
+height: 6px;
+background: rgba(197, 160, 89, 0.45);
+border-radius: 6px;
+box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+transition: background 0.2s ease, width 0.2s ease;
+}
+
+.drawer-handle-zone:hover .drawer-handle,
+.drawer-handle-zone:active .drawer-handle {
+background: var(--accent-gold);
+width: 64px;
+}
+
+.sidebar-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+border-bottom: 1px solid var(--sidebar-border);
+padding-bottom: 12px;
+touch-action: none;
+user-select: none;
+-webkit-user-select: none;
+gap: 12px;
+}
+
+.sidebar-close-desktop-btn {
+background: rgba(255, 255, 255, 0.08);
+border: 1px solid rgba(255, 255, 255, 0.16);
+color: #ffffff;
+font-size: 1.15rem;
+font-weight: 700;
+width: 34px;
+height: 34px;
+border-radius: 6px;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: all 0.2s ease;
+touch-action: manipulation;
+margin-left: auto;
+flex-shrink: 0;
+}
+
+.sidebar-close-desktop-btn:hover {
+background: rgba(230, 57, 70, 0.85);
+border-color: #e63946;
+color: #ffffff;
+transform: scale(1.08);
+}
+
+.brand {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.brand-icon {
+font-size: 1.25rem;
+}
+
+#sidebar h2 { 
+font-family: var(--font-serif);
+font-size: 1.15rem; 
+font-weight: 700;
+color: #ffffff; 
+letter-spacing: 0.5px;
+}
+
+
+
+
+
+.back-btn { 
+background: rgba(197, 160, 89, 0.1); 
+color: var(--accent-gold); 
+border: 1px solid var(--sidebar-border); 
+padding: 7px 14px; 
+border-radius: 6px;
+cursor: pointer; 
+font-weight: 600; 
+font-size: 0.82rem;
+transition: all 0.2s ease;
+display: inline-flex;
+align-items: center;
+gap: 6px;
+touch-action: manipulation;
+white-space: nowrap;
+}
+
+.back-btn:hover, .back-btn:active {
+background: var(--hover-bg);
+color: var(--accent-gold-bright);
+border-color: var(--accent-gold);
+transform: translateX(-2px);
+box-shadow: 0 4px 12px var(--accent-gold-glow);
+}
+
+/* Vue 1 : Sélection des personnages */
+.section-title {
+margin-bottom: 12px;
+}
+
+.section-title span {
+font-family: var(--font-serif);
+font-size: 0.95rem;
+font-weight: 700;
+color: var(--text-main);
+display: block;
+}
+
+.section-title small {
+font-size: 0.78rem;
+color: var(--text-muted);
+}
+
+#menu-personnes {
+display: flex;
+flex-direction: column;
+gap: 12px;
+width: 100%;
+}
+
+.btn-personne { 
+display: flex; 
+align-items: center; 
+gap: 14px; 
+width: 100%; 
+padding: 12px 14px; 
+background: var(--bg-card); 
+border: 1px solid var(--sidebar-border); 
+cursor: pointer; 
+text-align: left; 
+border-radius: 8px;
+transition: all 0.25s ease; 
+}
+
+.avatar-wrap {
+position: relative;
+width: 52px;
+height: 52px;
+flex-shrink: 0;
+}
+
+.avatar-wrap img { 
+width: 100%; 
+height: 100%; 
+border-radius: 6px;
+object-fit: cover; 
+border: 1px solid var(--sidebar-border);
+}
+
+.color-badge {
+position: absolute;
+bottom: -3px;
+right: -3px;
+width: 13px;
+height: 13px;
+border-radius: 50%;
+border: 2px solid var(--bg-dark);
+}
+
+.info-perso {
+display: flex;
+flex-direction: column;
+flex-grow: 1;
+gap: 3px;
+}
+
+.info-perso .nom {
+font-family: var(--font-serif);
+font-weight: 700;
+font-size: 1.02rem;
+color: var(--text-main);
+}
+
+.info-perso .role {
+font-size: 0.8rem;
+color: var(--text-muted);
+line-height: 1.3;
+}
+
+.info-perso .etapes-count {
+font-size: 0.72rem;
+color: var(--accent-gold);
+font-weight: 600;
+}
+
+.chevron {
+font-size: 1.3rem;
+color: var(--text-dim);
+transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.btn-personne:hover { 
+background: var(--hover-bg); 
+border-color: var(--accent-gold); 
+transform: translateX(4px); 
+}
+
+.btn-personne:hover .chevron {
+transform: translateX(3px);
+color: var(--accent-gold);
+}
+
+.btn-personne.actif { 
+background: linear-gradient(135deg, rgba(197, 160, 89, 0.22), rgba(197, 160, 89, 0.05)); 
+border-color: var(--accent-gold); 
+box-shadow: 0 6px 20px var(--accent-gold-glow);
+}
+
+.btn-personne.actif .nom {
+color: var(--accent-gold);
+}
+
+/* Vue 1 : Fiche détaillée du résistant et étapes */
+#sidebar-detail-view {
+display: flex;
+flex-direction: column;
+gap: 16px;
+animation: fadeIn 0.3s ease;
+}
+
+/* Bouton de retour à l'accueil (placé au même endroit) */
+.sub-back-btn {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+background: rgba(197, 160, 89, 0.1);
+border: 1px solid var(--sidebar-border);
+color: var(--accent-gold);
+font-size: 0.86rem;
+font-weight: 600;
+cursor: pointer;
+padding: 7px 14px;
+border-radius: 6px;
+transition: all 0.2s ease;
+align-self: flex-start;
+touch-action: manipulation;
+margin-bottom: 2px;
+}
+
+.sub-back-btn:hover, .sub-back-btn:active {
+background: var(--hover-bg);
+border-color: var(--accent-gold);
+color: var(--accent-gold-bright);
+transform: translateX(-3px);
+box-shadow: 0 4px 14px var(--accent-gold-glow);
+}
+
+/* Vue 2 : Lieux de Justice, Prisons et Police de répression */
+#sidebar-justice-view {
+display: flex;
+flex-direction: column;
+gap: 16px;
+animation: fadeIn 0.3s ease;
+}
+
+.justice-hero {
+display: flex;
+align-items: center;
+gap: 14px;
+padding: 14px;
+background: var(--bg-card);
+border: 1px solid var(--sidebar-border);
+border-radius: 8px;
+}
+
+.justice-hero-icon {
+width: 52px;
+height: 52px;
+border-radius: 6px;
+background: rgba(197, 160, 89, 0.12);
+border: 1.5px solid var(--accent-gold);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.6rem;
+flex-shrink: 0;
+}
+
+.justice-filter-section {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.filter-label {
+font-size: 0.78rem;
+text-transform: uppercase;
+letter-spacing: 0.8px;
+color: var(--accent-gold);
+font-weight: 700;
+}
+
+.filter-pills {
+display: flex;
+flex-wrap: wrap;
+gap: 8px;
+}
+
+.filter-pill {
+background: var(--bg-card);
+border: 1px solid var(--sidebar-border);
+color: var(--text-muted);
+padding: 8px 14px;
+border-radius: 6px;
+font-size: 0.8rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.2s ease;
+touch-action: manipulation;
+}
+
+.filter-pill:hover {
+border-color: var(--accent-gold);
+color: var(--text-main);
+}
+
+.filter-pill.active {
+background: var(--accent-gold);
+color: #0c0e14;
+border-color: var(--accent-gold);
+font-weight: 700;
+box-shadow: 0 4px 14px var(--accent-gold-glow);
+}
+
+/* Liste des fiches de lieux de justice */
+#liste-lieux-justice {
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+
+.lieu-justice-card {
+display: flex;
+gap: 14px;
+padding: 13px 14px;
+background: var(--bg-card);
+border: 1px solid var(--sidebar-border);
+border-radius: 8px;
+cursor: pointer;
+transition: all 0.25s ease;
+}
+
+.lieu-badge {
+width: 34px;
+height: 34px;
+border-radius: 6px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.1rem;
+flex-shrink: 0;
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.lieu-info {
+display: flex;
+flex-direction: column;
+gap: 4px;
+flex-grow: 1;
+}
+
+.lieu-header {
+display: flex;
+justify-content: space-between;
+align-items: baseline;
+gap: 8px;
+flex-wrap: wrap;
+}
+
+.lieu-titre {
+font-weight: 600;
+font-size: 0.92rem;
+color: var(--text-main);
+}
+
+.lieu-cat-tag {
+font-size: 0.72rem;
+font-weight: 700;
+letter-spacing: 0.3px;
+}
+
+.lieu-adresse {
+font-size: 0.78rem;
+color: var(--accent-gold);
+}
+
+.lieu-desc {
+font-size: 0.82rem;
+color: var(--text-muted);
+line-height: 1.45;
+margin-top: 2px;
+}
+
+.lieu-justice-card:hover {
+background: var(--hover-bg);
+border-color: var(--accent-gold);
+transform: translateY(-2px);
+}
+
+.lieu-justice-card.active {
+border-color: var(--accent-gold);
+background: rgba(197, 160, 89, 0.15);
+box-shadow: 0 6px 18px var(--accent-gold-glow);
+}
+
+.lieu-justice-card.active .lieu-titre {
+color: var(--accent-gold);
+}
+
+.profil-hero {
+display: flex;
+align-items: center;
+gap: 16px;
+padding: 14px;
+background: var(--bg-card);
+border: 1px solid var(--sidebar-border);
+border-radius: 8px;
+}
+
+.profil-hero img {
+width: 65px;
+height: 65px;
+border-radius: 6px;
+object-fit: cover;
+border: 2px solid var(--accent-gold);
+flex-shrink: 0;
+}
+
+.profil-info h3 {
+font-family: var(--font-serif);
+font-size: 1.15rem;
+font-weight: 700;
+color: #ffffff;
+margin-bottom: 4px;
+}
+
+.profil-info span {
+font-size: 0.82rem;
+color: var(--text-muted);
+}
+
+.quote-box {
+font-style: italic;
+font-size: 0.88rem;
+line-height: 1.5;
+color: #e2e8f0;
+border-left: 3px solid var(--accent-gold);
+padding: 8px 14px;
+background: rgba(197, 160, 89, 0.08);
+border-radius: 0 10px 10px 0;
+}
+
+.bio-text {
+font-size: 0.85rem;
+line-height: 1.6;
+color: var(--text-muted);
+}
+
+/* ==========================================================================
+9. MODULE D'ITINÉRAIRE ROUTIER RÉEL (#itineraire-box)
+==========================================================================
+Boîte complète hébergeant le calcul d'itinéraires piéton / cycliste.
+Elle est pliable (minimisable) pour libérer de l'espace à l'écran. */
+
+.itineraire-box {
+background: linear-gradient(135deg, rgba(22, 26, 38, 0.95), rgba(16, 20, 30, 0.95));
+border: 1.5px solid var(--sidebar-border);
+border-radius: 8px;
+padding: 14px 16px;
+display: flex;
+flex-direction: column;
+gap: 12px;
+box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* En-tête de la boîte GPS : aligne le titre à gauche et l'interrupteur On/Off à droite */
+.itineraire-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 10px;
+flex-wrap: wrap;
+}
+
+/* Groupe cliquable (Titre + Flèche) :
+Un clic sur ce bloc plie ou déplie la boîte GPS */
+.itineraire-header-title-group {
+display: flex;
+align-items: center;
+gap: 8px;
+cursor: pointer;
+user-select: none;
+padding: 4px 6px;
+margin: -4px -6px;
+border-radius: 8px;
+transition: background 0.2s ease;
+}
+
+.itineraire-header-title-group:hover {
+background: rgba(255, 255, 255, 0.06);
+}
+
+.itineraire-title {
+font-family: var(--font-serif);
+font-size: 0.88rem;
+font-weight: 700;
+color: var(--accent-gold);
+letter-spacing: 0.4px;
+}
+
+/* Petite flèche indicatrice de repliement : tourne à -90° quand la boîte est fermée */
+.minimize-toggle-icon {
+font-size: 0.68rem;
+color: var(--accent-gold);
+display: inline-flex;
+align-items: center;
+justify-content: center;
+width: 22px;
+height: 22px;
+border-radius: 50%;
+background: rgba(197, 160, 89, 0.15);
+border: 1px solid rgba(197, 160, 89, 0.3);
+transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Petit résumé condensé affiché uniquement quand la boîte GPS est repliée (ex: 🚶‍♂️ 3.8 km • 51 min) */
+.itineraire-mini-summary {
+font-size: 0.74rem;
+font-weight: 700;
+color: var(--accent-gold-bright);
+background: rgba(0, 0, 0, 0.45);
+padding: 2px 8px;
+border-radius: 4px;
+border: 1px solid rgba(197, 160, 89, 0.3);
+}
+
+/* Corps pliable de la boîte d'itinéraire :
+L'animation d'ouverture/fermeture s'appuie sur la transition de max-height */
+.itineraire-body {
+display: flex;
+flex-direction: column;
+gap: 12px;
+max-height: 1500px; /* Valeur suffisamment grande pour contenir tout le contenu déplié */
+opacity: 1;
+overflow: hidden;
+transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+}
+
+/* ==========================================================================
+ÉTAT MINIMISÉ / REPLIÉ (.itineraire-box.minimized)
+========================================================================== */
+.itineraire-box.minimized {
+padding-top: 10px;
+padding-bottom: 10px;
+background: linear-gradient(135deg, rgba(18, 22, 32, 0.95), rgba(12, 16, 24, 0.95));
+gap: 0;
+}
+
+/* Rotation de la flèche indicatrice */
+.itineraire-box.minimized .minimize-toggle-icon {
+transform: rotate(-90deg);
+}
+
+/* Masquage complet du corps pliable */
+.itineraire-box.minimized .itineraire-body {
+max-height: 0;
+opacity: 0;
+pointer-events: none;
+}
+
+/* ==========================================================================
+INTERRUPTEUR ON/OFF (Toggle Switch du tracé actif)
+==========================================================================
+Permet d'activer ou de masquer le tracé de la ligne GPS sur la carte Leaflet.
+Réalisé en pur CSS avec une case à cocher invisible et un pseudo-élément glissant. */
+.itineraire-toggle-wrapper {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.toggle-label {
+font-size: 0.74rem;
+font-weight: 600;
+color: var(--text-muted);
+letter-spacing: 0.3px;
+transition: color 0.25s ease;
+}
+
+.toggle-label.active {
+color: #2ec4b6; /* Vert turquoise moderne confirmant l'activation */
+}
+
+/* Conteneur externe de l'interrupteur */
+.switch-toggle {
+position: relative;
+display: inline-block;
+width: 38px;
+height: 20px;
+margin: 0;
+}
+
+/* On rend la balise <input type="checkbox"> invisible tout en gardant son interactivité */
+.switch-toggle input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+
+/* Rail de fond de l'interrupteur */
+.slider-toggle {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: rgba(255, 255, 255, 0.16);
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+border-radius: 20px;
+border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Pastille ronde blanche qui glisse de gauche à droite */
+.slider-toggle:before {
+position: absolute;
+content: "";
+height: 14px;
+width: 14px;
+left: 2px;
+bottom: 2px;
+background-color: #d1d5db;
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+border-radius: 50%;
+}
+
+/* Styles quand la case est cochée (:checked) */
+.switch-toggle input:checked + .slider-toggle {
+background-color: rgba(46, 196, 182, 0.85);
+border-color: #2ec4b6;
+box-shadow: 0 0 10px rgba(46, 196, 182, 0.45);
+}
+
+.switch-toggle input:checked + .slider-toggle:before {
+transform: translateX(18px);
+background-color: #0c0e14;
+}
+
+/* ==========================================================================
+SÉLECTEUR DE TRAJET & D'ÉTAPES (.select-itineraire-trajet)
+==========================================================================
+Permet à l'utilisateur de choisir s'il veut visualiser l'intégralité du parcours
+ou seulement un segment spécifique (ex: Étape 1 ➔ Étape 2). */
+.itineraire-selection-row {
+display: flex;
+flex-direction: column;
+gap: 5px;
+}
+
+.itineraire-field-label {
+font-size: 0.72rem;
+color: var(--text-muted);
+text-transform: uppercase;
+letter-spacing: 0.5px;
+font-weight: 600;
+}
+
+/* Menu déroulant stylisé en harmonie avec le thème sombre et doré */
+.select-itineraire-trajet {
+width: 100%;
+background: rgba(12, 14, 20, 0.95);
+border: 1.5px solid rgba(197, 160, 89, 0.35);
+color: #f0f3f8;
+border-radius: 6px;
+padding: 8px 12px;
+font-size: 0.82rem;
+font-family: inherit;
+outline: none;
+cursor: pointer;
+transition: all 0.25s ease;
+}
+
+.select-itineraire-trajet:focus {
+border-color: var(--accent-gold);
+box-shadow: 0 0 10px var(--accent-gold-glow);
+}
+
+.select-itineraire-trajet option {
+background: #121622;
+color: #f0f3f8;
+padding: 8px;
+}
+
+/* ==========================================================================
+CHOIX DU MODE DE DÉPLACEMENT : À PIED / À VÉLO (.mode-transport-pills)
+==========================================================================
+Calcule automatiquement des vitesses réalistes et adaptées à la ville de Lyon :
+- À pied : 4.5 km/h
+- À vélo : 15.0 km/h */
+.itineraire-mode-row {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 10px;
+}
+
+.mode-transport-pills {
+display: flex;
+gap: 6px;
+background: rgba(0, 0, 0, 0.35);
+padding: 3px;
+border-radius: 6px;
+border: 1px solid rgba(197, 160, 89, 0.2);
+}
+
+.mode-btn {
+background: transparent;
+border: none;
+color: var(--text-muted);
+font-size: 0.78rem;
+font-weight: 600;
+padding: 5px 12px;
+border-radius: 6px;
+cursor: pointer;
+transition: all 0.25s ease;
+touch-action: manipulation;
+white-space: nowrap;
+}
+
+.mode-btn:hover {
+color: var(--text-main);
+}
+
+/* Bouton du mode actuellement sélectionné */
+.mode-btn.active {
+background: var(--accent-gold);
+color: #0c0e14;
+font-weight: 700;
+box-shadow: 0 2px 10px var(--accent-gold-glow);
+}
+
+/* ==========================================================================
+CARTES DE PROPOSITIONS MULTI-ITINÉRAIRES (Style Google Maps)
+==========================================================================
+Affiche 3 cartes interactives permettant d'alterner entre :
+1. Itinéraire direct / le plus rapide
+2. Itinéraire patrimonial par les Quais de Saône
+3. Itinéraire aéré par les Berges du Rhône */
+.itineraire-variantes-section {
+display: flex;
+flex-direction: column;
+gap: 8px;
+margin: 2px 0;
+}
+
+.itineraire-propositions-list {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.itineraire-proposition-card {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 10px;
+background: rgba(255, 255, 255, 0.04);
+border: 1.5px solid rgba(255, 255, 255, 0.08);
+border-radius: 6px;
+padding: 10px 14px;
+cursor: pointer;
+transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+touch-action: manipulation;
+}
+
+.itineraire-proposition-card:hover {
+background: rgba(255, 255, 255, 0.08);
+border-color: rgba(197, 160, 89, 0.4);
+transform: translateY(-1.5px);
+}
+
+/* Carte d'itinéraire active : mise en valeur par un fond et un contour doré */
+.itineraire-proposition-card.active {
+background: linear-gradient(135deg, rgba(197, 160, 89, 0.2), rgba(197, 160, 89, 0.06));
+border: 1.5px solid var(--accent-gold);
+box-shadow: 0 4px 16px var(--accent-gold-glow);
+}
+
+.prop-info {
+display: flex;
+flex-direction: column;
+gap: 3px;
+min-width: 0;
+}
+
+.prop-title-row {
+display: flex;
+align-items: center;
+gap: 6px;
+flex-wrap: wrap;
+}
+
+.prop-name {
+font-size: 0.82rem;
+font-weight: 700;
+color: #ffffff;
+letter-spacing: 0.2px;
+}
+
+/* Badge "Recommandé" sur le trajet le plus rapide */
+.prop-badge-rec {
+background: rgba(46, 196, 182, 0.2);
+color: #48e5d5;
+border: 1px solid rgba(46, 196, 182, 0.4);
+font-size: 0.65rem;
+font-weight: 700;
+padding: 1px 6px;
+border-radius: 6px;
+text-transform: uppercase;
+}
+
+.prop-desc {
+font-size: 0.72rem;
+color: var(--text-muted);
+}
+
+.prop-metrics {
+display: flex;
+flex-direction: column;
+align-items: flex-end;
+gap: 2px;
+flex-shrink: 0;
+}
+
+/* Durée estimée en grand format bien visible */
+.prop-time {
+font-size: 0.95rem;
+font-weight: 800;
+color: var(--accent-gold-bright);
+letter-spacing: 0.2px;
+}
+
+.itineraire-proposition-card.active .prop-time {
+color: #ffffff;
+text-shadow: 0 0 10px var(--accent-gold-glow);
+}
+
+.prop-distance {
+font-size: 0.74rem;
+color: var(--text-muted);
+font-weight: 600;
+}
+
+/* ==========================================================================
+STATISTIQUES DE ROUTE (.itineraire-stats)
+==========================================================================
+Grille en 2 colonnes affichant la Distance totale et le Temps de parcours. */
+.itineraire-stats {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+background: rgba(0, 0, 0, 0.25);
+padding: 10px 14px;
+border-radius: 6px;
+border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-item {
+display: flex;
+flex-direction: column;
+gap: 2px;
+}
+
+.stat-label {
+font-size: 0.72rem;
+color: var(--text-muted);
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+
+.stat-value {
+font-size: 1.05rem;
+font-weight: 700;
+color: #ffffff;
+letter-spacing: 0.3px;
+}
+
+/* ==========================================================================
+BOUTONS D'ACTION DU MODULE ITINÉRAIRE (.itineraire-actions-group)
+========================================================================== */
+.itineraire-actions-group {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+/* Bouton 1 : Actualiser / Recalculer l'itinéraire */
+.btn-calculer-itineraire {
+width: 100%;
+background: linear-gradient(135deg, rgba(197, 160, 89, 0.2), rgba(197, 160, 89, 0.08));
+border: 1.5px solid var(--accent-gold);
+color: var(--accent-gold-bright);
+font-size: 0.86rem;
+font-weight: 700;
+padding: 10px 16px;
+border-radius: 6px;
+cursor: pointer;
+transition: all 0.25s ease;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+touch-action: manipulation;
+}
+
+.btn-calculer-itineraire:hover, .btn-calculer-itineraire:active {
+background: var(--accent-gold);
+color: #0c0e14;
+box-shadow: 0 6px 20px var(--accent-gold-glow);
+transform: translateY(-2px);
+}
+
+.btn-calculer-itineraire.loading {
+opacity: 0.75;
+pointer-events: none;
+cursor: wait;
+}
+
+/* Bouton 2 : Ouvrir dans l'application GPS native de l'appareil
+(Apple Maps sur iPhone / Google Maps sur Android et PC) */
+.btn-ouvrir-gps-externe {
+width: 100%;
+background: linear-gradient(135deg, rgba(46, 196, 182, 0.22), rgba(46, 196, 182, 0.08));
+border: 1.5px solid #2ec4b6;
+color: #48e5d5;
+font-size: 0.86rem;
+font-weight: 700;
+padding: 10px 16px;
+border-radius: 6px;
+cursor: pointer;
+transition: all 0.25s ease;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+touch-action: manipulation;
+}
+
+.btn-ouvrir-gps-externe:hover, .btn-ouvrir-gps-externe:active {
+background: #2ec4b6;
+color: #0c0e14;
+box-shadow: 0 6px 20px rgba(46, 196, 182, 0.45);
+transform: translateY(-2px);
+}
+
+.etapes-title {
+margin-bottom: 12px;
+}
+
+.etapes-title span {
+font-family: var(--font-serif);
+font-size: 0.95rem;
+font-weight: 700;
+color: var(--text-main);
+display: block;
+}
+
+.etapes-title small {
+font-size: 0.76rem;
+color: var(--text-dim);
+}
+
+#liste-etapes {
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+
+.etape-card {
+display: flex;
+gap: 14px;
+padding: 12px 14px;
+background: var(--bg-card);
+border: 1px solid var(--sidebar-border);
+border-radius: 8px;
+cursor: pointer;
+transition: all 0.25s ease;
+}
+
+.etape-number {
+width: 30px;
+height: 30px;
+border-radius: 50%;
+color: #ffffff;
+font-weight: 700;
+font-size: 0.85rem;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.etape-info {
+display: flex;
+flex-direction: column;
+gap: 4px;
+flex-grow: 1;
+}
+
+.etape-header {
+display: flex;
+justify-content: space-between;
+align-items: baseline;
+gap: 8px;
+}
+
+.etape-titre {
+font-weight: 600;
+font-size: 0.92rem;
+color: var(--text-main);
+}
+
+.etape-date {
+font-size: 0.75rem;
+font-weight: 600;
+color: var(--accent-gold);
+white-space: nowrap;
+}
+
+.etape-lieu {
+font-size: 0.78rem;
+color: var(--text-dim);
+}
+
+.etape-desc {
+font-size: 0.82rem;
+color: var(--text-muted);
+line-height: 1.45;
+margin-top: 4px;
+}
+
+.etape-card:hover {
+background: var(--hover-bg);
+border-color: var(--accent-gold);
+transform: translateY(-2px);
+}
+
+.etape-card.active {
+border-color: var(--accent-gold);
+background: rgba(197, 160, 89, 0.15);
+box-shadow: 0 6px 18px var(--accent-gold-glow);
+}
+
+.etape-card.active .etape-titre {
+color: var(--accent-gold);
+}
+
+/* ==========================================================================
+10. MARQUEURS CARTOGRAPHIQUES & EFFETS LEAFLET
+==========================================================================
+Leaflet injecte des éléments HTML dans la carte grâce à L.divIcon.
+Nous stylisons ici ces éléments avec des auras dorées et des animations. */
+
+.custom-marker-wrapper {
+background: transparent;
+border: none;
+}
+
+/* Marqueurs numérotés des figures de la Résistance :
+- Fond sombre contrasté
+- Bordure de la couleur spécifique du résistant (ex: rouge pour Jean Moulin) */
+.custom-marker {
+position: relative;
+width: 32px;
+height: 32px;
+border-radius: 50%;
+background-color: #0f1117;
+border: 2.5px solid var(--marker-color);
+display: flex;
+align-items: center;
+justify-content: center;
+box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
+transition: transform 0.25s ease;
+}
+
+.marker-number {
+font-size: 0.85rem;
+font-weight: 800;
+color: #ffffff;
+}
+
+/* Effet d'onde radar pulsante autour du marqueur */
+.marker-pulse {
+position: absolute;
+inset: -6px;
+border-radius: 50%;
+border: 1.5px solid var(--marker-color);
+opacity: 0.6;
+animation: pulseRing 2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+/* Marqueur de l'étape actuellement ciblée / active (grossissement à 1.3x) */
+.custom-marker.marker-actif {
+transform: scale(1.3);
+background-color: var(--marker-color);
+box-shadow: 0 0 22px var(--marker-color);
+}
+
+.custom-marker.marker-actif .marker-number {
+color: #0f1117;
+}
+
+/* Marqueurs pour les Lieux de Justice (Prisons, Tribunaux, Police) */
+.justice-marker {
+width: 32px;
+height: 32px;
+border-radius: 50%;
+background-color: #0f1117;
+border: 2px solid var(--justice-color);
+display: flex;
+align-items: center;
+justify-content: center;
+box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
+transition: transform 0.2s ease;
+}
+
+.justice-emoji {
+font-size: 0.95rem;
+}
+
+.justice-marker:hover {
+transform: scale(1.25);
+box-shadow: 0 0 16px var(--justice-color);
+}
+
+/* Animation de l'onde de pulsation circulaire */
+@keyframes pulseRing {
+0% { transform: scale(0.9); opacity: 0.8; }
+50% { transform: scale(1.4); opacity: 0; }
+100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* ==========================================================================
+11. BULLES POPUPS LEAFLET & BOUTON DE FERMETURE AGRANDI (38px)
+==========================================================================
+Personnalisation de la bulle d'information qui s'ouvre au clic sur un marqueur. */
+
+.custom-leaflet-popup .leaflet-popup-content-wrapper {
+background: rgba(14, 17, 24, 0.96);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+color: var(--text-main);
+border: 1px solid var(--sidebar-border);
+border-radius: 6px;
+padding: 4px;
+box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+}
+
+.custom-leaflet-popup .leaflet-popup-tip {
+background: rgba(14, 17, 24, 0.96);
+border: 1px solid var(--sidebar-border);
+}
+
+/* Bouton de fermeture de la bulle popup (Croix ✕ agrandie à 38px) :
+Garantit une zone de contact confortable pour les doigts sur smartphone */
+.custom-leaflet-popup .leaflet-popup-close-button {
+color: #ffffff !important;
+font-size: 26px !important;
+font-weight: 700 !important;
+width: 38px !important;
+height: 38px !important;
+line-height: 34px !important;
+text-align: center !important;
+padding: 0 !important;
+top: 6px !important;
+right: 6px !important;
+border-radius: 50% !important;
+background: rgba(0, 0, 0, 0.5) !important;
+border: 1px solid rgba(255, 255, 255, 0.22) !important;
+display: flex !important;
+align-items: center !important;
+justify-content: center !important;
+transition: all 0.2s ease !important;
+z-index: 20 !important;
+box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
+touch-action: manipulation !important;
+}
+
+.custom-leaflet-popup .leaflet-popup-close-button:hover,
+.custom-leaflet-popup .leaflet-popup-close-button:active {
+color: #ffffff !important;
+background: rgba(230, 57, 70, 0.9) !important;
+border-color: #e63946 !important;
+transform: scale(1.12);
+}
+
+.popup-bubble {
+padding: 8px 10px;
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+
+.popup-badge {
+display: inline-block;
+align-self: flex-start;
+font-size: 0.7rem;
+font-weight: 700;
+color: #ffffff;
+padding: 3px 8px;
+border-radius: 6px;
+letter-spacing: 0.5px;
+}
+
+.popup-title {
+font-family: var(--font-serif);
+font-size: 1.05rem;
+font-weight: 700;
+color: #ffffff;
+margin: 2px 0;
+}
+
+.popup-place {
+font-size: 0.78rem;
+color: var(--accent-gold);
+font-weight: 500;
+}
+
+.popup-text {
+font-size: 0.82rem;
+color: var(--text-muted);
+line-height: 1.45;
+}
+
+/* ==========================================================================
+12. BARRES DE DÉFILEMENT (Scrollbar) & ANIMATION D'APPARITION
+========================================================================== */
+
+#sidebar::-webkit-scrollbar { width: 6px; }
+#sidebar::-webkit-scrollbar-track { background: transparent; }
+#sidebar::-webkit-scrollbar-thumb { 
+background: rgba(197, 160, 89, 0.25); 
+border-radius: 4px; 
+}
+#sidebar::-webkit-scrollbar-thumb:hover { 
+background: rgba(197, 160, 89, 0.5); 
+}
+
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(12px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+13. RESPONSIVE DESIGN & MEDIA QUERIES
+==========================================================================
+Permet au site de s'adapter magnifiquement sur téléphones, tablettes et PC. */
+
+/* 13.1 Écrans Mobiles (< 768px) */
+@media (max-width: 767px) {
+/* Modales flottantes transformées en bottom sheet / carte centrée */
+.floating-panel {
+position: fixed;
+top: auto;
+bottom: max(16px, env(safe-area-inset-bottom));
+left: 12px;
+right: 12px;
+width: auto;
+max-width: 480px;
+margin: 0 auto;
+max-height: 80vh;
+max-height: 80dvh;
+overflow-y: auto;
+-webkit-overflow-scrolling: touch;
+border-radius: 10px;
+z-index: 1005;
+box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85);
+transform: translateY(20px) scale(0.95);
+}
+
+.floating-panel.open {
+transform: translateY(0) scale(1);
+}
+
+/* Fenêtre flottante d'image sur smartphone */
+.floating-image-panel {
+max-height: 82vh;
+max-height: 82dvh;
+}
+.floating-image-panel .floating-image-container {
+min-height: 180px;
+max-height: 240px;
+}
+
+/* Header épuré et switch sur mobile */
+.app-header {
+  top: max(10px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  max-width: calc(100vw - max(12px, env(safe-area-inset-left)) - 105px) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.header-context-title {
+  font-size: 0.95rem;
+  padding-left: 8px;
+  max-width: calc(100vw - 200px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.theme-switch-wrapper.theme-switch-vertical {
+  top: max(14px, env(safe-area-inset-top)) !important;
+  right: calc(max(12px, env(safe-area-inset-right)) + 44px) !important;
+  width: 36px !important;
+  height: 74px !important;
+}
+.sidebar-close-desktop-btn {
+display: none !important; /* Sur mobile, la fermeture se fait via swipe down ou clic extérieur */
+}
+
+/* Pilules de filtres avec défilement fluide sans empiéter sur la hauteur */
+.filter-pills {
+flex-wrap: nowrap;
+overflow-x: auto;
+-webkit-overflow-scrolling: touch;
+scrollbar-width: none;
+padding-bottom: 4px;
+}
+
+.filter-pills::-webkit-scrollbar {
+display: none;
+}
+
+.filter-pill {
+white-space: nowrap;
+flex-shrink: 0;
+}
+
+/* Contrôles de zoom Leaflet sur mobile */
+.leaflet-top.leaflet-right {
+top: max(14px, env(safe-area-inset-top)) !important;
+right: 12px !important;
+}
+
+.leaflet-control-zoom {
+  margin: 0 !important;
+  border: 1.5px solid var(--sidebar-border) !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45) !important;
+  width: 36px !important;
+  height: 74px !important;
+  box-sizing: border-box !important;
+}
+
+.leaflet-control-zoom a {
+  background-color: var(--bg-sidebar) !important;
+  color: var(--accent-gold) !important;
+  border-color: var(--sidebar-border) !important;
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  font-size: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+.leaflet-control-zoom a:active {
+background-color: var(--hover-bg) !important;
+color: var(--accent-gold-bright) !important;
+}
+
+/* Bulle de popup mobile adaptée */
+.custom-leaflet-popup .leaflet-popup-content-wrapper {
+max-width: calc(100vw - 36px);
+margin: 0 auto;
+}
+}
+
+/* 13.2 Tablettes intermédiaires (>= 560px) */
+@media (min-width: 560px) {
+.buttons-container {
+grid-template-columns: repeat(2, 1fr);
+max-width: 680px;
+gap: 16px;
+}
+
+.img-btn {
+height: 160px;
+border-radius: 8px;
+}
+
+.img-btn .btn-overlay {
+padding: 16px;
+}
+
+.img-btn .btn-label {
+font-size: 1.2rem;
+}
+}
+
+/* 13.3 Ordinateurs de bureau et écrans larges (>= 768px) */
+@media (min-width: 768px) {
+/* Disposition côte à côte : Carte à gauche, Volet latéral à droite */
+#app {
+flex-direction: row;
+}
+
+#map-wrapper {
+flex: 1;
+height: 100vh;
+height: 100dvh;
+min-width: 0;
+position: relative;
+overflow: hidden;
+}
+
+
+/* Sur grand écran (Desktop), le bouton Menu n'apparaît que si le volet latéral est masqué */
+#menu-toggle {
+display: none;
+}
+
+#menu-toggle.pc-visible {
+display: flex !important;
+}
+
+.drawer-handle-zone,
+.drawer-handle {
+display: none !important;
+}
+
+.backdrop-overlay {
+display: none !important;
+}
+
+/* Le tiroir mobile devient une barre latérale fixe sur PC */
+#sidebar {
+position: relative;
+width: 440px;
+max-height: none;
+height: 100vh;
+height: 100dvh;
+border-top: none;
+border-left: 1.5px solid var(--sidebar-border);
+border-radius: 0;
+transform: translateY(0) !important;
+box-shadow: -15px 0 45px rgba(0, 0, 0, 0.6);
+padding: 24px 20px;
+flex-shrink: 0;
+z-index: 10;
+transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), margin-right 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Volet masqué sur PC après avoir cliqué sur la croix ✕ */
+#sidebar.desktop-collapsed {
+margin-right: -440px !important;
+transform: translateX(100%) !important;
+pointer-events: none;
+}
+}
+
+/* 13.4 Grands Écrans Desktop (>= 992px) */
+@media (min-width: 992px) {
+/* Présente les 4 cartes sur une seule ligne panoramique sur la page d'accueil */
+.buttons-container {
+grid-template-columns: repeat(4, 1fr);
+max-width: 1160px;
+gap: 20px;
+}
+
+.img-btn {
+height: 270px;
+border-radius: 8px;
+}
+
+.img-btn .btn-overlay {
+padding: 20px;
+}
+
+.img-btn .btn-label {
+    font-size: 1.25rem;
+}
+}
+
+/* ==========================================================================
+14. PIED DE PAGE : COPYRIGHT & MENTIONS LÉGALES
+==========================================================================
+Boutons et textes de bas de page discrets et élégants.
+- Non encadrés (pas de bordure ni fond)
+- Survol : changement de couleur doré doux et léger agrandissement fluide
+========================================================================== */
+
+/* Pied de page sur l'écran d'accueil (positionné en bas à gauche) */
+.landing-footer {
+    position: absolute;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    left: max(22px, env(safe-area-inset-left));
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    z-index: 2010;
+    user-select: none;
+    pointer-events: auto;
+}
+
+/* Pied de page sur l'application cartographique (en bas à gauche, sans aucun fond noir) */
+.map-legal-footer {
+    position: absolute;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    left: max(16px, env(safe-area-inset-left));
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.74rem;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding: 0;
+    z-index: 998;
+    user-select: none;
+    pointer-events: auto;
+    color: #121417;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+/* Couleurs dynamiques selon le mode Sombre / Clair :
+   - Mode clair : écrit en noir pur
+   - Mode sombre : écrit en blanc */
+.map-legal-footer .footer-legal-link {
+    color: inherit;
+}
+
+[data-theme="light"] .map-legal-footer {
+    color: #121417 !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="light"] .map-legal-footer .footer-legal-link {
+    color: #121417 !important;
+}
+
+[data-theme="light"] .map-legal-footer .footer-legal-link:hover {
+    color: #8c6d2d !important;
+}
+
+[data-theme="dark"] .map-legal-footer {
+    color: #ffffff !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+}
+
+[data-theme="dark"] .map-legal-footer .footer-legal-link {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .map-legal-footer .footer-legal-link:hover {
+    color: var(--accent-gold-bright) !important;
+}
+
+.copyright-text {
+    font-family: var(--font-sans);
+    font-size: inherit;
+    color: inherit;
+    letter-spacing: 0.3px;
+    opacity: 0.9;
+}
+
+.footer-dot {
+    opacity: 0.5;
+    font-size: 0.75em;
+}
+
+/* Lien discret Mentions légales :
+   - Aucun encadrement
+   - Au survol : changement de couleur et léger agrandissement fluide */
+.footer-legal-link {
+    background: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: inherit;
+    font-weight: 500;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: color 0.25s ease, transform 0.25s cubic-bezier(0.2, 0, 0.2, 1);
+    touch-action: manipulation;
+}
+
+.footer-legal-link:hover,
+.footer-legal-link:focus-visible {
+    transform: scale(1.08);
+}
+
+.footer-legal-link:active {
+    transform: scale(0.97);
+}
+
+/* ==========================================================================
+15. BOÎTE MODALE DES MENTIONS LÉGALES & SOURCES (.legal-modal)
+========================================================================== */
+.legal-modal {
+    position: fixed;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) scale(0.96) !important;
+    width: 620px;
+    max-width: calc(100vw - 32px);
+    max-height: 85vh;
+    max-height: 85dvh;
+    background: rgba(18, 20, 25, 0.98);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1.5px solid var(--sidebar-border);
+    border-radius: 8px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.9);
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.legal-modal.open {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+}
+
+.legal-modal-body {
+    padding: 18px 22px 26px 22px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.legal-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.legal-section h4 {
+    font-family: var(--font-serif);
+    font-size: 0.96rem;
+    font-weight: 700;
+    color: var(--accent-gold-bright);
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid rgba(197, 160, 89, 0.18);
+    padding-bottom: 5px;
+}
+
+.legal-section p {
+    font-size: 0.84rem;
+    color: var(--text-main);
+    line-height: 1.55;
+}
+
+.legal-sub {
+    font-size: 0.78rem !important;
+    color: var(--text-muted) !important;
+}
+
+.legal-highlight {
+    background: rgba(255, 255, 255, 0.04);
+    border-left: 2.5px solid var(--accent-gold);
+    padding: 10px 14px;
+    border-radius: 4px;
+}
+
+.legal-highlight p {
+    font-size: 0.82rem;
+}
+
+.legal-highlight a {
+    color: var(--accent-gold-bright);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.legal-highlight a:hover {
+    color: #ffffff;
+}
+
+.legal-sources-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 2px;
+}
+
+.legal-sources-list li {
+    font-size: 0.82rem;
+    color: var(--text-main);
+    line-height: 1.5;
+    position: relative;
+    padding-left: 14px;
+}
+
+.legal-sources-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--accent-gold);
+    font-weight: bold;
+}
+
+.legal-sources-list li strong {
+    color: var(--accent-gold-bright);
+    font-weight: 600;
+}
+
+#legal-backdrop {
+    z-index: 2990;
+}
+
+/* Adaptations sur petits écrans mobiles */
+@media (max-width: 576px) {
+    .landing-footer {
+        left: 14px;
+        right: auto;
+        bottom: max(12px, env(safe-area-inset-bottom));
+        font-size: 0.72rem;
+        gap: 6px;
+    }
+
+    .map-legal-footer {
+        left: 10px;
+        right: auto;
+        bottom: max(6px, env(safe-area-inset-bottom));
+        font-size: 0.70rem;
+    }
+
+    .legal-modal-body {
+        padding: 14px 16px 20px 16px;
+        gap: 14px;
+    }
+
+    .legal-section h4 {
+        font-size: 0.90rem;
+    }
+
+    .legal-section p,
+    .legal-sources-list li {
+        font-size: 0.78rem;
+    }
+}
