@@ -9,6 +9,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Parcours de la Résistance à Lyon</title>
 
+<!-- Base relative pour résolution absolue sans faille sur GitHub Pages (sous-dossiers et slashs finaux) -->
+<base href="./">
+
+<!-- Préchargement de l'image de fond héroïque pour éviter tout écran noir ou scintillement à l'arrivée sur GitHub Pages -->
+<link rel="preload" as="image" href="images/fond_lyon.jpg">
+
 <!-- Bibliothèque cartographique Leaflet 1.9.4 -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
@@ -34,7 +40,7 @@
 
 <!-- Parcours 1 : Jean Moulin -->
 <div class="img-btn" onclick="ouvrirCarte('jean_moulin')" role="button" tabindex="0">
-<img src="images/jean_moulin.jpg" alt="Portrait de Jean Moulin">
+<img src="images/jean_moulin.jpg" alt="Portrait de Jean Moulin" decoding="async">
 <div class="btn-overlay">
 <span class="btn-role">Unificateur des réseaux</span>
 <span class="btn-label">Jean Moulin</span>
@@ -44,7 +50,7 @@
 
 <!-- Parcours 2 : Klaus Barbie -->
 <div class="img-btn" onclick="ouvrirCarte('klaus_barbie')" role="button" tabindex="0">
-<img src="images/klaus_barbie.jpg" alt="Portrait de Klaus Barbie">
+<img src="images/klaus_barbie.jpg" alt="Portrait de Klaus Barbie" decoding="async">
 <div class="btn-overlay">
 <span class="btn-role">Chef de la Gestapo</span>
 <span class="btn-label">Klaus Barbie</span>
@@ -54,7 +60,7 @@
 
 <!-- Parcours 3 : Lucie Aubrac -->
 <div class="img-btn" onclick="ouvrirCarte('lucie_aubrac')" role="button" tabindex="0">
-<img src="images/lucie_aubrac.jpg" alt="Portrait de Lucie Aubrac">
+<img src="images/lucie_aubrac.jpg" alt="Portrait de Lucie Aubrac" decoding="async">
 <div class="btn-overlay">
 <span class="btn-role">Libération-Sud</span>
 <span class="btn-label">Lucie Aubrac</span>
@@ -64,7 +70,7 @@
 
 <!-- Parcours 4 : Lieux de Justice & Répression -->
 <div class="img-btn img-btn-justice" onclick="ouvrirCarteJustice()" role="button" tabindex="0">
-<img src="images/palais_justice.jpg" alt="Palais de Justice historique de Lyon">
+<img src="images/palais_justice.jpg" alt="Palais de Justice historique de Lyon" decoding="async">
 <div class="btn-overlay">
 <span class="btn-role">Prisons & Tribunaux</span>
 <span class="btn-label">Lieux de Justice & Répression</span>

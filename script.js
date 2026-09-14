@@ -370,77 +370,113 @@ popupAnchor: [0, -18]
 // 4. INITIALISATION DE LA CARTE LEAFLET & FONDS ESRI (initMap)
 // ==========================================================================
 
+// Variable globale conservant l'instance du ResizeObserver pour la carte Leaflet
+let mapResizeObserver = null;
+
 /**
-* Initialise le moteur cartographique Leaflet au premier affichage.
-* - Ne s'exécute qu'une seule fois grâce au test "if (map) return;".
-* - Configure le centre sur Lyon [45.7600, 4.8357] et le niveau de zoom (13).
-* - Prépare les tuiles Esri Canvas World Light Gray et Dark Gray.
-*/
-function initMap() {
-if (map) return; // Si la carte existe déjà, on ne la réinitialise pas
-
-// Création de l'instance Leaflet attachée à l'élément HTML <div id="map">
-map = L.map('map', {
-zoomControl: false // On désactive le zoom par défaut en haut à gauche pour éviter qu'il ne chevauche notre barre d'outils
-}).setView([45.7600, 4.8357], 13); // [Latitude, Longitude] de Lyon, Zoom 13
-window.map = map;
-
-// Repositionnement des boutons de zoom [+] et [-] en haut à droite
-L.control.zoom({ position: 'topright' }).addTo(map);
-
-// Fond de carte clair officiel Esri World Light Gray (Mode par défaut)
-tileEsriLight = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-maxZoom: 16
-});
-
-// Fond de carte sombre officiel Esri World Dark Gray (Mode nuit)
-tileEsriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-maxZoom: 16
-});
-
-// Couches historiques IGN Géoplateforme ouverte (différentes époques pour les lieux de justice)
-tileIGN1950 = L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN50.1950&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
-attribution: 'IGN &mdash; Carte 1950 (Après-guerre)',
-maxZoom: 18,
-minZoom: 6
-});
-
-tileEtatMajor = L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
-attribution: 'IGN &mdash; Carte d’État-Major (1820-1866)',
-maxZoom: 18,
-minZoom: 6
-});
-
-tileOrtho1950 = L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS.1950-1965&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
-attribution: 'IGN &mdash; Vues aériennes historiques (1950-1965)',
-maxZoom: 18,
-minZoom: 6
-});
-
-window.tileIGN1950 = tileIGN1950;
-window.tileEtatMajor = tileEtatMajor;
-window.tileOrtho1950 = tileOrtho1950;
-window.tileEsriLight = tileEsriLight;
-window.tileEsriDark = tileEsriDark;
-
-// Écouteur de clic sur la carte : referme les panneaux d'options et le tiroir mobile
-map.on('click', () => {
-fermerTousModals();
-fermerMenuMobile();
-});
-
-// Activation du fond de carte initial et synchronisation de l'interrupteur
-if (modeFondCarte === 'dark') {
-tileEsriDark.addTo(map);
-} else {
-tileEsriLight.addTo(map);
+ * Force le recalcul géométrique de la surface de la carte Leaflet de façon échelonnée.
+ * Évite les artefacts visuels, les tuiles grises ou incomplètes lors des transitions DOM et du chargement réseau (GitHub Pages).
+ */
+function invaliderTailleCarte() {
+    if (!map) return;
+    map.invalidateSize();
+    if (typeof requestAnimationFrame === 'function') {
+        requestAnimationFrame(() => {
+            if (map) map.invalidateSize();
+        });
+    }
+    setTimeout(() => {
+        if (map) map.invalidateSize();
+    }, 60);
+    setTimeout(() => {
+        if (map) map.invalidateSize();
+    }, 250);
 }
-changerFondCarte(modeFondCarte);
 
-// Initialisation des calques des Lieux de Justice (Prisons, Tribunaux, Gestapo)
-initCalquesJustice();
+/**
+ * Initialise le moteur cartographique Leaflet au premier affichage.
+ * - Ne s'exécute qu'une seule fois grâce au test "if (map) return;".
+ * - Configure le centre sur Lyon [45.7600, 4.8357] et le niveau de zoom (13).
+ * - Prépare les tuiles Esri Canvas World Light Gray et Dark Gray.
+ */
+function initMap() {
+    if (map) return; // Si la carte existe déjà, on ne la réinitialise pas
+
+    // Création de l'instance Leaflet attachée à l'élément HTML <div id="map">
+    map = L.map('map', {
+        zoomControl: false // On désactive le zoom par défaut en haut à gauche pour éviter qu'il ne chevauche notre barre d'outils
+    }).setView([45.7600, 4.8357], 13); // [Latitude, Longitude] de Lyon, Zoom 13
+    window.map = map;
+
+    // Repositionnement des boutons de zoom [+] et [-] en haut à droite
+    L.control.zoom({ position: 'topright' }).addTo(map);
+
+    // Fond de carte clair officiel Esri World Light Gray (Mode par défaut)
+    tileEsriLight = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+        maxZoom: 16
+    });
+
+    // Fond de carte sombre officiel Esri World Dark Gray (Mode nuit)
+    tileEsriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+        maxZoom: 16
+    });
+
+    // Couches historiques IGN Géoplateforme ouverte (différentes époques pour les lieux de justice)
+    tileIGN1950 = L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN50.1950&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
+        attribution: 'IGN &mdash; Carte 1950 (Après-guerre)',
+        maxZoom: 18,
+        minZoom: 6
+    });
+
+    tileEtatMajor = L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
+        attribution: 'IGN &mdash; Carte d’État-Major (1820-1866)',
+        maxZoom: 18,
+        minZoom: 6
+    });
+
+    tileOrtho1950 = L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS.1950-1965&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
+        attribution: 'IGN &mdash; Vues aériennes historiques (1950-1965)',
+        maxZoom: 18,
+        minZoom: 6
+    });
+
+    window.tileIGN1950 = tileIGN1950;
+    window.tileEtatMajor = tileEtatMajor;
+    window.tileOrtho1950 = tileOrtho1950;
+    window.tileEsriLight = tileEsriLight;
+    window.tileEsriDark = tileEsriDark;
+
+    // Surveillance automatique des redimensionnements du conteneur (chargement de polices, rotation d'écran, ouverture du volet)
+    if (typeof ResizeObserver !== 'undefined' && !mapResizeObserver) {
+        const mapContainer = document.getElementById('map');
+        if (mapContainer) {
+            mapResizeObserver = new ResizeObserver(() => {
+                if (map) {
+                    map.invalidateSize();
+                }
+            });
+            mapResizeObserver.observe(mapContainer);
+        }
+    }
+
+    // Écouteur de clic sur la carte : referme les panneaux d'options et le tiroir mobile
+    map.on('click', () => {
+        fermerTousModals();
+        fermerMenuMobile();
+    });
+
+    // Activation du fond de carte initial et synchronisation de l'interrupteur
+    if (modeFondCarte === 'dark') {
+        tileEsriDark.addTo(map);
+    } else {
+        tileEsriLight.addTo(map);
+    }
+    changerFondCarte(modeFondCarte);
+
+    // Initialisation des calques des Lieux de Justice (Prisons, Tribunaux, Gestapo)
+    initCalquesJustice();
 }
 
 /**
@@ -500,27 +536,10 @@ if (btnSquare) {
 // Synchronisation de l'interrupteur switch (#theme-map-switch)
 const switchInput = document.getElementById('theme-map-switch');
 if (switchInput) {
-switchInput.checked = (mode === 'dark');
+    switchInput.checked = (mode === 'dark');
 }
 
-// Mise à jour visuelle des anciens boutons verticaux si présents
-const btnSun = document.getElementById('theme-btn-sun');
-const btnMoon = document.getElementById('theme-btn-moon');
-if (btnSun) btnSun.classList.toggle('active', mode === 'light');
-if (btnMoon) btnMoon.classList.toggle('active', mode === 'dark');
-
-// Synchronisation des anciennes références pour compatibilité
-const labelTexte = document.getElementById('theme-switch-label');
-const iconSun = document.getElementById('theme-icon-sun');
-const iconMoon = document.getElementById('theme-icon-moon');
-
-if (labelTexte) {
-labelTexte.textContent = (mode === 'dark') ? 'Sombre' : 'Clair';
-}
-if (iconSun) iconSun.classList.toggle('active', mode === 'light');
-if (iconMoon) iconMoon.classList.toggle('active', mode === 'dark');
-
-// Synchronisation du thème sur le body pour adapter dynamiquement les styles
+// Synchronisation de l'attribut de thème sur le body pour adapter les styles CSS
 document.body.setAttribute('data-theme', mode);
 }
 
@@ -933,8 +952,9 @@ function fermerSidebarDesktop() {
         menuToggle.classList.add('pc-visible');
         menuToggle.classList.remove('hidden');
     }
+    invaliderTailleCarte();
     setTimeout(() => {
-        if (map) map.invalidateSize();
+        invaliderTailleCarte();
     }, 360);
 }
 
@@ -944,7 +964,7 @@ function fermerSidebarDesktop() {
  * Fonctionnement technique :
  * - Retire la classe 'desktop-collapsed' sur #sidebar pour réintégrer le volet latéral.
  * - Masque le bouton central bas 'Menu'.
- * - Recalcule la géométrie Leaflet (map.invalidateSize).
+ * - Recalcule la géométrie Leaflet (invaliderTailleCarte).
  */
 function ouvrirSidebarDesktop() {
     const sidebar = document.getElementById('sidebar');
@@ -953,8 +973,9 @@ function ouvrirSidebarDesktop() {
     if (menuToggle) {
         menuToggle.classList.remove('pc-visible');
     }
+    invaliderTailleCarte();
     setTimeout(() => {
-        if (map) map.invalidateSize();
+        invaliderTailleCarte();
     }, 360);
 }
 
@@ -1073,9 +1094,11 @@ function ouvrirCarte(id) {
         }
     }
 
-    // 6. Délai d'attente pour stabilisation du flux DOM et recalcul Leaflet
+    // 6. Recalcul échelonné de la géométrie de la fenêtre Leaflet pour éviter tout artefact ou tuile grise sur GitHub Pages
+    invaliderTailleCarte();
+
     setTimeout(() => {
-        map.invalidateSize(); // Recalcul obligatoire de la géométrie de la fenêtre
+        invaliderTailleCarte();
 
         // Masquage des calques de justice pour ne conserver que le résistant demandé
         ['carceraux', 'juridiques', 'police'].forEach(cat => {
@@ -1092,7 +1115,7 @@ function ouvrirCarte(id) {
             if (titleBadge) titleBadge.textContent = dataPersonnes[id].nom;
             selectionnerPersonne(id);
         }
-    }, 150);
+    }, 120);
 }
 
 /**
@@ -1128,9 +1151,11 @@ function ouvrirCarteJustice() {
 
     document.body.setAttribute('data-theme', modeFondCarte);
 
-    // 5. Initialisation des calques et des données après affichage CSS
+    // 5. Recalcul échelonné et initialisation des calques après affichage CSS
+    invaliderTailleCarte();
+
     setTimeout(() => {
-        map.invalidateSize();
+        invaliderTailleCarte();
 
         // Nettoyer les éventuels tracés de résistant précédents
         if (coucheActuelle) {
@@ -1461,6 +1486,7 @@ function ouvrirMenuMobile() {
     if (menuToggle) menuToggle.classList.add('hidden');
 
     fermerTousModals();
+    invaliderTailleCarte();
 }
 
 /**
@@ -1485,6 +1511,7 @@ function fermerMenuMobile() {
         backdrop.style.opacity = '';
     }
     if (menuToggle) menuToggle.classList.remove('hidden');
+    invaliderTailleCarte();
 }
 
 // ==========================================================================
@@ -2166,9 +2193,9 @@ async function calculerEtAfficherItineraire() {
         const coordsStr = plan.pts.map(c => `${c[1]},${c[0]}`).join(';');
         const url = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?overview=full&geometries=geojson`;
 
-        // Interruption automatique après 6,5 secondes en cas de connexion lente
+        // Interruption automatique après 3,5 secondes en cas de latence sur le serveur public OSRM
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 6500);
+        const timeoutId = setTimeout(() => controller.abort(), 3500);
 
         try {
             const resp = await fetch(url, { signal: controller.signal });
