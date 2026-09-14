@@ -1,90 +1,40 @@
 <!DOCTYPE html>
-<!-- ==========================================================================
-🌍 PROJET PÉDAGOGIQUE : PARCOURS DE LA RÉSISTANCE À LYON (1940 - 1944)
-==========================================================================
-🧒 GUIDE FACILE À COMPRENDRE (MÊME POUR UN ENFANT OU UN DÉBUTANT) :
-
-1. QU'EST-CE QUE CE FICHIER "index.html" ?
-   Imagine que créer un site internet, c'est comme construire une maison :
-   - Le fichier HTML (ici) : c'est les MURS, les PORTES et les FENÊTRES (la structure).
-     Il dit : "ici il y a un titre", "ici il y a un bouton", "ici il y a une carte".
-   - Le fichier "style.css" : c'est la PEINTURE, les MEUBLES et la DÉCORATION.
-     Il choisit les jolies couleurs dorées, les bordures et la taille des textes.
-   - Le fichier "script.js" : c'est l'ÉLECTRICITÉ et les MOTEURS (le cerveau).
-     Quand tu cliques sur un bouton, c'est lui qui ouvre la carte et fait bouger les images !
-
-2. COMMENT SE COMPOSE CE FICHIER HTML ?
-   - <head> (La tête) : Les informations invisibles indispensables (langue, polices d'écriture,
-     liens vers la feuille de style CSS et la bibliothèque cartographique Leaflet).
-   - <body> (Le corps) : Tout ce qui se voit à l'écran :
-     * <main id="landing"> : La grande page d'accueil avec les 4 cartes illustrées.
-     * <div id="app"> : L'application cartographique interactive (la carte de Lyon,
-       l'en-tête avec le bouton 'Accueil', l'interrupteur vertical jour/nuit ☀️/🌙,
-       et le grand volet d'informations à droite).
-     * Les fenêtres flottantes : pour voir les photographies d'archives en grand format
-       et les mentions légales du site.
-========================================================================== -->
+<!--
+  Projet cartographique patrimonial : Résistance Urbaine à Lyon (1940-1944)
+  Médiation historique, itinéraires clandestins et lieux de justice.
+-->
 <html lang="fr">
 <head>
-<!-- Encodage UTF-8 : indispensable pour afficher correctement les accents français (é, è, à, etc.) -->
 <meta charset="UTF-8">
-
-<!-- Configuration de l'affichage adaptatif (Responsive Design) :
-- width=device-width : la largeur de la page s'adapte à celle de l'écran du smartphone ou de l'ordinateur
-- initial-scale=1.0 : niveau de zoom initial à 100%
-- viewport-fit=cover : permet d'occuper tout l'écran des smartphones modernes avec encoche (iPhone, etc.) -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
 <title>Parcours de la Résistance à Lyon</title>
 
-<!-- Feuille de styles CSS externe de Leaflet (version 1.9.4) :
-Elle fournit les styles de base indispensables pour afficher les cartes, les tuiles et les contrôles Leaflet -->
+<!-- Bibliothèque cartographique Leaflet 1.9.4 -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-<!-- Optimisation du chargement des polices Google Fonts grâce au pré-chargement des connexions réseau -->
+<!-- Typographies : Cinzel (titres historiques et noblesse monumentale) et Inter (interface et corps de texte) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- Chargement des polices historiques sobres et lisibles :
-- 'Lora' : empattements nobles, calmes, hautement lisibles et adaptés à la médiation historique
-- 'Plus Jakarta Sans' : sans-empattements moderne, équilibré, neutre et très lisible pour les interfaces -->
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<!-- Notre propre feuille de style personnalisée : elle définit les couleurs dorées, les animations et la mise en page -->
+<!-- Feuille de styles principale -->
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<!-- ======================================================================
-2.1 ÉCRAN D'ACCUEIL IMMERSIF (#landing)
-======================================================================
-Cette section s'affiche au premier chargement du site.
-Elle contient l'image de fond panoramique de Lyon, le titre d'introduction
-et les 4 cartes interactives permettant d'ouvrir un parcours historique.
-Quand l'utilisateur clique sur une carte, JavaScript masque cet écran (#landing)
-et affiche l'application cartographique (#app). -->
+<!-- Page d'accueil : sélection des 4 parcours historiques -->
 <main id="landing">
 <div class="landing-content">
-<!-- Badge commémoratif avec bordure dorée -->
 <span class="landing-badge">Lyon 1940 — 1944</span>
-
-<!-- Titre principal en typographie Cinzel noble -->
 <h1>Résistance Urbaine à Lyon</h1>
-
-<!-- Sous-titre explicatif rappelant le rôle historique de Lyon -->
 <p class="landing-subtitle">Capitale de la Résistance • Parcourez les lieux de mémoire, de justice et les itinéraires clandestins</p>
 
-<!-- Grille responsive organisant les 4 cartes de sélection (CSS Grid) -->
+<!-- Grille des 4 parcours historiques -->
 <div class="buttons-container">
 
-<!-- CARTE 1 : Jean Moulin
-- onclick="ouvrirCarte('jean_moulin')" : Déclenche la fonction JavaScript qui charge les données de Jean Moulin
-- role="button" : Indique aux lecteurs d'écran d'accessibilité que cet élément agit comme un bouton
-- tabindex="0" : Rend cet élément accessible avec la touche 'Tab' du clavier -->
+<!-- Parcours 1 : Jean Moulin -->
 <div class="img-btn" onclick="ouvrirCarte('jean_moulin')" role="button" tabindex="0">
-<!-- Image locale optimisée stockée dans le dossier images/ -->
 <img src="images/jean_moulin.jpg" alt="Portrait de Jean Moulin">
-<!-- Voile sombre semi-transparent avec informations textuelles -->
 <div class="btn-overlay">
 <span class="btn-role">Unificateur des réseaux</span>
 <span class="btn-label">Jean Moulin</span>
@@ -92,17 +42,17 @@ et affiche l'application cartographique (#app). -->
 </div>
 </div>
 
-<!-- CARTE 2 : Jacques Chaban-Delmas -->
-<div class="img-btn" onclick="ouvrirCarte('chaban_delmas')" role="button" tabindex="0">
-<img src="images/chaban_delmas.jpg" alt="Portrait de Jacques Chaban-Delmas">
+<!-- Parcours 2 : Klaus Barbie -->
+<div class="img-btn" onclick="ouvrirCarte('klaus_barbie')" role="button" tabindex="0">
+<img src="images/klaus_barbie.jpg" alt="Portrait de Klaus Barbie">
 <div class="btn-overlay">
-<span class="btn-role">Général & DMN</span>
-<span class="btn-label">Jacques Chaban-Delmas</span>
+<span class="btn-role">Chef de la Gestapo</span>
+<span class="btn-label">Klaus Barbie</span>
 <span class="btn-action">Découvrir le parcours →</span>
 </div>
 </div>
 
-<!-- CARTE 3 : Lucie Aubrac -->
+<!-- Parcours 3 : Lucie Aubrac -->
 <div class="img-btn" onclick="ouvrirCarte('lucie_aubrac')" role="button" tabindex="0">
 <img src="images/lucie_aubrac.jpg" alt="Portrait de Lucie Aubrac">
 <div class="btn-overlay">
@@ -112,8 +62,7 @@ et affiche l'application cartographique (#app). -->
 </div>
 </div>
 
-<!-- CARTE 4 : Lieux de Justice & Répression (4e mode d'exploration)
-- onclick="ouvrirCarteJustice()" : Déclenche la vue spécifique des prisons, tribunaux et QG de la Gestapo -->
+<!-- Parcours 4 : Lieux de Justice & Répression -->
 <div class="img-btn img-btn-justice" onclick="ouvrirCarteJustice()" role="button" tabindex="0">
 <img src="images/palais_justice.jpg" alt="Palais de Justice historique de Lyon">
 <div class="btn-overlay">
@@ -126,7 +75,7 @@ et affiche l'application cartographique (#app). -->
 </div>
 </div>
 
-<!-- Pied de page discret en bas à droite : Copyright 2026 ENSAL & Mentions légales -->
+<!-- Pied de page : Copyright et mentions légales (accessible en fin de scroll) -->
 <footer class="landing-footer">
 <span class="copyright-text">© 2026 ENSAL</span>
 <span class="footer-dot">•</span>
@@ -134,13 +83,7 @@ et affiche l'application cartographique (#app). -->
 </footer>
 </main>
 
-<!-- ======================================================================
-2.2 APPLICATION CARTOGRAPHIQUE (#app)
-======================================================================
-Ce conteneur englobe toute l'expérience interactive cartographique.
-Il est masqué au chargement initial (style="display: none;").
-Lorsqu'un parcours est choisi sur la page d'accueil, JavaScript passe
-son display à 'flex' et initialise la carte Leaflet. -->
+<!-- Application cartographique interactive -->
 <div id="app" style="display: none;">
 
 <!-- Conteneur principal de la carte et des contrôles superposés -->
@@ -154,37 +97,20 @@ les tuiles cartographiques Esri, les marqueurs des étapes et les lignes d'itin�
 <!-- Fond d'image alternatif pour la carte (Mode Lieux de Justice) -->
 <div id="map-image-background" class="map-image-background" style="display: none;"></div>
 
-<!-- En-tête épuré : Accueil et Titre du parcours uniquement -->
+<!-- En-tête applicatif : retour accueil, bascule thème et titre de parcours -->
 <header id="app-top-header" class="app-header">
 <div class="app-header-left">
-<!-- Bouton 'Retour accueil' : Quitte la carte et réaffiche la page d'accueil -->
 <button class="header-btn back-btn" onclick="retourAccueil()" title="Retour à l'accueil" aria-label="Retour à l'accueil">
 <span class="btn-icon">‹</span>
 <span class="btn-text">Accueil</span>
 </button>
-<!-- Titre pur non encadré pour ne pas être confondu avec un bouton -->
+<button type="button" class="theme-toggle-square-btn" id="theme-toggle-btn" onclick="basculerThemeUnique()" title="Changer de thème (Clair / Sombre)" aria-label="Basculer entre mode clair et mode sombre">
+<span class="theme-toggle-icon" id="theme-toggle-icon">🌙</span>
+</button>
 <span id="header-context-title" class="header-context-title">Parcours Historique</span>
 </div>
 </header>
-
-<!-- ======================================================================
-2.2.1 INTERRUPTEUR VERTICAL CLAIR / SOMBRE (#theme-switch-wrapper)
-======================================================================
-Cet interrupteur est disposé à la verticale (comme les boutons zoom [+] et [-]).
-- En mode clair (jour) : le boîtier devient NOIR (contraste fort).
-- En mode sombre (nuit) : le boîtier devient BLANC (contraste inversé).
-- Le bouton du haut avec le soleil ☀️ active le mode clair.
-- Le bouton du bas avec la lune 🌙 active le mode sombre. -->
-<div class="theme-switch-wrapper theme-switch-vertical" id="theme-switch-wrapper" title="Basculer entre le mode clair et le mode sombre">
-<button type="button" class="theme-btn-vertical active" id="theme-btn-sun" onclick="basculerModeSombreClair(false)" title="Activer le mode clair (Soleil)" aria-label="Activer le mode clair">
-<span class="theme-icon">☀️</span>
-</button>
-<button type="button" class="theme-btn-vertical" id="theme-btn-moon" onclick="basculerModeSombreClair(true)" title="Activer le mode sombre (Lune)" aria-label="Activer le mode sombre">
-<span class="theme-icon">🌙</span>
-</button>
-<!-- Case à cocher cachée conservée pour la compatibilité avec tout code JavaScript existant -->
 <input type="checkbox" id="theme-map-switch" style="display: none;" onchange="basculerModeSombreClair(this.checked)">
-</div>
 
 <!-- Fenêtre flottante interactive : Affichage d'image centrée par-dessus la carte (#modal-image-flottante) -->
 <div id="modal-image-flottante" class="floating-panel floating-image-panel">
@@ -199,12 +125,14 @@ Cet interrupteur est disposé à la verticale (comme les boutons zoom [+] et [-]
 
 <!-- Corps de la fenêtre flottante centrée -->
 <div class="panel-body floating-image-body">
-<!-- Cadre d'affichage de la photographie avec légende et zoom plein écran -->
+<!-- Cadre d'affichage de la photographie avec légende et bouton de téléchargement -->
 <div class="floating-image-container">
 <img id="floating-image-display" src="" alt="Photographie d'archive">
 <div class="floating-image-overlay-caption">
 <span id="floating-image-caption-text">Photographie d'archive</span>
-<button class="btn-zoom-image" onclick="togglePleinEcranImage()" title="Agrandir en grand format">🔍 Agrandir</button>
+<button type="button" class="btn-download-image" id="floating-image-download-btn" onclick="telechargerImageArchive(event)" title="Télécharger l'image d'archive en haute résolution">
+Télécharger
+</button>
 </div>
 </div>
 </div>
@@ -222,30 +150,17 @@ Permet de rouvrir le volet d'informations aussi bien sur PC que sur téléphone 
 Menu
 </button>
 
-<!-- Copyright & Mentions légales en bas à droite sur la carte -->
-<div class="map-legal-footer">
-<span class="copyright-text">© 2026 ENSAL</span>
-<span class="footer-dot">•</span>
-<button class="footer-legal-link" onclick="ouvrirModalMentionsLegales()" title="Consulter les mentions légales, hébergeur et sources">Mentions légales</button>
-</div>
 </div>
 
-<!-- ==================================================================
-VOLET LATÉRAL / TIROIR MOBILE (#sidebar)
-==================================================================
-Balise sémantique <aside> :
-- Sur ordinateur (Desktop) : Panneau latéral fixe et élégant de 440px sur la droite de l'écran.
-- Sur mobile / tablette : Tiroir rétractable (Bottom Sheet) qui coulisse depuis le bas
-et peut être glissé vers le bas avec le doigt (geste tactile swipe down). -->
+<!-- Volet latéral / tiroir responsive (#sidebar) -->
 <aside id="sidebar">
 
-<!-- Poignée tactile pour smartphone (Swipe Down) :
-Permet à l'utilisateur de poser son doigt et de glisser vers le bas pour fermer le tiroir -->
+<!-- Poignée tactile mobile (Swipe Down) -->
 <div class="drawer-handle-zone" id="drawer-drag-area" title="Glisser vers le bas pour fermer">
 <div class="drawer-handle"></div>
 </div>
 
-<!-- En-tête de la barre latérale avec logo, titre et croix de fermeture pour PC -->
+<!-- En-tête du volet avec marque et bouton de fermeture desktop -->
 <div class="sidebar-header">
 <div class="brand">
 <span class="brand-icon">⚔️</span>
@@ -254,14 +169,10 @@ Permet à l'utilisateur de poser son doigt et de glisser vers le bas pour fermer
 <button class="sidebar-close-desktop-btn" onclick="fermerSidebarDesktop()" aria-label="Fermer le volet latéral" title="Fermer le volet (PC)">✕</button>
 </div>
 
-<!-- ==============================================================
-VUE 1 : DÉTAIL DU RÉSISTANT SÉLECTIONNÉ (#sidebar-detail-view)
-==============================================================
-Cette vue s'active lorsqu'on sélectionne Jean Moulin, Chaban-Delmas ou Lucie Aubrac.
-Elle affiche la photo, la biographie, le module GPS et la liste des étapes. -->
+<!-- Vue 1 : Détail du personnage sélectionné -->
 <div id="sidebar-detail-view" style="display: none;">
 
-<!-- Fiche d'identité : Photo de profil, Nom et Rôle historique -->
+<!-- Profil : portrait, identité et rôle -->
 <div class="profil-hero">
 <img id="detail-photo" src="" alt="Portrait du résistant">
 <div class="profil-info">
@@ -270,26 +181,30 @@ Elle affiche la photo, la biographie, le module GPS et la liste des étapes. -->
 </div>
 </div>
 
-<!-- Bouton Carte historique placé dans le menu déroulant selon la demande -->
+<!-- Bouton d'accès à la photographie/carte d'archive en grand format -->
 <div class="sidebar-carte-historique-container">
-<button class="sidebar-action-btn" id="btn-image-personnage" onclick="toggleModalImageFlottante()" title="Consulter la photographie d'archive">
+<button class="sidebar-action-btn" id="btn-image-personnage" onclick="toggleModalImageFlottante()" title="Consulter la photographie d'archive en grand format">
 <span class="btn-icon">🖼️</span>
 <span class="btn-text">Carte historique</span>
 </button>
 </div>
 
-<!-- Citation historique emblématique du résistant -->
+<!-- Citation historique -->
 <blockquote id="detail-quote" class="quote-box"></blockquote>
 
-<!-- Résumé biographique contextualisant son action clandestine à Lyon -->
+<!-- Notice biographique et description du personnage (placée avant les étapes) -->
 <p id="detail-bio" class="bio-text"></p>
 
-<!-- ==========================================================
-MODULE GPS & ITINÉRAIRE INTERACTIF (#itineraire-box)
-==========================================================
-Boîte technologique complète permettant de calculer et visualiser
-le trajet réel dans les rues de Lyon, à pied ou à vélo.
-Désactivée et minimisée d'office par défaut. -->
+<!-- Liste des étapes du parcours -->
+<div class="etapes-section">
+<div class="etapes-title">
+<span>Lieux & Étapes du tracé</span>
+<small>Cliquez pour centrer la carte</small>
+</div>
+<div id="liste-etapes"></div>
+</div>
+
+<!-- Module de calcul d'itinéraire GPS (OSRM) -->
 <div class="itineraire-box minimized" id="itineraire-box">
 
 <!-- En-tête de la boîte GPS :
@@ -374,25 +289,10 @@ Désactivée et minimisée d'office par défaut. -->
 </div>
 </div>
 </div>
-
-<!-- Section des étapes numérotées du parcours -->
-<div class="etapes-section">
-<div class="etapes-title">
-<span>Lieux & Étapes du tracé</span>
-<small>Cliquez pour centrer la carte</small>
-</div>
-<!-- Liste injectée dynamiquement par JavaScript avec chaque lieu clé du résistant -->
-<div id="liste-etapes"></div>
-</div>
 </div>
 
-<!-- ==============================================================
-VUE 2 : LIEUX DE JUSTICE, PRISONS & RÉPRESSION (#sidebar-justice-view)
-==============================================================
-Cette vue s'active lorsqu'on sélectionne le 4e mode depuis l'accueil.
-Elle présente les tribunaux, prisons et centres de torture de la Gestapo à Lyon. -->
+<!-- Vue 2 : Lieux de Justice, Prisons & Répression -->
 <div id="sidebar-justice-view" style="display: none;">
-<!-- En-tête de la section Justice -->
 <div class="profil-hero justice-hero">
 <div class="justice-hero-icon">⚖️</div>
 <div class="profil-info">
@@ -401,53 +301,48 @@ Elle présente les tribunaux, prisons et centres de torture de la Gestapo à Lyo
 </div>
 </div>
 
-<!-- Choix du fond de plan cartographique dans le menu déroulant -->
+<!-- Sélecteur d'époques cartographiques historiques (IGN / Contemporaine) -->
 <div class="sidebar-justice-fond-section" id="justice-fond-wrapper">
-<span class="filter-label">Fond de plan :</span>
+<span class="filter-label">Carte historique :</span>
 <div class="fond-selector-wrapper">
-<button class="sidebar-action-btn" id="btn-fond-justice" onclick="toggleDropdownFondsJustice()" aria-expanded="false" title="Changer le fond de plan">
-<span class="btn-text" id="btn-fond-justice-text">Carte interactive</span>
+<button class="sidebar-action-btn" id="btn-fond-justice" onclick="toggleDropdownFondsJustice()" aria-expanded="false" title="Changer l'époque cartographique">
+<span class="btn-text" id="btn-fond-justice-text">Carte contemporaine</span>
 <span class="dropdown-arrow">▾</span>
 </button>
 <div class="fond-selector-dropdown" id="dropdown-fonds-justice">
 <button class="fond-option active" data-fond="esri" onclick="choisirFondPlanJustice('esri')">
 <span class="fond-icon">🗺️</span>
 <div class="fond-info">
-<span class="fond-title">Carte interactive</span>
-<span class="fond-sub">Points cliquables et fiches détaillées</span>
+<span class="fond-title">Carte contemporaine</span>
+<span class="fond-sub">Plan moderne interactif</span>
 </div>
 </button>
-<button class="fond-option" data-fond="aerienne" onclick="choisirFondPlanJustice('aerienne')">
-<span class="fond-icon">✈️</span>
+<button class="fond-option" data-fond="ign1950" onclick="choisirFondPlanJustice('ign1950')">
+<span class="fond-icon">📜</span>
 <div class="fond-info">
-<span class="fond-title">Vue aérienne d'archive</span>
-<span class="fond-sub">Photographie de Lyon (1940-1944)</span>
+<span class="fond-title">Carte IGN 1950</span>
+<span class="fond-sub">Topographie après-guerre (IGN)</span>
 </div>
 </button>
-<button class="fond-option" data-fond="panorama" onclick="choisirFondPlanJustice('panorama')">
+<button class="fond-option" data-fond="etatmajor" onclick="choisirFondPlanJustice('etatmajor')">
 <span class="fond-icon">🏛️</span>
 <div class="fond-info">
-<span class="fond-title">Panorama Saône & Fourvière</span>
-<span class="fond-sub">Perspective fluviale historique</span>
+<span class="fond-title">Carte d'État-Major</span>
+<span class="fond-sub">Cartographie militaire 1820-1866 (IGN)</span>
 </div>
 </button>
-<button class="fond-option" data-fond="justice" onclick="choisirFondPlanJustice('justice')">
-<span class="fond-icon">⚖️</span>
+<button class="fond-option" data-fond="ortho1950" onclick="choisirFondPlanJustice('ortho1950')">
+<span class="fond-icon">✈️</span>
 <div class="fond-info">
-<span class="fond-title">Palais de Justice</span>
-<span class="fond-sub">Façade des 24 Colonnes</span>
+<span class="fond-title">Photos aériennes 1950</span>
+<span class="fond-sub">Vues aériennes d'archive 1950-1965 (IGN)</span>
 </div>
 </button>
 </div>
 </div>
 </div>
 
-<!-- ==================================================================
-CONTENU INTERACTIF : POINTS & FICHES (Affiché sur Carte interactive)
-==================================================================
-Quand l'utilisateur est sur la "Carte interactive", les filtres et les 10 lieux
-s'affichent ici et sur la carte. Dès qu'une image photographique d'archive
-est choisie, ce bloc se masque automatiquement pour admirer la photo historique. -->
+<!-- Contenu interactif des lieux de justice -->
 <div id="justice-interactive-content">
 <!-- Filtres par catégorie avec boutons interactifs -->
 <div class="justice-filter-section">
@@ -480,6 +375,13 @@ est choisie, ce bloc se masque automatiquement pour admirer la photo historique.
 </div>
 </div>
 </div>
+
+<!-- Pied de page discret au bas des menus déroulants -->
+<footer class="sidebar-legal-footer">
+<span class="copyright-text">© 2026 ENSAL</span>
+<span class="footer-dot">•</span>
+<button class="footer-legal-link" onclick="ouvrirModalMentionsLegales()" title="Consulter les mentions légales, hébergeur et sources">Mentions légales</button>
+</footer>
 
 </aside>
 </div>
@@ -532,13 +434,7 @@ Plateforme : <a href="https://pages.github.com" target="_blank" rel="noopener no
 <!-- Voile d'arrière-plan dédié aux Mentions Légales -->
 <div id="legal-backdrop" class="backdrop-overlay" onclick="fermerModalMentionsLegales()"></div>
 
-<!-- ======================================================================
-3. CHARGEMENT DES SCRIPTS JAVASCRIPT
-======================================================================
-Placés à la fin du fichier <body> pour que l'analyse du DOM soit terminée
-avant le déclenchement des fonctions JavaScript :
-- Leaflet JS : Moteur cartographique open-source
-- script.js : Notre logique d'application (données, Leaflet, OSRM, gestes tactiles) -->
+<!-- Scripts applicatifs -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="script.js" charset="UTF-8"></script>
 </body>

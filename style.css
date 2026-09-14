@@ -1,56 +1,33 @@
 @charset "UTF-8";
-/* ==========================================================================
-🎨 PROJET PÉDAGOGIQUE : STYLE & APPARENCE (style.css)
-==========================================================================
-🧒 GUIDE FACILE À COMPRENDRE (MÊME POUR UN ENFANT OU UN DÉBUTANT) :
-
-1. À QUOI SERT CE FICHIER "style.css" ?
-   Imagine que le fichier HTML a construit une maison avec des murs gris.
-   Ce fichier CSS est le DÉCORATEUR et le PEINTRE :
-   - Il peint les murs en noir minéral noble et doré historique.
-   - Il arrondit les coins des boutons pour qu'ils soient agréables au toucher.
-   - Il fait briller les éléments quand on passe la souris dessus.
-   - Il range les boutons bien droits (les uns à côté des autres ou les uns sous les autres).
-
-2. LES MOTS MAGIQUES DU CSS EXPLIQUÉS TRÈS SIMPLEMENT :
-   - "color" : la couleur du texte (comme un feutre de couleur).
-   - "background" : la couleur du fond (la couleur de la feuille de papier).
-   - "border" : le contour dessiné autour d'un objet (comme un cadre photo).
-   - "border-radius" : arrondit les angles (6px = un petit arrondi très doux).
-   - "display: flex" : range les objets en ligne ou en colonne comme des soldats bien alignés.
-   - "position: absolute" : colle un élément à un endroit très précis sur l'écran (comme un autocollant).
-   - "backdrop-filter: blur(16px)" : effet de verre dépoli (comme regarder à travers une vitre embuée).
-   - "transition: all 0.25s" : rend les animations toutes douces quand on clique ou survole un bouton.
-   - "@media (max-width: ...)" : règles intelligentes qui changent la taille selon qu'on est sur PC ou Smartphone !
-========================================================================== */
+/**
+ * Feuille de styles principale — Parcours de la Résistance à Lyon (1940-1944)
+ * Architecture visuelle, palette patrimoniale, typographies, interactions et responsive design.
+ */
 
 /* ==========================================================================
-1. VARIABLES GLOBALES CSS (:root) & RESET GÉNÉRAL
-==========================================================================
-Les variables CSS (commençant par --) sont comme des tiroirs magiques avec une étiquette :
-on y range une couleur une seule fois (ex: notre doré historique --accent-gold),
-et on peut la réutiliser sur 100 boutons différents sans jamais se tromper ! */
+   1. VARIABLES DE THÈME (:root) & TYPOGRAPHIE
+   ========================================================================== */
 :root {
-/* Nuances minérales et charbon historique (ton sobre muséal et archives) */
---bg-dark: #121417;
---bg-card: rgba(25, 28, 34, 0.85);
---bg-sidebar: rgba(18, 20, 25, 0.96);
---sidebar-border: rgba(197, 160, 89, 0.22);
+  /* Nuances sombres minérales */
+  --bg-dark: #121417;
+  --bg-card: rgba(25, 28, 34, 0.85);
+  --bg-sidebar: rgba(18, 20, 25, 0.96);
+  --sidebar-border: rgba(197, 160, 89, 0.22);
 
-/* Palette bronze / laiton vieilli commémoratif (aspect archive noble, non criard) */
---accent-gold: #c5a059;
---accent-gold-bright: #dfbe7a;
---accent-gold-glow: rgba(197, 160, 89, 0.2);
+  /* Doré patrimonial et accents */
+  --accent-gold: #c5a059;
+  --accent-gold-bright: #dfbe7a;
+  --accent-gold-glow: rgba(197, 160, 89, 0.2);
 
-/* Hiérarchie de couleurs pour le texte (blanc ivoire / parchemin doux au gris minéral) */
---text-main: #f4efe6;
---text-muted: #9e9a91;
---text-dim: #6d6a62;
---hover-bg: rgba(197, 160, 89, 0.12);
+  /* Hiérarchie typographique des contrastes */
+  --text-main: #f4efe6;
+  --text-muted: #9e9a91;
+  --text-dim: #6d6a62;
+  --hover-bg: rgba(197, 160, 89, 0.12);
 
-/* Définition des polices typographiques équilibrées et lisibles */
---font-serif: 'Lora', Georgia, serif;                    /* Titres historiques calmes et lisibles */
---font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; /* Corps de texte et UI neutre */
+  /* Polices typographiques : Cinzel (titres monumentaux) & Inter (interface UI) */
+  --font-serif: 'Cinzel', 'Times New Roman', serif;
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Remise à zéro universelle (Universal CSS Reset) :
@@ -81,39 +58,27 @@ touch-action: manipulation;
 }
 
 /* ==========================================================================
-2. PAGE D'ACCUEIL IMMERSIVE (#landing)
-==========================================================================
-Présente une photographie aérienne haute définition de Lyon et de ses alentours
-(vue d'ensemble de la métropole : Presqu'île, Rhône, Saône, Fourvière, etc.).
-Un filtre sombre opaque combiné (dégradé radial + linéaire) est superposé à l'image
-afin que les textes dorés et les cartes de sélection ressortent avec un contraste
-parfait, tout en laissant transparaître les contours emblématiques de la ville. */
-
+   2. PAGE D'ACCUEIL (#landing)
+   ========================================================================== */
 #landing {
-position: absolute; 
-inset: 0; /* Équivaut à top: 0; right: 0; bottom: 0; left: 0; */
-width: 100%; 
-height: 100vh;
-height: 100dvh;
-overflow-y: auto; /* Permet le défilement si l'écran est petit */
--webkit-overflow-scrolling: touch;
-
-/* Superposition de 3 couches de fond (du premier au dernier plan) :
-1. radial-gradient : effet de vignette (plus clair au centre à 0.68, plus sombre sur les bords à 0.94)
-2. linear-gradient : filtre vertical opaque (0.75 à 0.88) assurant un contraste optimal pour la lecture
-3. url('images/fond_lyon.jpg') : la photographie aérienne de Lyon et de ses environs */
-background: 
-radial-gradient(circle at center, rgba(14, 17, 24, 0.50) 0%, rgba(10, 12, 18, 0.94) 100%),
-linear-gradient(rgba(12, 14, 20, 0.75), rgba(12, 14, 20, 0.65)),
-url('images/fond_lyon.jpg') no-repeat center center/cover;
-background-attachment: fixed; /* Effet de profondeur visuelle */
-
-display: flex; 
-flex-direction: column; 
-justify-content: flex-start; 
-align-items: center; 
-z-index: 2000; /* Positionné au-dessus de la carte lors de l'ouverture */
-padding: max(20px, env(safe-area-inset-top)) 16px max(30px, env(safe-area-inset-bottom)) 16px;
+  position: absolute; 
+  inset: 0;
+  width: 100%; 
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: 
+    radial-gradient(circle at center, rgba(14, 17, 24, 0.50) 0%, rgba(10, 12, 18, 0.94) 100%),
+    linear-gradient(rgba(12, 14, 20, 0.75), rgba(12, 14, 20, 0.65)),
+    url('images/fond_lyon.jpg') no-repeat center center/cover;
+  background-attachment: fixed;
+  display: flex; 
+  flex-direction: column; 
+  justify-content: flex-start; 
+  align-items: center; 
+  z-index: 2000;
+  padding: max(20px, env(safe-area-inset-top)) 16px max(30px, env(safe-area-inset-bottom)) 16px;
 }
 
 /* Conteneur intérieur centré de la page d'accueil */
@@ -125,7 +90,7 @@ flex-direction: column;
 align-items: center;
 text-align: center;
 margin: auto 0;
-padding: 10px 0;
+padding: 10px 0 10px 0;
 animation: fadeIn 0.8s ease-out; /* Effet d'apparition en douceur */
 }
 
@@ -166,47 +131,38 @@ margin-bottom: clamp(24px, 3.5vh, 40px);
 }
 
 /* ==========================================================================
-3. GRILLE DES CARTES DE SÉLECTION (.buttons-container & .img-btn)
-==========================================================================
-Organise les 4 grandes cartes de sélection.
-Sur mobile, elles s'empilent verticalement en 1 colonne.
-Sur grand écran, les Media Queries à la fin du fichier les réorganisent en 4 colonnes. */
-
+   3. GRILLE DES CARTES DE SÉLECTION (.buttons-container & .img-btn)
+   ========================================================================== */
 .buttons-container { 
-display: grid;
-grid-template-columns: 1fr; /* 1 seule colonne par défaut (mobile-first) */
-gap: 14px;                  /* Espacement de 14px entre chaque carte */
-width: 100%;
-max-width: 400px;           /* Largeur idéale sur smartphone */
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(10px, 1.8vh, 16px);
+  width: 100%;
+  max-width: min(440px, 92vw);
 }
 
-/* Carte de sélection individuelle :
-- position: relative : permet à l'overlay textuel en position: absolute de s'aligner dessus
-- overflow: hidden : évite que l'image ne dépasse des coins arrondis lors du zoom au survol
-- cursor: pointer : indique clairement que l'élément est cliquable */
+/* Carte de sélection */
 .img-btn {
-position: relative;
-width: 100%; 
-height: 140px; 
-border-radius: 8px; 
-overflow: hidden; 
-cursor: pointer;
-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
-border: 1.5px solid var(--sidebar-border);
-transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
-background-color: #1a1e29;
+  position: relative;
+  width: 100%; 
+  height: clamp(120px, 16.5vh, 180px);
+  min-height: 110px;
+  border-radius: 8px; 
+  overflow: hidden; 
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
+  border: 1.5px solid var(--sidebar-border);
+  transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+  background-color: #1a1e29;
 }
 
-/* Image de fond de la carte :
-- object-fit: cover : redimensionne l'image pour remplir tout le cadre sans jamais l'étirer ni la déformer
-- filter: brightness(65%) grayscale(25%) : assombrit légèrement l'image pour mettre en avant le texte blanc */
 .img-btn img { 
-width: 100%; 
-height: 100%; 
-object-fit: cover; 
-object-position: center 25%;
-transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), filter 0.4s ease; 
-filter: brightness(65%) grayscale(25%);
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  object-position: center 25%;
+  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), filter 0.4s ease; 
+  filter: brightness(65%) grayscale(25%);
 }
 
 /* Voile dégradé sombre superposé à l'image :
@@ -424,7 +380,8 @@ body:not([data-theme="light"]) .header-btn.back-btn {
 BOUTONS D'ACTION DU VOLET LATÉRAL (Carte historique & Fond de plan)
 ========================================================================== */
 .sidebar-carte-historique-container {
-margin: 10px 0 14px 0;
+margin: 0;
+width: 100%;
 }
 
 /* Bouton "Carte historique" & action du volet : COULEUR SOLIDE PURE SANS DÉGRADÉ */
@@ -558,138 +515,76 @@ background: rgba(0, 0, 0, 0.04);
 }
 
 /* ==========================================================================
-INTERRUPTEUR VERTICAL CLAIR / SOMBRE (.theme-switch-wrapper)
-==========================================================================
-Positionné À GAUCHE DU ZOOM de la carte, de la MÊME TAILLE exacte (36px x 74px).
-- En Mode Clair (jour) : le boîtier est NOIR avec icônes contrastées.
-- En Mode Sombre (nuit) : le boîtier est BLANC avec icônes contrastées (vice-versa). */
-.theme-switch-wrapper.theme-switch-vertical {
-  position: absolute;
-  top: max(14px, env(safe-area-inset-top)) !important;
-  right: calc(max(14px, env(safe-area-inset-right)) + 44px) !important; /* À gauche du zoom avec un espacement régulier de 8px */
-  width: 36px !important; /* Même largeur exacte que les commandes de zoom */
-  height: 74px !important; /* Même hauteur exacte que le bloc zoom (2 x 36px + bordures) */
-  box-sizing: border-box !important;
-  z-index: 1001;
-  display: flex;
-  flex-direction: column;
-  border-radius: 6px !important;
-  overflow: hidden !important;
-  padding: 0 !important;
-  gap: 0;
+   BOUTON DE THÈME CLAIR / SOMBRE (.theme-toggle-square-btn)
+   ==========================================================================
+   Positionné dans l'en-tête à côté du bouton Accueil, hors d'atteinte du zoom. */
+.theme-toggle-square-btn {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  box-sizing: border-box;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1;
   user-select: none;
-  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.2, 0, 0.2, 1);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+  pointer-events: auto;
 }
 
-/* Positionnement et dimensions unifiés des contrôles de zoom Leaflet */
+/* En Mode Sombre : le bouton est blanc / clair avec icône soleil contrastée */
+[data-theme="dark"] .theme-toggle-square-btn,
+body:not([data-theme="light"]) .theme-toggle-square-btn {
+  background: #ffffff;
+  border: 1.5px solid rgba(197, 160, 89, 0.7);
+  color: #121417;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+}
+
+/* En Mode Clair : le bouton est sombre / noir avec icône lune dorée */
+[data-theme="light"] .theme-toggle-square-btn {
+  background: #181b22;
+  border: 1.5px solid #000000;
+  color: var(--accent-gold);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.theme-toggle-square-btn:hover {
+  transform: scale(1.08);
+}
+
+[data-theme="dark"] .theme-toggle-square-btn:hover,
+body:not([data-theme="light"]) .theme-toggle-square-btn:hover {
+  border-color: var(--accent-gold);
+  background: #f8fafc;
+}
+
+[data-theme="light"] .theme-toggle-square-btn:hover {
+  border-color: var(--accent-gold);
+  background: #0f1218;
+}
+
+.theme-toggle-square-btn:active {
+  transform: scale(0.95);
+}
+
+/* Positionnement des contrôles de zoom Leaflet (Rétablis dans leur style d'origine) */
 .leaflet-top.leaflet-right {
-  top: max(14px, env(safe-area-inset-top)) !important;
-  right: max(14px, env(safe-area-inset-right)) !important;
+  top: max(14px, env(safe-area-inset-top));
+  right: max(14px, env(safe-area-inset-right));
 }
 
 .leaflet-control-zoom {
-  margin: 0 !important;
-  border: 1.5px solid var(--sidebar-border) !important;
-  border-radius: 6px !important;
-  overflow: hidden !important;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45) !important;
-  width: 36px !important;
-  height: 74px !important;
-  box-sizing: border-box !important;
-}
-
-.leaflet-control-zoom a {
-  background-color: var(--bg-sidebar) !important;
-  color: var(--accent-gold) !important;
-  border-color: var(--sidebar-border) !important;
-  width: 36px !important;
-  height: 36px !important;
-  line-height: 36px !important;
-  font-size: 16px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-sizing: border-box !important;
-}
-
-/* En Mode Sombre : le switch est BLANC (vice-versa selon la demande) */
-[data-theme="dark"] .theme-switch-wrapper.theme-switch-vertical,
-body:not([data-theme="light"]) .theme-switch-wrapper.theme-switch-vertical {
-  background: #ffffff !important; /* Boîtier blanc */
-  border: 1.5px solid rgba(255, 255, 255, 0.95) !important;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55) !important;
-}
-
-/* En Mode Clair : le switch est NOIR selon la demande */
-[data-theme="light"] .theme-switch-wrapper.theme-switch-vertical {
-background: #121417 !important; /* Boîtier noir */
-border: 1.5px solid #000000 !important;
-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
-}
-
-/* Boutons verticaux individuels (Soleil ☀️ en haut, Lune 🌙 en bas) */
-.theme-btn-vertical {
-width: 36px;
-height: 36px;
-display: flex;
-align-items: center;
-justify-content: center;
-background: transparent;
-border: none;
-cursor: pointer;
-font-size: 1.05rem;
-line-height: 1;
-transition: all 0.2s ease;
-padding: 0;
-margin: 0;
-}
-
-/* Séparateur entre le soleil et la lune */
-.theme-btn-vertical:first-child {
-border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-}
-[data-theme="light"] .theme-btn-vertical:first-child {
-border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* En mode sombre (boîtier blanc) : couleurs des boutons */
-[data-theme="dark"] .theme-btn-vertical,
-.theme-btn-vertical {
-color: #121417;
-}
-
-[data-theme="dark"] .theme-btn-vertical:hover,
-.theme-btn-vertical:hover {
-background: rgba(0, 0, 0, 0.08);
-}
-
-[data-theme="dark"] .theme-btn-vertical.active,
-.theme-btn-vertical.active {
-background: #f0f0f4;
-}
-
-/* En mode clair (boîtier noir) : couleurs des boutons */
-[data-theme="light"] .theme-btn-vertical {
-color: #ffffff;
-}
-
-[data-theme="light"] .theme-btn-vertical:hover {
-background: rgba(255, 255, 255, 0.15);
-}
-
-[data-theme="light"] .theme-btn-vertical.active {
-background: #000000;
-}
-
-.theme-switch-toggle input:checked + .slider-toggle {
-background-color: rgba(197, 160, 89, 0.88);
-border-color: var(--accent-gold);
-box-shadow: 0 0 10px var(--accent-gold-glow);
-}
-
-.theme-switch-toggle input:checked + .slider-toggle:before {
-transform: translateX(16px);
-background-color: #0c0e14;
+  margin: 0;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
 }
 
 /* ==========================================================================
@@ -718,11 +613,11 @@ backdrop-filter: blur(24px);
 -webkit-backdrop-filter: blur(24px);
 border: 1.5px solid rgba(197, 160, 89, 0.35);
 border-radius: 8px;
-padding: 8px;
+padding: 6px;
 box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85);
 display: flex;
 flex-direction: column;
-gap: 5px;
+gap: 4px;
 opacity: 0;
 pointer-events: none;
 transform: translateY(-8px) scale(0.96);
@@ -745,8 +640,8 @@ right: 0;
 .fond-option {
 display: flex;
 align-items: center;
-gap: 12px;
-padding: 10px 12px;
+gap: 10px;
+padding: 8px 10px;
 background: transparent;
 border: 1px solid transparent;
 border-radius: 6px;
@@ -834,6 +729,11 @@ z-index: 1001;
 opacity: 0;
 pointer-events: none;
 transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* Voile d'arrière-plan dédié aux fenêtres modales : se superpose au volet latéral sans le fermer */
+#modal-backdrop {
+z-index: 1004;
 }
 
 .backdrop-overlay.active {
@@ -953,10 +853,10 @@ la carte interactive sans quitter la navigation. */
 position: fixed !important;
 top: 50% !important;
 left: 50% !important;
-transform: translate(-50%, -50%) scale(0.95) !important;
-width: 600px;
-max-width: min(92vw, 650px);
-max-height: 86vh;
+transform: translate(-50%, -50%) scale(0.96) !important;
+width: min(94vw, 920px) !important;
+max-width: min(94vw, 920px) !important;
+max-height: 90vh;
 display: flex;
 flex-direction: column;
 overflow: hidden;
@@ -1018,7 +918,7 @@ font-weight: 700;
 box-shadow: 0 2px 10px rgba(197, 160, 89, 0.35);
 }
 
-/* Cadre protecteur et adaptatif de la photographie */
+/* Cadre protecteur et adaptatif de la photographie (directement grand format) */
 .floating-image-container {
 position: relative;
 width: 100%;
@@ -1029,22 +929,22 @@ background: #000000;
 display: flex;
 align-items: center;
 justify-content: center;
-min-height: 220px;
-max-height: 360px;
+min-height: 360px;
+max-height: 72vh;
 box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
 }
 
 .floating-image-container img {
 width: 100%;
 height: 100%;
-max-height: 360px;
-object-fit: cover; /* Remplit élégamment le cadre sans déformer la photographie */
+max-height: 72vh;
+object-fit: contain; /* Directement grand format : image entière affichée sans rognage */
 display: block;
 transition: transform 0.3s ease;
 }
 
 .floating-image-container:hover img {
-transform: scale(1.02); /* Léger effet de zoom dynamique au survol */
+transform: scale(1.01);
 }
 
 /* Bandeau translucide d'information et légende au bas de la photo */
@@ -1068,46 +968,31 @@ line-height: 1.35;
 font-weight: 500;
 }
 
-/* Bouton pour basculer en mode zoom agrandi plein écran */
-.btn-zoom-image {
-background: rgba(197, 160, 89, 0.2);
-border: 1px solid var(--accent-gold);
+/* Bouton de téléchargement de l'image d'archive */
+.btn-download-image {
+background: #1c202a;
+border: 1.5px solid var(--accent-gold);
 color: var(--accent-gold-bright);
-padding: 4px 10px;
+padding: 6px 14px;
 border-radius: 6px;
-font-size: 0.72rem;
+font-family: var(--font-sans);
+font-size: 0.78rem;
 font-weight: 700;
 cursor: pointer;
 white-space: nowrap;
+display: inline-flex;
+align-items: center;
+gap: 6px;
 transition: all 0.2s ease;
 touch-action: manipulation;
 }
 
-.btn-zoom-image:hover, .btn-zoom-image:active {
+.btn-download-image:hover, .btn-download-image:active {
 background: var(--accent-gold);
 color: #0c0e14;
-box-shadow: 0 0 10px var(--accent-gold-glow);
-}
-
-/* Mode agrandi / plein écran pour la fenêtre flottante d'image */
-.floating-image-panel.fullscreen {
-width: 94vw !important;
-max-width: 900px !important;
-max-height: 92vh !important;
-top: 50% !important;
-left: 50% !important;
-transform: translate(-50%, -50%) !important;
-z-index: 1005 !important;
-}
-
-.floating-image-panel.fullscreen .floating-image-container {
-max-height: 68vh;
-min-height: 380px;
-}
-
-.floating-image-panel.fullscreen .floating-image-container img {
-max-height: 68vh;
-object-fit: contain; /* En plein écran, on montre 100% de la photo sans rognage */
+border-color: var(--accent-gold-bright);
+box-shadow: 0 0 14px var(--accent-gold-glow);
+transform: translateY(-1px);
 }
 
 /* Liste des interrupteurs Lieux de Justice */
@@ -1244,7 +1129,7 @@ Bouton doré en forme de pilule flottant en bas de l'écran sur smartphone.
 - bottom: max(20px, env(safe-area-inset-bottom)) : respecte la barre d'accueil tactile de l'iPhone */
 #menu-toggle {
 position: absolute;
-bottom: max(20px, env(safe-area-inset-bottom));
+bottom: max(38px, calc(env(safe-area-inset-bottom) + 18px));
 left: 50%;
 transform: translateX(-50%);
 background: linear-gradient(135deg, #1b1e26, #121417);
@@ -1327,12 +1212,11 @@ transform: translateY(0);
 /* ==========================================================================
 POIGNÉE TACTILE DE GLISSEMENT MOBILE (.drawer-handle-zone)
 ==========================================================================
-Zone dédiée pour poser son doigt et faire glisser le tiroir vers le bas (Swipe Down).
-- touch-action: none : indique au navigateur de ne pas intercepter les gestes natifs */
+/* Poignée tactile de glissement mobile : masquée sur ordinateur (pas de petite barre sur PC) */
 .drawer-handle-zone {
+display: none; /* Pas de petite barre sur PC */
 width: 100%;
 padding: 12px 0 14px 0;
-display: flex;
 justify-content: center;
 align-items: center;
 cursor: grab;
@@ -1345,7 +1229,7 @@ user-select: none;
 cursor: grabbing;
 }
 
-/* La petite barre visuelle dorée de la poignée */
+/* La petite barre visuelle dorée de la poignée (mobile uniquement) */
 .drawer-handle {
 width: 52px;
 height: 6px;
@@ -1373,9 +1257,10 @@ user-select: none;
 gap: 12px;
 }
 
+/* Bouton croix de fermeture du volet sur ordinateur (PC) */
 .sidebar-close-desktop-btn {
 background: rgba(255, 255, 255, 0.08);
-border: 1px solid rgba(255, 255, 255, 0.16);
+border: 1px solid rgba(197, 160, 89, 0.35);
 color: #ffffff;
 font-size: 1.15rem;
 font-weight: 700;
@@ -1567,7 +1452,7 @@ color: var(--accent-gold);
 #sidebar-detail-view {
 display: flex;
 flex-direction: column;
-gap: 16px;
+gap: 12px;
 animation: fadeIn 0.3s ease;
 }
 
@@ -1602,7 +1487,7 @@ box-shadow: 0 4px 14px var(--accent-gold-glow);
 #sidebar-justice-view {
 display: flex;
 flex-direction: column;
-gap: 16px;
+gap: 12px;
 animation: fadeIn 0.3s ease;
 }
 
@@ -1610,29 +1495,29 @@ animation: fadeIn 0.3s ease;
 display: flex;
 align-items: center;
 gap: 14px;
-padding: 14px;
+padding: 12px 14px;
 background: var(--bg-card);
 border: 1px solid var(--sidebar-border);
 border-radius: 8px;
 }
 
 .justice-hero-icon {
-width: 52px;
-height: 52px;
+width: 50px;
+height: 50px;
 border-radius: 6px;
 background: rgba(197, 160, 89, 0.12);
 border: 1.5px solid var(--accent-gold);
 display: flex;
 align-items: center;
 justify-content: center;
-font-size: 1.6rem;
+font-size: 1.5rem;
 flex-shrink: 0;
 }
 
 .justice-filter-section {
 display: flex;
 flex-direction: column;
-gap: 8px;
+gap: 6px;
 }
 
 .filter-label {
@@ -1646,14 +1531,14 @@ font-weight: 700;
 .filter-pills {
 display: flex;
 flex-wrap: wrap;
-gap: 8px;
+gap: 6px;
 }
 
 .filter-pill {
 background: var(--bg-card);
 border: 1px solid var(--sidebar-border);
 color: var(--text-muted);
-padding: 8px 14px;
+padding: 7px 12px;
 border-radius: 6px;
 font-size: 0.8rem;
 font-weight: 600;
@@ -1679,28 +1564,28 @@ box-shadow: 0 4px 14px var(--accent-gold-glow);
 #liste-lieux-justice {
 display: flex;
 flex-direction: column;
-gap: 12px;
+gap: 8px;
 }
 
 .lieu-justice-card {
 display: flex;
-gap: 14px;
-padding: 13px 14px;
+gap: 12px;
+padding: 11px 13px;
 background: var(--bg-card);
 border: 1px solid var(--sidebar-border);
-border-radius: 8px;
+border-radius: 6px;
 cursor: pointer;
 transition: all 0.25s ease;
 }
 
 .lieu-badge {
-width: 34px;
-height: 34px;
+width: 32px;
+height: 32px;
 border-radius: 6px;
 display: flex;
 align-items: center;
 justify-content: center;
-font-size: 1.1rem;
+font-size: 1.05rem;
 flex-shrink: 0;
 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
@@ -1708,7 +1593,7 @@ box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 .lieu-info {
 display: flex;
 flex-direction: column;
-gap: 4px;
+gap: 3px;
 flex-grow: 1;
 }
 
@@ -1763,16 +1648,16 @@ color: var(--accent-gold);
 .profil-hero {
 display: flex;
 align-items: center;
-gap: 16px;
-padding: 14px;
+gap: 14px;
+padding: 12px 14px;
 background: var(--bg-card);
 border: 1px solid var(--sidebar-border);
 border-radius: 8px;
 }
 
 .profil-hero img {
-width: 65px;
-height: 65px;
+width: 60px;
+height: 60px;
 border-radius: 6px;
 object-fit: cover;
 border: 2px solid var(--accent-gold);
@@ -1784,7 +1669,7 @@ font-family: var(--font-serif);
 font-size: 1.15rem;
 font-weight: 700;
 color: #ffffff;
-margin-bottom: 4px;
+margin-bottom: 3px;
 }
 
 .profil-info span {
@@ -1798,15 +1683,17 @@ font-size: 0.88rem;
 line-height: 1.5;
 color: #e2e8f0;
 border-left: 3px solid var(--accent-gold);
-padding: 8px 14px;
+padding: 8px 12px;
 background: rgba(197, 160, 89, 0.08);
-border-radius: 0 10px 10px 0;
+border-radius: 0 8px 8px 0;
+margin: 0;
 }
 
 .bio-text {
 font-size: 0.85rem;
-line-height: 1.6;
+line-height: 1.55;
 color: var(--text-muted);
+margin: 0;
 }
 
 /* ==========================================================================
@@ -1819,10 +1706,10 @@ Elle est pliable (minimisable) pour libérer de l'espace à l'écran. */
 background: linear-gradient(135deg, rgba(22, 26, 38, 0.95), rgba(16, 20, 30, 0.95));
 border: 1.5px solid var(--sidebar-border);
 border-radius: 8px;
-padding: 14px 16px;
+padding: 12px 14px;
 display: flex;
 flex-direction: column;
-gap: 12px;
+gap: 10px;
 box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -2308,7 +2195,7 @@ transform: translateY(-2px);
 }
 
 .etapes-title {
-margin-bottom: 12px;
+margin-bottom: 8px;
 }
 
 .etapes-title span {
@@ -2327,16 +2214,16 @@ color: var(--text-dim);
 #liste-etapes {
 display: flex;
 flex-direction: column;
-gap: 12px;
+gap: 8px;
 }
 
 .etape-card {
 display: flex;
-gap: 14px;
-padding: 12px 14px;
+gap: 12px;
+padding: 10px 12px;
 background: var(--bg-card);
 border: 1px solid var(--sidebar-border);
-border-radius: 8px;
+border-radius: 6px;
 cursor: pointer;
 transition: all 0.25s ease;
 }
@@ -2637,42 +2524,53 @@ transform: translateY(20px) scale(0.95);
 transform: translateY(0) scale(1);
 }
 
-/* Fenêtre flottante d'image sur smartphone */
+/* Fenêtre flottante d'image sur smartphone (directement grand format) */
 .floating-image-panel {
-max-height: 82vh;
-max-height: 82dvh;
+width: 95vw !important;
+max-width: 95vw !important;
+max-height: 88vh;
+max-height: 88dvh;
 }
 .floating-image-panel .floating-image-container {
-min-height: 180px;
-max-height: 240px;
+min-height: 240px;
+max-height: 65vh;
+}
+.floating-image-panel .floating-image-container img {
+max-height: 65vh;
 }
 
-/* Header épuré et switch sur mobile */
+/* Header épuré et navigation sur mobile */
 .app-header {
   top: max(10px, env(safe-area-inset-top));
   left: max(12px, env(safe-area-inset-left));
-  max-width: calc(100vw - max(12px, env(safe-area-inset-left)) - 105px) !important;
+  max-width: calc(100vw - 80px) !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   padding: 0 !important;
 }
 .header-context-title {
-  font-size: 0.95rem;
+  font-size: 0.90rem;
   padding-left: 8px;
-  max-width: calc(100vw - 200px);
+  max-width: calc(100vw - 210px);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.theme-switch-wrapper.theme-switch-vertical {
-  top: max(14px, env(safe-area-inset-top)) !important;
-  right: calc(max(12px, env(safe-area-inset-right)) + 44px) !important;
-  width: 36px !important;
-  height: 74px !important;
+.theme-toggle-square-btn {
+  width: 32px;
+  height: 32px;
 }
 .sidebar-close-desktop-btn {
-display: none !important; /* Sur mobile, la fermeture se fait via swipe down ou clic extérieur */
+display: none !important; /* Sur mobile, pas de croix : la fermeture se fait par glissement tactile vers le bas */
+}
+
+/* Poignée tactile de glissement : visible UNIQUEMENT sur mobile */
+.drawer-handle-zone {
+display: flex !important;
+}
+.drawer-handle {
+display: block !important;
 }
 
 /* Pilules de filtres avec défilement fluide sans empiéter sur la hauteur */
@@ -2693,40 +2591,14 @@ white-space: nowrap;
 flex-shrink: 0;
 }
 
-/* Contrôles de zoom Leaflet sur mobile */
+/* Contrôles de zoom Leaflet sur mobile (rétablis comme à l'origine) */
 .leaflet-top.leaflet-right {
-top: max(14px, env(safe-area-inset-top)) !important;
-right: 12px !important;
+top: max(14px, env(safe-area-inset-top));
+right: 12px;
 }
 
 .leaflet-control-zoom {
-  margin: 0 !important;
-  border: 1.5px solid var(--sidebar-border) !important;
-  border-radius: 6px !important;
-  overflow: hidden !important;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45) !important;
-  width: 36px !important;
-  height: 74px !important;
-  box-sizing: border-box !important;
-}
-
-.leaflet-control-zoom a {
-  background-color: var(--bg-sidebar) !important;
-  color: var(--accent-gold) !important;
-  border-color: var(--sidebar-border) !important;
-  width: 36px !important;
-  height: 36px !important;
-  line-height: 36px !important;
-  font-size: 16px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-sizing: border-box !important;
-}
-
-.leaflet-control-zoom a:active {
-background-color: var(--hover-bg) !important;
-color: var(--accent-gold-bright) !important;
+  margin: 0;
 }
 
 /* Bulle de popup mobile adaptée */
@@ -2740,21 +2612,22 @@ margin: 0 auto;
 @media (min-width: 560px) {
 .buttons-container {
 grid-template-columns: repeat(2, 1fr);
-max-width: 680px;
-gap: 16px;
+max-width: min(720px, 92vw);
+gap: clamp(12px, 2.2vw, 20px);
 }
 
 .img-btn {
-height: 160px;
+height: clamp(140px, 20vh, 220px);
+min-height: 135px;
 border-radius: 8px;
 }
 
 .img-btn .btn-overlay {
-padding: 16px;
+padding: clamp(12px, 2vw, 18px);
 }
 
 .img-btn .btn-label {
-font-size: 1.2rem;
+font-size: clamp(1.15rem, 1.8vw, 1.3rem);
 }
 }
 
@@ -2782,6 +2655,7 @@ display: none;
 
 #menu-toggle.pc-visible {
 display: flex !important;
+bottom: 38px;
 }
 
 .drawer-handle-zone,
@@ -2824,21 +2698,34 @@ pointer-events: none;
 /* Présente les 4 cartes sur une seule ligne panoramique sur la page d'accueil */
 .buttons-container {
 grid-template-columns: repeat(4, 1fr);
-max-width: 1160px;
-gap: 20px;
+max-width: min(1200px, 88vw);
+gap: clamp(14px, 1.6vw, 24px);
 }
 
 .img-btn {
-height: 270px;
+height: clamp(210px, 32vh, 320px);
+min-height: 200px;
 border-radius: 8px;
 }
 
 .img-btn .btn-overlay {
-padding: 20px;
+padding: clamp(16px, 2vw, 24px);
 }
 
 .img-btn .btn-label {
-    font-size: 1.25rem;
+    font-size: clamp(1.15rem, 1.35vw, 1.35rem);
+}
+}
+
+/* 13.5 Très Grands Écrans (>= 1400px) */
+@media (min-width: 1400px) {
+.buttons-container {
+max-width: min(1400px, 86vw);
+gap: clamp(18px, 1.8vw, 28px);
+}
+
+.img-btn {
+height: clamp(260px, 36vh, 380px);
 }
 }
 
@@ -2850,74 +2737,76 @@ Boutons et textes de bas de page discrets et élégants.
 - Survol : changement de couleur doré doux et léger agrandissement fluide
 ========================================================================== */
 
-/* Pied de page sur l'écran d'accueil (positionné en bas à gauche) */
+/* Pied de page sur l'écran d'accueil (situé physiquement tout en bas du contenu, accessible au scroll sans bouger) */
 .landing-footer {
-    position: absolute;
-    bottom: max(16px, env(safe-area-inset-bottom));
-    left: max(22px, env(safe-area-inset-left));
+    position: relative;
+    margin-top: clamp(24px, 5vh, 48px);
+    width: 100%;
+    max-width: 1080px;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     font-size: 0.78rem;
     color: var(--text-muted);
-    z-index: 2010;
+    padding: 16px 16px max(24px, env(safe-area-inset-bottom)) 16px;
+    z-index: 10;
     user-select: none;
     pointer-events: auto;
+    box-sizing: border-box;
+    flex-shrink: 0;
 }
 
-/* Pied de page sur l'application cartographique (en bas à gauche, sans aucun fond noir) */
-.map-legal-footer {
-    position: absolute;
-    bottom: max(10px, env(safe-area-inset-bottom));
-    left: max(16px, env(safe-area-inset-left));
+/* Pied de page au bas des menus déroulants (sidebar / tiroir) */
+.sidebar-legal-footer {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     font-size: 0.74rem;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    padding: 0;
-    z-index: 998;
+    color: var(--text-muted);
+    padding: 18px 8px max(14px, env(safe-area-inset-bottom)) 8px;
+    margin-top: auto;
+    border-top: 1px solid rgba(197, 160, 89, 0.2);
     user-select: none;
     pointer-events: auto;
-    color: #121417;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
+    flex-shrink: 0;
+    text-align: center;
 }
 
-/* Couleurs dynamiques selon le mode Sombre / Clair :
-   - Mode clair : écrit en noir pur
-   - Mode sombre : écrit en blanc */
-.map-legal-footer .footer-legal-link {
-    color: inherit;
+.sidebar-legal-footer .copyright-text {
+    font-family: var(--font-sans);
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+    opacity: 0.9;
 }
 
-[data-theme="light"] .map-legal-footer {
-    color: #121417 !important;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
+.sidebar-legal-footer .footer-dot {
+    color: var(--accent-gold);
+    opacity: 0.7;
 }
 
-[data-theme="light"] .map-legal-footer .footer-legal-link {
-    color: #121417 !important;
+.sidebar-legal-footer .footer-legal-link {
+    background: transparent;
+    border: none;
+    color: var(--accent-gold);
+    font-size: inherit;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 2px 4px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
 
-[data-theme="light"] .map-legal-footer .footer-legal-link:hover {
-    color: #8c6d2d !important;
+.sidebar-legal-footer .footer-legal-link:hover {
+    color: var(--accent-gold-bright);
+    transform: translateY(-1px);
 }
 
-[data-theme="dark"] .map-legal-footer {
-    color: #ffffff !important;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
-}
-
-[data-theme="dark"] .map-legal-footer .footer-legal-link {
-    color: #ffffff !important;
-}
-
-[data-theme="dark"] .map-legal-footer .footer-legal-link:hover {
-    color: var(--accent-gold-bright) !important;
+/* Neutralisation de l'ancien pied de page flottant sur la carte */
+.map-legal-footer {
+    display: none !important;
 }
 
 .copyright-text {
@@ -3088,18 +2977,22 @@ Boutons et textes de bas de page discrets et élégants.
 /* Adaptations sur petits écrans mobiles */
 @media (max-width: 576px) {
     .landing-footer {
-        left: 14px;
+        position: relative;
+        left: auto;
         right: auto;
-        bottom: max(12px, env(safe-area-inset-bottom));
+        bottom: auto;
+        margin-top: clamp(20px, 4vh, 36px);
+        padding: 16px 12px max(24px, env(safe-area-inset-bottom)) 12px;
         font-size: 0.72rem;
         gap: 6px;
+        z-index: 10;
+        justify-content: center;
     }
 
-    .map-legal-footer {
-        left: 10px;
-        right: auto;
-        bottom: max(6px, env(safe-area-inset-bottom));
+    .sidebar-legal-footer {
         font-size: 0.70rem;
+        gap: 6px;
+        padding: 16px 8px max(18px, env(safe-area-inset-bottom)) 8px;
     }
 
     .legal-modal-body {
