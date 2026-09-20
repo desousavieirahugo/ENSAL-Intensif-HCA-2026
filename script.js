@@ -1,49 +1,54 @@
 /**
  * Moteur interactif cartographique — Parcours de la Résistance à Lyon (1940-1944)
- * Gestion des données patrimoniales, couches Leaflet, navigation GPS et interface utilisateur.
+ * Architecture modulaire : données patrimoniales, couches Leaflet, GPS et interface.
  */
 
-// ==========================================================================
-// 1. DONNÉES HISTORIQUES DES PARCOURS
-// ==========================================================================
+// =============================================================================
+// PARTIE 1 : DONNÉES HISTORIQUES (PERSONNAGES & LIEUX DE JUSTICE)
+// =============================================================================
+
 const dataPersonnes = {
-    // Fiche Jean Moulin
+    // Parcours Jean Moulin
     "jean_moulin": {
         nom: "Jean Moulin",
-        titre: "Président du Conseil National de la Résistance",
-        role: "Unificateur des réseaux de la Résistance",
+        titre: "« Rex » • « Max » — Délégué du Général de Gaulle",
+        role: "Unificateur des mouvements de la Résistance (M.U.R.)",
         img: "images/jean_moulin.jpg",
-        color: "#e63946",
-        quote: "« Je ne savais pas que c'était si difficile de ne pas céder. »",
-        bio: "Héros emblématique de la Résistance française, Jean Moulin est parachuté en France par le général de Gaulle début 1942. Établi à Lyon, capitale de la Résistance, il parvient à unifier les mouvements Combat, Libération et Franc-Tireur sous l'égide des M.U.R., avant de présider le Conseil National de la Résistance.",
+        color: "#8b4513",
+        quote: "« Au premier combat venu, le peuple français retrouvera sa grandeur et sa liberté. »",
+        bio: "Préfet d'Eure-et-Loir révoqué par le régime de Vichy en 1940, Jean Moulin gagne Londres en 1941. Chargé par le général de Gaulle d'unifier la Résistance intérieure divisée, il choisit Lyon comme capitale clandestine de sa mission. Il y fonde les Mouvements Unis de la Résistance (M.U.R.) et orchestre la création du Conseil National de la Résistance (CNR), avant son arrestation dramatique à Caluire le 21 juin 1943.",
         etapes: [
             {
                 coords: [45.7578, 4.8320],
                 titre: "Place Bellecour & Galeries",
                 date: "1942 - 1943",
                 lieu: "Presqu'île, Lyon 2e",
-                desc: "Lieu privilégié pour les rendez-vous secrets et les contacts clandestins au cœur de la ville sous haute surveillance."
+                desc: "Cœur battant des liaisons clandestines lyonnaises. Jean Moulin y tenait des boîtes aux lettres discrètes et des rendez-vous sous la statue équestre ou sous les arcades.",
+                sources: ["Archives nationales", "Musée de l'Ordre de la Libération"]
             },
             {
                 coords: [45.7705, 4.8315],
                 titre: "Traboules des Pentes de la Croix-Rousse",
                 date: "Printemps 1943",
                 lieu: "Pentes de la Croix-Rousse, Lyon 1er",
-                desc: "Les passages secrets des canuts servaient d'échappatoires aux filatures de la Gestapo et abritaient des imprimeries clandestines."
+                desc: "Labyrinthe séculaire de cours et d'allées couvertes, essentiel pour semer les filatures de la Gestapo et acheminer le matériel d'imprimerie clandestine des journaux Combat et Franc-Tireur.",
+                sources: ["Centre d'Histoire de la Résistance et de la Déportation (CHRD Lyon)", "Fonds Franc-Tireur"]
             },
             {
                 coords: [45.7950, 4.8465],
                 titre: "Maison du Dr Dugoujon à Caluire",
                 date: "21 juin 1943",
                 lieu: "Caluire-et-Cuire",
-                desc: "Réunion clandestine décisive des dirigeants de la Résistance. Trahi, Jean Moulin y est arrêté par Klaus Barbie et la Gestapo."
+                desc: "Lieu de la réunion secrète des responsables de l'Armée Secrète. Barbie et la Gestapo y font irruption, capturant Jean Moulin et sept autres chefs de la Résistance.",
+                sources: ["Mémorial de Caluire", "Archives départementales du Rhône"]
             },
             {
                 coords: [45.7508, 4.8625],
                 titre: "Prison Militaire de Montluc",
                 date: "Juin - Juillet 1943",
                 lieu: "Rue Jeanne Hachette, Lyon 3e",
-                desc: "Incarcéré dans la cellule 130, Jean Moulin endure de terribles tortures sans livrer le moindre secret avant son transfert."
+                desc: "Incarcération dans la cellule 130 de Montluc. Jean Moulin y subit les tortures impitoyables de Klaus Barbie sans jamais trahir le moindre secret d'État avant son transfert fatal vers l'Allemagne.",
+                sources: ["Mémorial National de la Prison de Montluc", "Archives du Ministère des Armées"]
             }
         ],
         traceline: [
@@ -54,85 +59,95 @@ const dataPersonnes = {
         ]
     },
 
-    // Fiche complète de Klaus Barbie (toutes étapes, arrestation et procès)
+    // Parcours Klaus Barbie (étapes de guerre et événements d'après-guerre)
     "klaus_barbie": {
         nom: "Klaus Barbie",
-        titre: "Chef de la Section IV (Gestapo) à Lyon",
-        role: "Chef de la Gestapo & Répression",
+        titre: "« Le Boucher de Lyon » — Capitaine SS (Hauptsturmführer)",
+        role: "Chef de la section IV (Gestapo & Sipo-SD) à Lyon",
         img: "images/klaus_barbie.jpg",
-        color: "#dc2626",
-        quote: "« Jugé à Lyon en 1987 lors du premier procès en France pour crimes contre l'humanité. »",
-        bio: "Chef de la section IV de la Gestapo à Lyon dès novembre 1942, Klaus Barbie traque méthodiquement la Résistance et orchestre la déportation des Juifs. Responsable de tortures atroces et de massacres, il s'enfuit en Bolivie après-guerre sous la fausse identité de Klaus Altmann. Démasqué et traqué par Beate et Serge Klarsfeld, il est arrêté le 25 janvier 1983 à La Paz par les autorités boliviennes, extradé vers la France, écroué à Montluc et condamné à perpétuité aux 24 Colonnes en 1987.",
+        color: "#8b4513",
+        quote: "« Quand je serai devant le trône de Dieu, je serai jugé innocent. » — Déclaration de Klaus Barbie à son procès en 1987",
+        bio: "Arrivé à Lyon en novembre 1942, Klaus Barbie dirige avec une violence méthodique la traque impitoyable des résistants et la persécution antisémite. Responsable direct de la mort, de la torture et de la déportation de milliers d'innocents, il s'enfuit en Amérique du Sud après 1945. Retrouvé en Bolivie par les époux Klarsfeld, il est extradé à Lyon en 1983 pour le premier grand procès pour crimes contre l'humanité tenu en France.",
         etapes: [
             {
                 coords: [45.7495, 4.8260],
                 titre: "Hôtel Terminus — 1er QG de la Gestapo",
                 date: "Novembre 1942 - Printemps 1943",
                 lieu: "12 cours de Verdun, Lyon 2e",
-                desc: "Premier centre opérationnel de Barbie à Lyon : réquisition de l'hôtel, premiers interrogatoires violents et mise en place de l'appareil répressif."
+                desc: "Dès l'occupation de la zone Sud, la Gestapo réquisitionne cet hôtel face à la gare de Perrache pour y établir ses premiers bureaux et cellules d'interrogatoire.",
+                source: "Fonds d'archives CHRD Lyon"
             },
             {
                 coords: [45.7687, 4.8336],
                 titre: "Rafle de la rue Sainte-Catherine (UGIF)",
                 date: "9 février 1943",
                 lieu: "12 rue Sainte-Catherine, Lyon 1er",
-                desc: "Barbie organise une souricière au siège de l'Union générale des israélites de France : 86 personnes juives sont arrêtées puis déportées à Auschwitz et Sobibor."
+                desc: "Coup de filet ordonné par Barbie dans les locaux de l'Union Générale des Israélites de France : 86 personnes arrêtées et déportées vers Auschwitz et Sobibor.",
+                source: "Archives du Mémorial de la Shoah & Association des FILS"
             },
             {
                 coords: [45.7472, 4.8398],
-                titre: "École de Santé Militaire — Siège principal & tortures",
+                titre: "École de Santé Militaire — Siège de la torture",
                 date: "Printemps 1943 - Août 1944",
-                lieu: "14 avenue Berthelot, Lyon 7e (CHRD)",
-                desc: "Quartier général de la Gestapo lyonnaise. Barbie y dirige les interrogatoires et les tortures de résistants, dont Jean Moulin après sa capture."
+                lieu: "14 avenue Berthelot, Lyon 7e (Actuel CHRD)",
+                desc: "Quartier général principal de la Gestapo et de la section IV. Les sous-sols abritaient les salles d'interrogatoire où Barbie torturait personnellement les résistants.",
+                source: "Centre d'Histoire de la Résistance et de la Déportation"
             },
             {
                 coords: [45.7950, 4.8465],
                 titre: "Raid de Caluire — Capture de Jean Moulin",
                 date: "21 juin 1943",
                 lieu: "Maison du Dr Dugoujon, Caluire-et-Cuire",
-                desc: "Opération menée directement par Barbie : encerclement de la maison et arrestation des principaux cadres de la Résistance unifiée."
+                desc: "Intervention armée menée en personne par Barbie suite à une dénonciation, aboutissant à la capture du délégué général de la France Libre et des cadres de l'Armée Secrète.",
+                source: "Archives départementales du Rhône (dossier d'instruction procès Barbie)"
             },
             {
                 coords: [45.7508, 4.8625],
                 titre: "Prison Militaire de Montluc — Internements de masse",
                 date: "1943 - 1944",
                 lieu: "4 rue Jeanne-Hachette, Lyon 3e",
-                desc: "Principal centre d'internement de la Gestapo. Près de 10 000 détenus y sont incarcérés dans des conditions inhumaines avant déportation ou exécution."
+                desc: "Sous tutelle nazie, la prison voit transiter plus de 10 000 hommes, femmes et enfants dans des conditions d'entassement inhumaines avant leur exécution ou les camps de la mort.",
+                source: "Mémorial National de la Prison de Montluc"
             },
             {
                 coords: [45.7478, 4.8395],
                 titre: "Ordre de la rafle d'Izieu (Télégramme Gestapo)",
                 date: "6 avril 1944",
                 lieu: "Avenue Berthelot / Télétype Gestapo Lyon",
-                desc: "Barbie ordonne et supervise par télex la déportation de 44 enfants juifs et 7 éducateurs de la maison d'Izieu vers les camps de la mort."
+                desc: "Barbie ordonne et valide le télétype expédié aux autorités de sûreté rapportant la rafle de 44 enfants juifs et de leurs 7 éducateurs réfugiés dans la colonie d'Izieu (Ain).",
+                source: "Pièce à conviction n°1 du Procès Barbie (Archives nationales)"
             },
             {
                 coords: [45.6968, 4.7915],
                 titre: "Massacre du Fort de Côte-Lorette",
                 date: "20 août 1944",
                 lieu: "Fort de Côte-Lorette, Saint-Genis-Laval",
-                desc: "À la veille de la Libération de Lyon, 120 prisonniers extraits de Montluc sont fusillés et brûlés sur ordre exprès de la Gestapo."
+                desc: "À quelques jours de la Libération de Lyon, Barbie et la police allemande extraient 120 détenus de Montluc pour les fusiller sommairement et incendier la maison du gardien.",
+                source: "Mémorial du Fort de Côte-Lorette & Ville de Saint-Genis-Laval"
             },
             {
                 coords: [45.7510, 4.8628],
                 titre: "Arrestation en Bolivie (La Paz) & Extradition",
                 date: "25 janvier - 5 février 1983",
                 lieu: "La Paz (Bolivie) ➔ Écrou à Montluc (Lyon)",
-                desc: "Réfugié sous la fausse identité de Klaus Altmann, Barbie est localisé et démasqué en Bolivie par Beate et Serge Klarsfeld. Arrêté le 25 janvier 1983 à La Paz par les autorités boliviennes, il est expulsé le 4 février et extradé en France par vol militaire, avant d'être écroué à la prison de Montluc."
+                desc: "Démasqué sous le faux nom de Klaus Altmann par Serge et Beate Klarsfeld, Barbie est expulsé par la Bolivie vers la France et réincarcéré symboliquement à Montluc.",
+                source: "Archives audiovisuelles de la Justice & INA"
             },
             {
                 coords: [45.7617, 4.8278],
-                titre: "Palais des 24 Colonnes — Procès pour crimes contre l'humanité",
+                titre: "Palais des 24 Colonnes — Procès historique",
                 date: "11 mai - 4 juillet 1987",
                 lieu: "Quai Romain-Rolland, Lyon 5e",
-                desc: "Premier procès filmé en France pour crimes contre l'humanité. Défendu par Me Vergès, Barbie est condamné à la réclusion criminelle à perpétuité."
+                desc: "Premier procès en France pour crimes contre l'humanité. Reconnue coupable de la déportation de centaines de Juifs et de résistants, la cour condamne Barbie à la réclusion criminelle à perpétuité.",
+                source: "Cour d'Assises du Rhône & Archives nationales"
             },
             {
                 coords: [45.7480, 4.8282],
                 titre: "Prison Saint-Joseph — Fin de vie en détention",
                 date: "25 septembre 1991",
                 lieu: "Perrache, Lyon 2e",
-                desc: "Incarcéré au centre pénitentiaire de Lyon suite à sa condamnation définitive, Barbie y meurt en détention d'un cancer à l'âge de 77 ans."
+                desc: "Incarcéré dans le quartier des détenus sous haute surveillance de la prison Saint-Joseph de Lyon, Barbie y meurt d'un cancer à l'âge de 77 ans.",
+                source: "Administration pénitentiaire & État civil de Lyon"
             }
         ],
         traceline: [
@@ -148,234 +163,538 @@ const dataPersonnes = {
             [45.7480, 4.8282]
         ]
     },
-"lucie_aubrac": {
-nom: "Lucie Aubrac",
-titre: "Cofondatrice de Libération-Sud",
-role: "Héroïne de la Résistance & Évasions",
-img: "images/lucie_aubrac.jpg",
-color: "#2a9d8f",
-quote: "« Résister est un verbe qui se conjugue au présent. »",
-bio: "Professeure d'histoire au lycée de jeunes filles de Lyon, Lucie Aubrac cofonde le mouvement Libération-Sud. Face aux arrestations, elle conçoit et mène avec un sang-froid légendaire des opérations armées audacieuses pour libérer ses camarades et son époux Raymond.",
-etapes: [
-{
-coords: [45.7690, 4.8460],
-titre: "Lycée Edgar Quinet (Édouard Herriot)",
-date: "1941 - 1943",
-lieu: "Boulevard des Belges, Lyon 6e",
-desc: "Elle y enseigne l'histoire tout en recrutant des agents de liaison et en fabriquant des faux papiers d'identité dans la clandestinité."
-},
-{
-coords: [45.7485, 4.8270],
-titre: "Prison Saint-Paul",
-date: "Mai 1943",
-lieu: "Quartier Perrache, Lyon 2e",
-desc: "Elle affronte directement le procureur général sous une fausse identité et parvient à faire libérer Raymond Aubrac une première fois."
-},
-{
-coords: [45.7592, 4.8217],
-titre: "Coup de main du Bd des Hirondelles",
-date: "21 octobre 1943",
-lieu: "Fourvière / Antiquaille, Lyon 5e",
-desc: "Attaque armée spectaculaire d'un fourgon de la Gestapo : elle libère son mari et 13 autres résistants condamnés à mort."
-}
-],
-traceline: [
-[45.7690, 4.8460],
-[45.7485, 4.8270],
-[45.7592, 4.8217]
-]
-}
+
+    // Parcours Lucie Aubrac
+    "lucie_aubrac": {
+        nom: "Lucie Aubrac",
+        titre: "Co-fondatrice du mouvement Libération-Sud",
+        role: "Héroïne de la Résistance & Organisatrice d'évasions",
+        img: "images/lucie_aubrac.jpg",
+        color: "#8b4513",
+        quote: "« Le verbe résister doit toujours se conjuguer au présent. »",
+        bio: "Professeure agrégée d'histoire et militante antifasciste, Lucie Samuel (dite Aubrac) s'engage immédiatement dans la clandestinité dès 1940. Avec Emmanuel d'Astier de la Vigerie et son mari Raymond Aubrac, elle cofonde le mouvement Libération-Sud à Lyon. Elle accomplit des actes de bravoure inouïs pour délivrer son compagnon et ses camarades arrêtés par la police française et la Gestapo.",
+        etapes: [
+            {
+                coords: [45.7690, 4.8460],
+                titre: "Lycée Edgar Quinet (Lycée Édouard Herriot)",
+                date: "1941 - 1943",
+                lieu: "Boulevard des Belges, Lyon 6e",
+                desc: "Lucie y enseigne l'histoire et la géographie tout en utilisant sa position pour recruter de jeunes résistants et cacher du matériel de propagande clandestine.",
+                sources: ["Fonds CHRD Lyon", "Témoignages des réseaux Libération-Sud"]
+            },
+            {
+                coords: [45.7485, 4.8270],
+                titre: "Prison Saint-Paul — Premier sauvetage",
+                date: "Mai 1943",
+                lieu: "Quartier Perrache, Lyon 2e",
+                desc: "Raymond Aubrac est arrêté par la police de Vichy. Faisant preuve d'un sang-froid extraordinaire, Lucie obtient un parloir et organise sa libération sous caution.",
+                sources: ["Mémoires de Lucie Aubrac, « Ils partiront dans l'ivresse » (Seuil)"]
+            },
+            {
+                coords: [45.7592, 4.8217],
+                titre: "Coup de main du Bd des Hirondelles (Fourvière)",
+                date: "21 octobre 1943",
+                lieu: "Fourvière / Montée du Chemin-Neuf, Lyon 5e",
+                desc: "Attaque armée spectaculaire d'un fourgon cellulaire allemand transportant Raymond Aubrac et 13 autres résistants condamnés à mort. Tous sont libérés sains et saufs.",
+                sources: ["Archives de la Résistance intérieure (ANACR)", "CHRD Lyon"]
+            }
+        ],
+        traceline: [
+            [45.7690, 4.8460],
+            [45.7485, 4.8270],
+            [45.7592, 4.8217]
+        ]
+    }
 };
 
-// Alias de rétro-compatibilité au cas où un ancien appel pointerait vers chaban_delmas
+// Rétrocompatibilité d'alias
 dataPersonnes["chaban_delmas"] = dataPersonnes["klaus_barbie"];
 
-// Données historiques des Lieux de Justice, de Police et Carcéraux à Lyon (1940-1944)
+// Lieux de Justice, de Répression et Carcéraux (1940-1944) - Données documentaires
 const dataLieuxJustice = {
-carceraux: {
-nomCategorie: "Lieux carcéraux",
-icon: "⛓️",
-color: "#9b5de5",
-lieux: [
-{
-nom: "Prison Militaire de Montluc",
-coords: [45.7508, 4.8625],
-adresse: "4 rue Jeanne-Hachette, Lyon 3e",
-role: "Principal lieu d'internement de la Gestapo sous Klaus Barbie et des autorités de Vichy. Près de 10 000 personnes (résistants, otages, juifs) y furent enfermées."
-},
-{
-nom: "Prison Saint-Paul",
-coords: [45.7485, 4.8270],
-adresse: "Place des Archives / Perrache, Lyon 2e",
-role: "Prison civile où le régime de Vichy incarcérait les opposants politiques et résistants (dont Raymond Aubrac et les militants de Libération-Sud)."
-},
-{
-nom: "Prison Saint-Joseph",
-coords: [45.7475, 4.8272],
-adresse: "Quartier Perrache, Lyon 2e",
-role: "Établissement pénitentiaire contigu à Saint-Paul, fortement surpeuplé sous l'Occupation, accueillant détenus politiques et de droit commun."
-},
-{
-nom: "Fort de Côte-Lorette",
-coords: [45.6980, 4.7930],
-adresse: "Saint-Genis-Laval",
-role: "Lieu du massacre tragique du 20 août 1944 : 120 prisonniers extraits de Montluc y furent abattus et brûlés par les nazis avant leur fuite."
-}
-]
-},
-juridiques: {
-nomCategorie: "Lieux juridiques",
-icon: "⚖️",
-color: "#c5a059",
-lieux: [
-{
-nom: "Palais de Justice (« Les 24 Colonnes »)",
-coords: [45.7617, 4.8278],
-adresse: "Quai Romain-Rolland, Lyon 5e",
-role: "Siège de la Cour d'appel et des Sections Spéciales de Vichy instituées pour juger sans recours et condamner lourdement les résistants."
-},
-{
-nom: "Tribunal Militaire de Lyon",
-coords: [45.7550, 4.8480],
-adresse: "Caserne de la Part-Dieu, Lyon 3e",
-role: "Juridiction militaire d'exception jugeant les actes qualifiés de « terrorisme » par Vichy et les autorités d'occupation."
-},
-{
-nom: "Cour Martiale de la Milice",
-coords: [45.7675, 4.8336],
-adresse: "Hôtel de Ville / Préfecture, Lyon",
-role: "Instituée début 1944 par Joseph Darnand : trois juges miliciens anonymes prononçaient des peines de mort exécutées dans l'heure."
-}
-]
-},
-police: {
-nomCategorie: "Lieux de police & répression",
-icon: "🚨",
-color: "#e63946",
-lieux: [
-{
-nom: "École de Santé Militaire (QG Gestapo)",
-coords: [45.7472, 4.8398],
-adresse: "14 avenue Berthelot, Lyon 7e (Actuel CHRD)",
-role: "Quartier général de la Gestapo (Sipo-SD) sous les ordres de Klaus Barbie dès le printemps 1943. Lieu sinistre de tortures et d'interrogatoires."
-},
-{
-nom: "Hôtel Terminus",
-coords: [45.7495, 4.8260],
-adresse: "12 cours de Verdun, Lyon 2e",
-role: "Premier quartier général de Klaus Barbie et de la section IV de la Gestapo lors de l'invasion de la zone sud en novembre 1942."
-},
-{
-nom: "Siège de la Milice Française",
-coords: [45.7562, 4.8318],
-adresse: "Place Bellecour / Rue Sainte-Hélène, Lyon 2e",
-role: "QG des miliciens sous le commandement de Paul Touvier : centre des dénonciations, des rafles et de la traque des résistants et des familles juives."
-}
-]
-}
+    juridiques: {
+        nomCategorie: "Palais de Justice",
+        color: "#7c3aed",
+        lieux: [
+            {
+                nom: "Le Palais des 24 colonnes",
+                coords: [45.76189589270587, 4.828363008769444],
+                adresse: "1 Rue du Palais de Justice, 69005 Lyon",
+                anneeDebut: 1847,
+                anneeFin: null,
+                dates: "1847 – Présent",
+                role: "Architecte L.P. Baltard. Chef-d'œuvre néoclassique, siège de la cour d'assises du Rhône et cadre du procès historique de Klaus Barbie en 1987.",
+                source: "Ministère de la Justice & Barreau de Lyon"
+            },
+            {
+                nom: "Tribunal judiciaire",
+                coords: [45.76050201468607, 4.847978429714767],
+                adresse: "67 Rue Servient, 69003 Lyon",
+                anneeDebut: 1995,
+                anneeFin: null,
+                dates: "1995 – Présent",
+                role: "Architecte Yves Lion. Cité judiciaire moderne du quartier de la Part-Dieu.",
+                source: "Ministère de la Justice"
+            },
+            {
+                nom: "Tribunal militaire de Montluc",
+                coords: [45.75040300306873, 4.860886715861802],
+                adresse: "1 Rue du Général Mouton-Duvernet, 69003 Lyon",
+                anneeDebut: 1921,
+                anneeFin: 2009,
+                dates: "1921 – 2009",
+                role: "Architecte inconnu. Juridiction militaire d'exception ayant prononcé condamnations et sanctions sous les conflits du XXe siècle.",
+                source: "Archives militaires"
+            },
+            {
+                nom: "Tribunal administratif",
+                coords: [45.76278161175385, 4.847875218440093],
+                adresse: "184 Rue Duguesclin, 69003 Lyon",
+                anneeDebut: 1974,
+                anneeFin: null,
+                dates: "1974 – Présent",
+                role: "Architectes Cathelin, Lapernon, Boudeix. Juridiction administrative du Rhône.",
+                source: "Conseil d'État"
+            },
+            {
+                nom: "Tribunal de proximité",
+                coords: [45.76447172095773, 4.883243473722828],
+                adresse: "3 Rue Dr Fleury Pierre Papillon, 69100 Villeurbanne",
+                anneeDebut: 2008,
+                anneeFin: null,
+                dates: "2008 – Présent",
+                role: "Juridiction de proximité de l'agglomération lyonnaise.",
+                source: "Ministère de la Justice"
+            },
+            {
+                nom: "Greffe du Tribunal de commerce",
+                coords: [45.76298613560997, 4.848640967629738],
+                adresse: "44 Rue de Bonnel, Rue Servient Entrée 67, 69003 Lyon",
+                anneeDebut: 1995,
+                anneeFin: null,
+                dates: "1995 – Présent",
+                role: "Greffe de la juridiction consulaire et commerciale de Lyon.",
+                source: "Tribunal de commerce de Lyon"
+            },
+            {
+                nom: "Palais des juridictions locales",
+                coords: [45.7610, 4.8490],
+                adresse: "Part-Dieu, 69003 Lyon",
+                anneeDebut: 1974,
+                anneeFin: null,
+                dates: "1974 – Présent",
+                role: "Édifice dédié aux juridictions locales et administratives.",
+                source: "Archives judiciaires"
+            },
+            {
+                nom: "Conseil des Prud'hommes",
+                coords: [45.762818563198756, 4.853597951502243],
+                adresse: "20 Bd Eugène Deruelle, 69432 Lyon",
+                anneeDebut: 1980,
+                anneeFin: null,
+                dates: "Présent",
+                role: "Juridiction du travail et du règlement des litiges professionnels.",
+                source: "Conseil de Prud'hommes de Lyon"
+            },
+            {
+                nom: "Palais de justice de Roanne",
+                coords: [46.039932567144156, 4.073077886845756],
+                adresse: "1 Rue Fontenille, 42300 Roanne",
+                anneeDebut: 1600,
+                anneeFin: null,
+                dates: "XVIe – XVIIIe siècle",
+                role: "Édifice judiciaire historique du Roannais.",
+                source: "Ministère de la Justice"
+            }
+        ]
+    },
+    carceraux: {
+        nomCategorie: "Prisons",
+        color: "#64748b",
+        lieux: [
+            {
+                nom: "Prison de Montluc",
+                coords: [45.750660420617706, 4.861926125808476],
+                adresse: "4 Rue Jeanne Hachette, 69003 Lyon",
+                anneeDebut: 1921,
+                anneeFin: 2009,
+                dates: "1921 – 2009",
+                role: "Prison militaire tristement célèbre, réquisitionnée par la Gestapo sous Klaus Barbie. Plus de 10 000 internés (Jean Moulin, Marc Bloch, enfants d'Izieu).",
+                source: "Mémorial National de la Prison de Montluc"
+            },
+            {
+                nom: "Prison Saint-Paul",
+                coords: [45.746655060298856, 4.8264608525043915],
+                adresse: "Quartier Perrache, 69002 Lyon",
+                anneeDebut: 1853,
+                anneeFin: 2009,
+                dates: "XIXe siècle – 2009",
+                role: "Architectes A.G. Louvier / H. Moncorger. Prison cellulaire départementale où furent incarcérés de nombreux résistants.",
+                source: "Archives départementales du Rhône"
+            },
+            {
+                nom: "Prison Saint-Joseph",
+                coords: [45.746234645605576, 4.8275878094022495],
+                adresse: "Quartier Perrache, 69002 Lyon",
+                anneeDebut: 1831,
+                anneeFin: 2009,
+                dates: "XIXe siècle – 2009",
+                role: "Architectes A.G. Louvier / H. Moncorger. Établissement pénitentiaire où Klaus Barbie fut détenu sous haute surveillance jusqu'à sa mort en 1991.",
+                source: "Archives départementales du Rhône"
+            },
+            {
+                nom: "Maison d'arrêt Lyon-Corbas",
+                coords: [45.67952347912901, 4.931819654289679],
+                adresse: "40 Bd des Nations, 69960 Corbas",
+                anneeDebut: 2009,
+                anneeFin: null,
+                dates: "2009 – aujourd'hui",
+                role: "Établissement pénitentiaire contemporain moderne remplaçant les prisons historiques de Perrache.",
+                source: "Administration pénitentiaire"
+            },
+            {
+                nom: "Tribunal prison de Roanne",
+                coords: [46.0399, 4.0731],
+                adresse: "Centre historique, 42300 Roanne",
+                anneeDebut: 1650,
+                anneeFin: 1800,
+                dates: "XVIIe – XVIIIe siècle",
+                role: "Ancien siège judiciaire et geôles d'Ancien Régime du Roannais.",
+                source: "Archives municipales de Roanne"
+            },
+            {
+                nom: "Centre de détention de Roanne",
+                coords: [46.054036543808216, 4.100876400827728],
+                adresse: "Rue Georges Mandel, 42300 Roanne",
+                anneeDebut: 2009,
+                anneeFin: null,
+                dates: "Contemporain – aujourd'hui",
+                role: "Centre de détention moderne de la Loire.",
+                source: "Administration pénitentiaire"
+            },
+            {
+                nom: "Maison d'arrêt de Villefranche",
+                coords: [45.99772414831627, 4.72540805150315],
+                adresse: "260 Rue Lavoisier, 69400 Villefranche-sur-Saône",
+                anneeDebut: 1990,
+                anneeFin: null,
+                dates: "1990 – aujourd'hui",
+                role: "Maison d'arrêt départementale du Beaujolais.",
+                source: "Administration pénitentiaire"
+            }
+        ]
+    },
+    memoire: {
+        nomCategorie: "Lieux de mémoire",
+        color: "#059669",
+        lieux: [
+            {
+                nom: "CHRD : Centre d'Histoire de la Résistance et de la Déportation",
+                coords: [45.74716069447433, 4.835835133868228],
+                adresse: "14 Av. Berthelot, 69007 Lyon",
+                anneeDebut: 1889,
+                anneeFin: null,
+                dates: "Bâtiment 1889-1894 / Musée 1992",
+                role: "Bâtiment d'Abraham Hirsch (Ancienne École du Service de Santé Militaire), réquisitionné par Klaus Barbie comme QG de la Gestapo, inauguré comme musée mémorial en 1992.",
+                source: "CHRD Lyon"
+            },
+            {
+                nom: "L'Île du Souvenir",
+                coords: [45.78076542024068, 4.851968229992367],
+                adresse: "Parc de la Tête d'Or, 69006 Lyon",
+                anneeDebut: 1930,
+                anneeFin: null,
+                dates: "1930",
+                role: "Monument aux morts de Tony Garnier et Jean-Baptiste Larrivé, haut lieu mémorial sur le lac du parc.",
+                source: "Ville de Lyon"
+            },
+            {
+                nom: "Mémorial de la Shoah",
+                coords: [45.75097628935953, 4.82710851202114],
+                adresse: "24 Pl. Carnot, 69002 Lyon",
+                anneeDebut: 2025,
+                anneeFin: null,
+                dates: "2025",
+                role: "Mémorial dédié au souvenir des victimes de la Shoah et des convois de déportation partis de Lyon.",
+                source: "Association Mémorial de la Shoah"
+            },
+            {
+                nom: "Mémorial Jean Moulin",
+                coords: [45.79948950162012, 4.846192917037429],
+                adresse: "2 Pl. Jean Gouailhardou, 69300 Caluire-et-Cuire",
+                anneeDebut: 1973,
+                anneeFin: null,
+                dates: "1973 (la statue)",
+                role: "Statue et monument mémorial en hommage à Jean Moulin et à ses compagnons arrêtés à Caluire.",
+                source: "Ville de Caluire-et-Cuire"
+            },
+            {
+                nom: "Mémorial National de la Prison de Montluc",
+                coords: [45.7506680276929, 4.86189622014912],
+                adresse: "4 Rue Jeanne Hachette, 69003 Lyon",
+                anneeDebut: 2010,
+                anneeFin: null,
+                dates: "2010 – aujourd'hui",
+                role: "Haut lieu de la mémoire nationale (Ministère des Armées), préservant intactes les cellules de détention des résistants.",
+                source: "ONaCVG & Ministère des Armées"
+            },
+            {
+                nom: "Crypte des Brotteaux",
+                coords: [45.764515549172536, 4.847161704227896],
+                adresse: "147 Rue de Créqui, 69006 Lyon",
+                anneeDebut: 1795,
+                anneeFin: null,
+                dates: "1795",
+                role: "Chapelle expiatoire et crypte conservant les restes des victimes des massacres révolutionnaires de 1793.",
+                source: "Association mémorielle des Brotteaux"
+            }
+        ]
+    },
+    execution: {
+        nomCategorie: "Lieux d'exécution",
+        color: "#dc2626",
+        lieux: [
+            {
+                nom: "Place des Terreaux (Place de la guillotine vers 1700)",
+                coords: [45.76763107435983, 4.833462491194966],
+                adresse: "Pl. des Terreaux, 69001 Lyon",
+                anneeDebut: 1700,
+                anneeFin: null,
+                dates: "vers 1700 – Révolution",
+                role: "Lieu historique des exécutions capitales publiques sous l'Ancien Régime et de la guillotine lors de la Révolution.",
+                source: "Archives municipales de Lyon"
+            },
+            {
+                nom: "Prison de Montluc (Cour des exécutions)",
+                coords: [45.750660420617706, 4.861926125808476],
+                adresse: "4 Rue Jeanne Hachette, 69003 Lyon",
+                anneeDebut: 1943,
+                anneeFin: 1944,
+                dates: "1943 – 1944",
+                role: "Cour intérieure et chemin de ronde où eurent lieu les fusillades d'otages et résistants par les pelotons allemands.",
+                source: "Mémorial National de la Prison de Montluc"
+            },
+            {
+                nom: "La Doua – Butte des fusillés",
+                coords: [45.785732103261545, 4.886703596561138],
+                adresse: "30 Av. Albert Einstein, 69100 Villeurbanne",
+                anneeDebut: 1943,
+                anneeFin: 1944,
+                dates: "1943 – 1944",
+                role: "Terrain militaire où l'occupant fusilla de nombreux résistants clandestins, devenu aujourd'hui la Nécropole nationale de la Doua.",
+                source: "Ministère des Armées"
+            },
+            {
+                nom: "Plaine des Brotteaux (Mitraillades de 1793)",
+                coords: [45.764515549172536, 4.847161704227896],
+                adresse: "Plaine des Brotteaux, 69006 Lyon",
+                anneeDebut: 1793,
+                anneeFin: 1794,
+                dates: "1793",
+                role: "Lieu d'exécution de masse par 'mitraillades' (tirs de canon chargés de mitraille) sous la Terreur ordonnée par Collot d'Herbois et Fouché.",
+                source: "Fonds historique Révolutionnaire"
+            },
+            {
+                nom: "Place du Change (Pendaisons)",
+                coords: [45.76458742670638, 4.828427476905882],
+                adresse: "Place du Change, 69005 Lyon",
+                anneeDebut: 1500,
+                anneeFin: null,
+                dates: "vers 1500",
+                role: "Place médiévale et Renaissance du Vieux-Lyon où étaient érigés les gibets pour les pendaisons publiques.",
+                source: "Archives de la Ville de Lyon"
+            },
+            {
+                nom: "Place Carnot (Guillotine)",
+                coords: [45.751084000596634, 4.826856276121871],
+                adresse: "Place Carnot, 69002 Lyon",
+                anneeDebut: 1850,
+                anneeFin: null,
+                dates: "XIXe siècle",
+                role: "Emplacement où la guillotine de la place des Terreaux fut transférée pour les exécutions capitales du XIXe siècle.",
+                source: "Archives judiciaires du Rhône"
+            },
+            {
+                nom: "Place Bellecour (Massacre de la Gestapo)",
+                coords: [45.757782494828106, 4.832158271072953],
+                adresse: "Place Bellecour / Rue Gasparin, 69002 Lyon",
+                anneeDebut: 1944,
+                anneeFin: null,
+                dates: "27 juillet 1944",
+                role: "Massacre de 5 résistants fusillés en représailles par la Gestapo et la Milice, commémoré par le monument du Veilleur de Pierre.",
+                source: "CHRD & Ville de Lyon"
+            }
+        ]
+    }
 };
 
-// ==========================================================================
-// 2. VARIABLES GLOBALES DE GESTION & ÉTAT DU SITE
-// ==========================================================================
-// Ces variables conservent en mémoire l'état courant de l'application :
-// quel résistant est affiché, quelle étape est sélectionnée, quel mode de transport est actif, etc.
+/**
+ * Extrait les années de début et de fin d'un élément (étape ou lieu) en tenant compte des siècles (chiffres romains et arabes).
+ * @param {Object} item
+ * @returns {{ debut: number|null, fin: number|null }}
+ */
+function extraireAnneesItem(item) {
+    let debut = null;
+    let fin = null;
 
-let map = null;                    // Instance principale de la carte Leaflet (initialisée par initMap)
-let coucheActuelle = null;         // Groupe de calques (L.layerGroup) contenant les étapes et la ligne du résistant
-let marqueursActuels = [];         // Tableau mémorisant les marqueurs Leaflet créés pour pouvoir les cibler par clic
-let personnageActifId = null;      // Identifiant du résistant actif ('jean_moulin', 'chaban_delmas', 'lucie_aubrac')
-let etapeActiveIndex = null;       // Numéro de l'étape actuellement mise en surbrillance (0, 1, 2...)
+    if (typeof item.anneeDebut === 'number') debut = item.anneeDebut;
+    if (typeof item.anneeFin === 'number') fin = item.anneeFin;
 
-// Variables dédiées au calcul et à l'affichage du routage GPS réel
-let modeTransportActuel = 'foot';   // Mode de déplacement : 'foot' (marche à 4.5 km/h) ou 'bike' (vélo à 15.0 km/h)
-let coucheLigneItineraire = null;   // Calque Leaflet contenant le tracé des routes réelles calculées
-let itineraireEstVisible = true;   // Vrai si le tracé routier doit être affiché sur la carte, faux sinon
-let trajetSelectionne = 'all';     // 'all' (parcours complet) ou '0-1', '1-2' (tronçon spécifique entre deux étapes)
-let routesAlternativesRecues = []; // Tableau contenant les 3 variantes de route (Direct, Quais de Saône, Berges du Rhône)
-let varianteActiveIndex = 0;       // Index de l'itinéraire choisi par l'utilisateur (0 = le plus rapide)
+    const dateStr = String(item.dates || item.date || '');
 
-// Tuiles cartographiques Esri (fonds contemporains haute performance)
-let tileEsriLight = null;          // Fond clair officiel Esri World Light Gray Base
-let tileEsriDark = null;           // Fond sombre officiel Esri World Dark Gray Base
-let modeFondCarte = 'light';       // Mode actif par défaut ('light' selon les souhaits du projet)
+    if (debut === null || fin === null) {
+        const romanToCentury = {
+            'I': 1, 'II': 2, 'III': 3, 'IV': 4, 'V': 5,
+            'VI': 6, 'VII': 7, 'VIII': 8, 'IX': 9, 'X': 10,
+            'XI': 11, 'XII': 12, 'XIII': 13, 'XIV': 14, 'XV': 15,
+            'XVI': 16, 'XVII': 17, 'XVIII': 18, 'XIX': 19, 'XX': 20, 'XXI': 21
+        };
 
-// Tuiles cartographiques historiques IGN (Géoplateforme ouverte)
-let tileIGN1950 = null;            // Carte topographique IGN 1950 (après-guerre)
-let tileEtatMajor = null;          // Carte d'État-Major 1820-1866 (XIXe siècle)
-let tileOrtho1950 = null;          // Photographies aériennes historiques 1950-1965
-let fondJusticeActif = 'esri';     // Époque cartographique active ('esri', 'ign1950', 'etatmajor', 'ortho1950')
+        // Intervalle de siècles en chiffres romains (ex: "XVI-XVIII", "XIXe - XXe siècle")
+        const romanRange = dateStr.match(/\b(X[IVX]*|V?I{1,3})\s*(?:e|ème)?\s*[-–—àa]\s*(X[IVX]*|V?I{1,3})\s*(?:e|ème)?\s*siècle/i)
+            || dateStr.match(/\b(XVI|XVII|XVIII|XIX|XX|XV|XIV)\s*[-–—]\s*(XVI|XVII|XVIII|XIX|XX|XV|XIV)\b/i);
 
-// Groupes de calques Leaflet pour les Lieux de Justice & Répression (permet d'afficher/masquer par catégorie)
+        if (romanRange) {
+            const c1 = romanToCentury[romanRange[1].toUpperCase()];
+            const c2 = romanToCentury[romanRange[2].toUpperCase()];
+            if (c1 && c2) {
+                if (debut === null) debut = (c1 - 1) * 100 + 1;
+                if (fin === null) fin = c2 * 100;
+            }
+        } else {
+            // Siècle unique en chiffres romains (ex: "XIXe siècle", "XIXe", "vers le XVIIe siècle")
+            const singleRoman = dateStr.match(/\b(X[IVX]*|V?I{1,3})\s*(?:e|ème)?\s*siècle/i)
+                || dateStr.match(/\b(XVI|XVII|XVIII|XIX|XX|XV|XIV)e?\b/i);
+            if (singleRoman) {
+                const c = romanToCentury[singleRoman[1].toUpperCase()];
+                if (c) {
+                    if (debut === null) debut = (c - 1) * 100 + 1;
+                    if (fin === null) fin = c * 100;
+                }
+            }
+        }
+
+        // Intervalle de siècles en chiffres arabes (ex: "16-18e siècle", "19e siècle")
+        const arabicRange = dateStr.match(/\b(\d{1,2})\s*(?:e|ème)?\s*[-–—àa]\s*(\d{1,2})\s*(?:e|ème)?\s*siècle/i);
+        if (arabicRange) {
+            const c1 = parseInt(arabicRange[1], 10);
+            const c2 = parseInt(arabicRange[2], 10);
+            if (debut === null) debut = (c1 - 1) * 100 + 1;
+            if (fin === null) fin = c2 * 100;
+        } else {
+            const singleArabic = dateStr.match(/\b(\d{1,2})\s*(?:e|ème)?\s*siècle/i);
+            if (singleArabic) {
+                const c = parseInt(singleArabic[1], 10);
+                if (debut === null) debut = (c - 1) * 100 + 1;
+                if (fin === null) fin = c * 100;
+            }
+        }
+
+        // Années à 4 chiffres (ex: "1835", "1940-1944", "1793")
+        const annees4 = dateStr.match(/\b(1[0-9]{3}|20[0-9]{2})\b/g);
+        if (annees4 && annees4.length > 0) {
+            const parsed = annees4.map(a => parseInt(a, 10));
+            if (debut === null) debut = Math.min(...parsed);
+            if (fin === null && parsed.length > 1) fin = Math.max(...parsed);
+        }
+    }
+
+    return { debut, fin };
+}
+
+/**
+ * Détermine si un point, une étape ou un lieu historique existait déjà à l'époque de la carte sélectionnée.
+ * Prend en compte les siècles (romains et arabes) et les dates précises.
+ * @param {Object} item - Étape de parcours ou lieu historique
+ * @param {'esri'|'ign1950'|'etatmajor'} [fondKey] - Identifiant de la carte active (par défaut fondActif)
+ * @returns {boolean}
+ */
+function pointExistePourFond(item, fondKey = fondActif) {
+    if (!item) return true;
+
+    // Flags manuels explicites
+    if (fondKey === 'ign1950' && item.existeEn1950 !== undefined) {
+        return Boolean(item.existeEn1950);
+    }
+    if (fondKey === 'etatmajor' && item.existeEnEtatMajor !== undefined) {
+        return Boolean(item.existeEnEtatMajor);
+    }
+
+    const { debut, fin } = extraireAnneesItem(item);
+
+    // Carte d'État-Major (1820-1866)
+    if (fondKey === 'etatmajor') {
+        if (debut !== null && debut > 1866) return false;
+        if (fin !== null && fin < 1820) return false;
+        return true;
+    }
+
+    // Époque 1950 : Carte IGN 1950
+    if (fondKey === 'ign1950') {
+        if (debut !== null && debut > 1950) return false;
+        if (fin !== null && fin < 1950) return false;
+        return true;
+    }
+
+    // Carte contemporaine (Aujourd'hui)
+    if (fondKey === 'esri') {
+        if (fin !== null && fin < 2026 && (item.anneeFin !== undefined && item.anneeFin !== null)) {
+            return false;
+        }
+        return true;
+    }
+
+    return true;
+}
+
+/**
+ * Détermine si un point ou une étape historique existait déjà en 1950 (rétrocompatibilité).
+ * @param {Object} item - Étape ou lieu historique
+ * @returns {boolean}
+ */
+function pointExisteEn1950(item) {
+    return pointExistePourFond(item, 'ign1950');
+}
+
+// =============================================================================
+// PARTIE 2 : ÉTAT GLOBAL DE L'APPLICATION
+// =============================================================================
+
+let map = null;                    // Instance principale Leaflet
+let coucheActuelle = null;         // Calque Leaflet regroupant polyligne et marqueurs
+let marqueursActuels = [];         // Références des marqueurs actifs pour le ciblage
+let personnageActifId = null;      // Identifiant du personnage sélectionné
+let etapeActiveIndex = null;       // Index de l'étape active
+
+// Fonds contemporains Esri
+let tileEsriLight = null;          // Esri World Light Gray Base
+let tileEsriDark = null;           // Esri World Dark Gray Base
+let modeFondCarte = 'light';       // Mode clair/sombre par défaut
+let modeThemeContemporain = 'light'; // Mode clair/sombre mémorisé pour la carte contemporaine (Esri)
+
+// Fonds historiques IGN (opacité 80%)
+let tileIGN1950 = null;            // Topographie 1950
+let tileEtatMajor = null;          // État-Major 1820-1866
+let fondActif = 'esri';            // Époque active ('esri', 'ign1950', 'etatmajor')
+let fondJusticeActif = 'esri';     // Alias
+let filtreJusticeActif = 'tous';   // Filtre des lieux de justice
+
+// Calques catégorisés des lieux de justice
 const calquesJustice = {
-carceraux: null,               // Prisons (Montluc, Saint-Paul, Saint-Joseph, Fort de Côte-Lorette)
-juridiques: null,              // Tribunaux (Palais des 24 Colonnes, Tribunal Militaire, Cour Martiale)
-police: null                   // Centres de police et de torture (QG Gestapo Berthelot, Terminus, Milice)
+    juridiques: null,
+    carceraux: null,
+    memoire: null,
+    execution: null
 };
-window.calquesJustice = calquesJustice;
 
-// ==========================================================================
-// 3. GÉNÉRATEURS D'ICÔNES LEAFLET PERSONNALISÉES
-// ==========================================================================
-
-/**
-* Crée une icône HTML personnalisée (L.divIcon) pour les étapes des parcours résistants.
-* Utilise du code HTML et du CSS plutôt qu'une simple image statique pour afficher :
-* - Le numéro de l'étape au centre (1, 2, 3...)
-* - La couleur unique du résistant
-* - Une onde radar pulsante (marker-pulse)
-* 
-* @param {string} couleur - Code couleur hexadécimal (ex: '#e63946')
-* @param {number} numero - Numéro de l'étape à afficher (1, 2, 3...)
-* @param {boolean} estActif - Si vrai, applique la classe 'marker-actif' pour agrandir le marqueur
-* @returns {L.DivIcon} - Objet icône Leaflet prêt à être associé à un marqueur
-*/
-function creerIconeMarqueur(couleur, numero, estActif = false) {
-return L.divIcon({
-className: 'custom-marker-wrapper', // Classe conteneur sans bordure
-html: `
-<div class="custom-marker ${estActif ? 'marker-actif' : ''}" style="--marker-color: ${couleur};">
-<span class="marker-number">${numero}</span>
-<span class="marker-pulse"></span>
-</div>
-`,
-iconSize: [34, 34],       // Taille en pixels [largeur, hauteur]
-iconAnchor: [17, 17],     // Point d'ancrage physique au centre exact du marqueur
-popupAnchor: [0, -20]     // Décalage pour ouvrir la bulle popup au-dessus du marqueur
-});
-}
-
-/**
-* Crée une icône pour les lieux de justice avec son emoji distinctif (⛓️, ⚖️, 🚨).
-* 
-* @param {string} iconEmoji - Emoji représentatif (ex: '⚖️' ou '⛓️')
-* @param {string} couleur - Couleur thématique de la catégorie
-* @returns {L.DivIcon}
-*/
-function creerIconeJustice(iconEmoji, couleur) {
-return L.divIcon({
-className: 'custom-marker-wrapper',
-html: `
-<div class="justice-marker" style="--justice-color: ${couleur};">
-<span class="justice-emoji">${iconEmoji}</span>
-</div>
-`,
-iconSize: [32, 32],
-iconAnchor: [16, 16],
-popupAnchor: [0, -18]
-});
-}
-
-// ==========================================================================
-// 4. INITIALISATION DE LA CARTE LEAFLET & FONDS ESRI (initMap)
-// ==========================================================================
-
-// Variable globale conservant l'instance du ResizeObserver pour la carte Leaflet
 let mapResizeObserver = null;
 
+// =============================================================================
+// PARTIE 3 : INITIALISATION DE LA CARTE & GESTION DU THÈME
+// =============================================================================
+
 /**
- * Force le recalcul géométrique de la surface de la carte Leaflet de façon échelonnée.
- * Évite les artefacts visuels, les tuiles grises ou incomplètes lors des transitions DOM et du chargement réseau (GitHub Pages).
+ * Force le recalcul de la taille de la carte Leaflet de façon échelonnée.
  */
 function invaliderTailleCarte() {
     if (!map) return;
@@ -394,80 +713,64 @@ function invaliderTailleCarte() {
 }
 
 /**
- * Initialise le moteur cartographique Leaflet au premier affichage.
- * - Ne s'exécute qu'une seule fois grâce au test "if (map) return;".
- * - Configure le centre sur Lyon [45.7600, 4.8357] et le niveau de zoom (13).
- * - Prépare les tuiles Esri Canvas World Light Gray et Dark Gray.
+ * Initialise l'instance Leaflet et configure les couches cartographiques.
  */
 function initMap() {
-    if (map) return; // Si la carte existe déjà, on ne la réinitialise pas
+    if (map) return;
 
-    // Création de l'instance Leaflet attachée à l'élément HTML <div id="map">
     map = L.map('map', {
-        zoomControl: false // On désactive le zoom par défaut en haut à gauche pour éviter qu'il ne chevauche notre barre d'outils
-    }).setView([45.7600, 4.8357], 13); // [Latitude, Longitude] de Lyon, Zoom 13
+        zoomControl: false
+    }).setView([45.7600, 4.8357], 13);
     window.map = map;
 
-    // Repositionnement des boutons de zoom [+] et [-] en haut à droite
-    L.control.zoom({ position: 'topright' }).addTo(map);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Fond de carte clair officiel Esri World Light Gray (Mode par défaut)
+    // Tuiles contemporaines Esri (opacité 100%)
     tileEsriLight = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-        maxZoom: 16
+        maxZoom: 16,
+        opacity: 1.0
     });
 
-    // Fond de carte sombre officiel Esri World Dark Gray (Mode nuit)
     tileEsriDark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-        maxZoom: 16
+        maxZoom: 16,
+        opacity: 1.0
     });
 
-    // Couches historiques IGN Géoplateforme ouverte (différentes époques pour les lieux de justice)
+    // Tuiles historiques IGN (opacité fixée à 80%)
     tileIGN1950 = L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN50.1950&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
         attribution: 'IGN &mdash; Carte 1950 (Après-guerre)',
         maxZoom: 18,
-        minZoom: 6
+        minZoom: 6,
+        opacity: 0.8
     });
 
     tileEtatMajor = L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
         attribution: 'IGN &mdash; Carte d’État-Major (1820-1866)',
         maxZoom: 18,
-        minZoom: 6
+        minZoom: 6,
+        opacity: 0.8
     });
 
-    tileOrtho1950 = L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS.1950-1965&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
-        attribution: 'IGN &mdash; Vues aériennes historiques (1950-1965)',
-        maxZoom: 18,
-        minZoom: 6
-    });
-
-    window.tileIGN1950 = tileIGN1950;
-    window.tileEtatMajor = tileEtatMajor;
-    window.tileOrtho1950 = tileOrtho1950;
-    window.tileEsriLight = tileEsriLight;
-    window.tileEsriDark = tileEsriDark;
-
-    // Surveillance automatique des redimensionnements du conteneur (chargement de polices, rotation d'écran, ouverture du volet)
+    // Surveillance du redimensionnement du conteneur
     if (typeof ResizeObserver !== 'undefined' && !mapResizeObserver) {
         const mapContainer = document.getElementById('map');
         if (mapContainer) {
             mapResizeObserver = new ResizeObserver(() => {
-                if (map) {
-                    map.invalidateSize();
-                }
+                if (map) map.invalidateSize();
             });
             mapResizeObserver.observe(mapContainer);
         }
     }
 
-    // Écouteur de clic sur la carte : referme les panneaux d'options et le tiroir mobile
+    // Fermeture des modales et menus au clic sur la carte
     map.on('click', () => {
         fermerTousModals();
         fermerMenuMobile();
     });
 
-    // Activation du fond de carte initial et synchronisation de l'interrupteur
+    // Activation du fond initial
     if (modeFondCarte === 'dark') {
         tileEsriDark.addTo(map);
     } else {
@@ -475,380 +778,155 @@ function initMap() {
     }
     changerFondCarte(modeFondCarte);
 
-    // Initialisation des calques des Lieux de Justice (Prisons, Tribunaux, Gestapo)
+    // Initialisation des calques des Lieux de Justice
     initCalquesJustice();
 }
 
 /**
-* Bascule entre le mode sombre et le mode clair à l'aide du bouton carré unique.
-* Permute dynamiquement la couleur du bouton et son icône (☀️ / 🌙).
-*/
+ * Bascule le mode clair/sombre via le bouton d'en-tête.
+ */
 function basculerThemeUnique() {
     const nouveauMode = (modeFondCarte === 'light') ? 'dark' : 'light';
+    if (fondActif === 'esri') {
+        modeThemeContemporain = nouveauMode;
+    }
     changerFondCarte(nouveauMode);
 }
 
 /**
-* Bascule entre le mode sombre et le mode clair à l'aide de l'interrupteur à bascule (Switch).
-* Conservé pour rétro-compatibilité.
-* 
-* @param {boolean} estSombre - true si l'interrupteur est basculé sur Sombre, false sinon
-*/
+ * Bascule le mode clair/sombre (interrupteur optionnel).
+ * @param {boolean} estSombre
+ */
 function basculerModeSombreClair(estSombre) {
-const nouveauMode = estSombre ? 'dark' : 'light';
-changerFondCarte(nouveauMode);
+    const nouveauMode = estSombre ? 'dark' : 'light';
+    if (fondActif === 'esri') {
+        modeThemeContemporain = nouveauMode;
+    }
+    changerFondCarte(nouveauMode);
 }
 
 /**
-* Active le fond cartographique Esri clair ou sombre sur la carte Leaflet.
-* Synchronise également l'état du bouton carré unique (couleur et icône ☀️ / 🌙).
-* 
-* @param {'light'|'dark'} mode - 'light' pour le mode clair (Esri Gray Light), 'dark' pour le mode sombre (Esri Gray Dark)
-*/
+ * Applique le thème clair ou sombre sur la carte et l'interface.
+ * @param {'light'|'dark'} mode
+ */
 function changerFondCarte(mode) {
-if (!map) return;
-modeFondCarte = mode;
+    modeFondCarte = mode;
 
-// Si un fond historique IGN est actif en mode Justice, on préserve l'époque cartographique
-const estFondHistoriqueActif = (personnageActifId === null && (fondJusticeActif === 'ign1950' || fondJusticeActif === 'etatmajor' || fondJusticeActif === 'ortho1950'));
+    if (map) {
+        const estFondHistoriqueActif = (fondActif === 'ign1950' || fondActif === 'etatmajor');
 
-if (!estFondHistoriqueActif) {
-    if (mode === 'light') {
-        if (map.hasLayer(tileEsriDark)) map.removeLayer(tileEsriDark);
-        if (!map.hasLayer(tileEsriLight)) tileEsriLight.addTo(map);
-    } else {
-        if (map.hasLayer(tileEsriLight)) map.removeLayer(tileEsriLight);
-        if (!map.hasLayer(tileEsriDark)) tileEsriDark.addTo(map);
-    }
-}
-
-// Mise à jour visuelle du bouton carré unique (#theme-toggle-btn)
-const btnSquare = document.getElementById('theme-toggle-btn');
-const iconSquare = document.getElementById('theme-toggle-icon');
-if (iconSquare) {
-    iconSquare.textContent = (mode === 'dark') ? '☀️' : '🌙';
-}
-if (btnSquare) {
-    btnSquare.setAttribute('title', (mode === 'dark') ? 'Passer en mode clair (Soleil ☀️)' : 'Passer en mode sombre (Lune 🌙)');
-    btnSquare.setAttribute('aria-label', (mode === 'dark') ? 'Activer le mode clair' : 'Activer le mode sombre');
-}
-
-// Synchronisation de l'interrupteur switch (#theme-map-switch)
-const switchInput = document.getElementById('theme-map-switch');
-if (switchInput) {
-    switchInput.checked = (mode === 'dark');
-}
-
-// Synchronisation de l'attribut de thème sur le body pour adapter les styles CSS
-document.body.setAttribute('data-theme', mode);
-}
-
-// ==========================================================================
-// 5. GESTION DES CALQUES DE JUSTICE & RÉPRESSION
-// ==========================================================================
-
-/**
-* Construit les groupes de calques Leaflet (L.layerGroup) pour chaque catégorie :
-* - Carcéraux (Prisons)
-* - Juridiques (Tribunaux)
-* - Police (QG Gestapo, Milice)
-* Un LayerGroup permet d'afficher ou masquer tous les marqueurs d'une catégorie
-* en une seule opération sans recharger la page.
-*/
-function initCalquesJustice() {
-for (const catKey in dataLieuxJustice) {
-const cat = dataLieuxJustice[catKey];
-const group = L.layerGroup(); // Conteneur Leaflet pour cette catégorie
-
-cat.lieux.forEach((lieu, idx) => {
-// Création de l'icône personnalisée avec l'emoji de la catégorie
-const icon = creerIconeJustice(cat.icon, cat.color);
-const marker = L.marker(lieu.coords, { icon: icon });
-
-// Contenu HTML de la bulle d'information popup
-const popupContent = `
-<div class="popup-bubble">
-<div class="popup-badge" style="background: ${cat.color}">
-${cat.icon} ${cat.nomCategorie}
-</div>
-<h3 class="popup-title">${lieu.nom}</h3>
-<div class="popup-place">📍 ${lieu.adresse}</div>
-<p class="popup-text">${lieu.role}</p>
-</div>
-`;
-
-// Association du popup au marqueur
-marker.bindPopup(popupContent, {
-className: 'custom-leaflet-popup',
-maxWidth: 320
-});
-
-// Au clic sur le marqueur sur la carte :
-// Si le volet déroulant est fermé, la première chose à faire est de l'ouvrir,
-// puis de mettre en avant le lieu dans la liste déroulante !
-marker.on('click', () => {
-    const etaitFerme = estVoletFerme();
-    if (etaitFerme) {
-        assurerVoletOuvert();
-    }
-    mettreEnValeurLieuJusticeDansListe(catKey, idx);
-
-    // Défilement centré fluide (avec léger délai si le volet était en cours d'ouverture)
-    const delai = etaitFerme ? 300 : 60;
-    setTimeout(() => {
-        const card = document.querySelector(`.lieu-justice-card[data-cat="${catKey}"][data-index="${idx}"]`);
-        if (card) {
-            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-    }, delai);
-});
-
-lieu.marker = marker; // On mémorise la référence du marqueur pour pouvoir l'ouvrir depuis la liste
-group.addLayer(marker);
-});
-
-calquesJustice[catKey] = group;
-}
-}
-
-/**
- * Affiche ou masque un calque thématique de justice spécifique sur la carte Leaflet.
- * 
- * @param {'carceraux'|'juridiques'|'police'} categorie - Identifiant de la catégorie de lieux à manipuler :
- *   - 'carceraux' : Prisons et camps (Montluc, Saint-Paul, Saint-Joseph, Fort de Côte-Lorette)
- *   - 'juridiques' : Tribunaux d'exception et cours martiales (24 Colonnes, Tribunal Militaire)
- *   - 'police' : Centres de répression et torture (QG Gestapo Berthelot, Terminus, Milice)
- * @param {boolean} activer - État souhaité : true pour ajouter le calque sur la carte, false pour le retirer
- */
-function basculerCalqueJustice(categorie, activer) {
-    // Vérification de sécurité : la carte et le groupe de calques doivent être initialisés
-    if (!map || !calquesJustice[categorie]) return;
-
-    if (activer) {
-        // Ajoute le groupe de marqueurs à la carte s'il n'est pas déjà présent
-        if (!map.hasLayer(calquesJustice[categorie])) {
-            calquesJustice[categorie].addTo(map);
-        }
-    } else {
-        // Retire le groupe de marqueurs de la carte s'il est affiché
-        if (map.hasLayer(calquesJustice[categorie])) {
-            map.removeLayer(calquesJustice[categorie]);
-        }
-    }
-
-    // Actualise le badge indicateur du nombre de catégories actives
-    mettreAJourBadgeJustice();
-}
-
-/**
- * Commande rapide pour activer ou désactiver simultanément l'ensemble des lieux de justice.
- * 
- * @param {boolean} activer - true pour afficher tous les lieux (10 lieux), false pour tous les masquer
- */
-function toutBasculerJustice(activer) {
-    // Parcourt les 3 catégories de lieux patrimoniaux
-    ['carceraux', 'juridiques', 'police'].forEach(cat => {
-        // Synchronise l'état de la case à cocher dans l'interface utilisateur
-        const checkbox = document.getElementById(`toggle-${cat}`);
-        if (checkbox) checkbox.checked = activer;
-        // Applique l'état d'affichage sur la carte Leaflet
-        basculerCalqueJustice(cat, activer);
-    });
-}
-
-/**
- * Calcule et met à jour le badge numérique affichant le nombre de catégories actives.
- * Analyse les calques actuellement présents sur l'instance Leaflet et adapte le texte d'information.
- */
-function mettreAJourBadgeJustice() {
-    let count = 0;
-    // Compte le nombre de calques actifs sur la carte
-    ['carceraux', 'juridiques', 'police'].forEach(cat => {
-        if (map && map.hasLayer(calquesJustice[cat])) count++;
-    });
-
-    // Cible l'élément HTML du badge dans la barre d'outils
-    const badge = document.getElementById('justice-active-count');
-    if (badge) {
-        if (count > 0) {
-            // Affichage avec accord grammatical au pluriel
-            badge.textContent = `${count} actif${count > 1 ? 's' : ''}`;
-            badge.style.display = 'inline-block';
-        } else {
-            // Masque le badge si aucune catégorie n'est visible
-            badge.style.display = 'none';
-        }
-    }
-}
-
-// ==========================================================================
-// 6. GESTION DES FENÊTRES FLOTTANTES & GALERIE D'IMAGES
-// ==========================================================================
-
-/**
-* Base de données des images consultables dans la fenêtre flottante.
-* Chaque entrée contient un titre, le chemin de l'image locale et une légende explicative.
-*/
-const galerieImagesFlottantes = {
-'aerienne': {
-titre: "Photographie aérienne de Lyon",
-src: "images/fond_lyon.jpg",
-caption: "Vue aérienne haute résolution de Lyon, de la Presqu'île et de tous ses alentours"
-},
-'panorama': {
-titre: "Panorama de Fourvière & la Saône",
-src: "images/fond_lyon_panorama_saone.jpg",
-caption: "Vue panoramique emblématique de la colline de Fourvière et des quais de Saône"
-},
-'justice': {
-titre: "Palais de Justice historique de Lyon",
-src: "images/palais_justice.jpg",
-caption: "Les célèbres « 24 colonnes », haut lieu de justice et de répression durant l'Occupation"
-},
-'personnage': {
-titre: "Portrait du résistant actif",
-src: "images/jean_moulin.jpg",
-caption: "Photographie d'archive du personnage historique sélectionné"
-}
-};
-
-/**
- * Ouvre ou ferme la fenêtre flottante d'archive (#modal-image-flottante).
- * 
- * Fonctionnement technique :
- * - Bascule la classe CSS 'open' sur la boîte modale centrée par-dessus la carte.
- * - Active le voile semi-transparent d'arrière-plan (#modal-backdrop).
- * - Préserve l'état du volet latéral (menu déroulant) qui reste ouvert en arrière-plan.
- * - Récupère les données historiques du résistant sélectionné (ou Jean Moulin par défaut).
- * - Injecte dynamiquement le titre patrimonial, la source de l'image (img.src) et la légende.
- */
-function toggleModalImageFlottante() {
-    // 1. Récupération des éléments du DOM
-    const modalImage = document.getElementById("modal-image-flottante");
-    const modalBackdrop = document.getElementById("modal-backdrop");
-    
-    // Le menu déroulant/volet latéral n'est pas fermé, il reste ouvert comme demandé
-    if (modalImage) {
-        // Basculement de l'état ouvert/fermé de la modale
-        const estOuvert = modalImage.classList.toggle("open");
-        // Synchronisation du voile d'obscurcissement avec la présence de la modale
-        if (modalBackdrop) modalBackdrop.classList.toggle("active", estOuvert);
-        
-        if (estOuvert) {
-            // Sélection du personnage actif ou repli sur Jean Moulin
-            const p = (personnageActifId && dataPersonnes[personnageActifId]) ? dataPersonnes[personnageActifId] : dataPersonnes["jean_moulin"];
-            const titreEl = document.getElementById("floating-panel-title");
-            const imgEl = document.getElementById("floating-image-display");
-            const captionEl = document.getElementById("floating-image-caption-text");
-            
-            // Mise à jour textuelle du titre d'en-tête
-            if (titreEl) titreEl.textContent = "Photographie d'archive — " + p.nom;
-            // Chargement de l'image d'époque haute définition
-            if (imgEl) {
-                imgEl.src = p.img;
-                imgEl.alt = "Photographie d'archive de " + p.nom;
+        if (!estFondHistoriqueActif) {
+            if (mode === 'light') {
+                if (map.hasLayer(tileEsriDark)) map.removeLayer(tileEsriDark);
+                if (!map.hasLayer(tileEsriLight)) tileEsriLight.addTo(map);
+            } else {
+                if (map.hasLayer(tileEsriLight)) map.removeLayer(tileEsriLight);
+                if (!map.hasLayer(tileEsriDark)) tileEsriDark.addTo(map);
             }
-            // Affichage de la légende avec identité et rôle historique
-            if (captionEl) captionEl.textContent = p.nom + " (" + p.role + ")";
+        }
+
+        // Filtre sombre pour toutes les cartes historiques (permettant le mode sombre sur 100% des cartes)
+        const mapContainer = document.getElementById('map');
+        if (mapContainer) {
+            if (estFondHistoriqueActif && mode === 'dark') {
+                mapContainer.classList.add('map-dark-filter');
+            } else {
+                mapContainer.classList.remove('map-dark-filter');
+            }
         }
     }
-}
 
-/**
- * Déclenche le téléchargement direct de la photographie d'archive du personnage actif.
- * 
- * @param {MouseEvent|Event} [event] - Événement natif du clic utilisateur :
- *   - event.preventDefault() : empêche tout comportement de lien natif indésirable
- *   - event.stopPropagation() : bloque le bouillonnement de l'événement vers les conteneurs parents
- */
-function telechargerImageArchive(event) {
-    // Interception et neutralisation du comportement de clic par défaut
-    if (event) {
-        if (typeof event.preventDefault === 'function') event.preventDefault();
-        if (typeof event.stopPropagation === 'function') event.stopPropagation();
+    // Mise à jour de l'icône du bouton de thème avec SVG sobre
+    const iconSquare = document.getElementById('theme-toggle-icon');
+    const btnSquare = document.getElementById('theme-toggle-btn');
+    if (iconSquare) {
+        if (mode === 'dark') {
+            iconSquare.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
+        } else {
+            iconSquare.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+        }
     }
-    
-    // Identification de la fiche patrimoniale ciblée
-    const p = (personnageActifId && dataPersonnes[personnageActifId]) ? dataPersonnes[personnageActifId] : dataPersonnes["jean_moulin"];
-    // Génération d'un nom de fichier propre sans espaces ni caractères spéciaux (ex: jean_moulin.jpg)
-    const nomFichier = (p.nom ? p.nom.toLowerCase().replace(/[^a-z0-9]/g, '_') : 'image_archive') + '.jpg';
-    
-    // Création dynamique d'un élément d'ancrage invisible pour ordonner le téléchargement par le navigateur
-    const link = document.createElement('a');
-    link.href = p.img;          // Chemin relatif vers l'image dans le dossier images/
-    link.download = nomFichier;  // Attribut HTML5 ordonnant le téléchargement local du fichier
-    document.body.appendChild(link);
-    link.click();                // Simulation du clic de téléchargement
-    document.body.removeChild(link); // Nettoyage immédiat du nœud temporaire dans le DOM
-}
-
-/**
- * Ferme simultanément toutes les fenêtres flottantes et sous-menus ouverts :
- * - Masque la modale d'archive photo (#modal-image-flottante)
- * - Masque la modale des mentions légales (#modal-mentions-legales)
- * - Désactive les voiles sombres d'arrière-plan (#modal-backdrop, #legal-backdrop)
- * - Replie le menu déroulant des fonds de carte historiques
- */
-function fermerTousModals() {
-    // 1. Réinitialisation de la modale d'archive photographique
-    const modalImage = document.getElementById('modal-image-flottante');
-    if (modalImage) {
-        modalImage.classList.remove('open');
-        modalImage.classList.remove('fullscreen');
+    if (btnSquare) {
+        btnSquare.setAttribute('title', (mode === 'dark') ? 'Passer en mode clair' : 'Passer en mode sombre');
+        btnSquare.setAttribute('aria-label', (mode === 'dark') ? 'Activer le mode clair' : 'Activer le mode sombre');
     }
 
-    // 2. Fermeture de la modale des mentions légales
-    fermerModalMentionsLegales();
+    const switchInput = document.getElementById('theme-map-switch');
+    if (switchInput) switchInput.checked = (mode === 'dark');
 
-    // 3. Masquage du voile d'obscurcissement principal
-    const backdrop = document.getElementById('modal-backdrop');
-    if (backdrop) backdrop.classList.remove('active');
-
-    // 4. Repliement du sélecteur d'époques cartographiques
-    fermerDropdownFondsJustice();
+    document.body.setAttribute('data-theme', mode);
+    actualiserVisibiliteBoutonTheme(fondActif);
 }
 
 /**
- * Déploie la boîte modale des Mentions Légales, de l'hébergeur et des crédits iconographiques.
- * Active également le voile sombre (#legal-backdrop) pour isoler la fenêtre d'information.
+ * Met à jour la visibilité du bouton de thème (Clair / Sombre) :
+ * Désormais toujours visible et accessible sur toutes les cartes.
+ * @param {'esri'|'ign1950'|'etatmajor'} [fondKey]
  */
-function ouvrirModalMentionsLegales() {
-    const modal = document.getElementById('modal-mentions-legales');
-    const backdrop = document.getElementById('legal-backdrop');
-    if (modal) modal.classList.add('open');        // Rend la modale visible au centre
-    if (backdrop) backdrop.classList.add('active'); // Assombrit le fond de page
+function actualiserVisibiliteBoutonTheme(fondKey = fondActif) {
+    const btnSquare = document.getElementById('theme-toggle-btn');
+    if (btnSquare) {
+        btnSquare.classList.remove('is-hidden');
+        btnSquare.style.display = '';
+    }
 }
 
 /**
- * Ferme la boîte modale des Mentions Légales et désactive son voile d'arrière-plan.
+ * Crée une icône Leaflet HTML numérotée pour les étapes d'un personnage.
+ * @param {string} couleur
+ * @param {number} numero
+ * @param {boolean} estActif
+ * @returns {L.DivIcon}
  */
-function fermerModalMentionsLegales() {
-    const modal = document.getElementById('modal-mentions-legales');
-    const backdrop = document.getElementById('legal-backdrop');
-    if (modal) modal.classList.remove('open');        // Masque la boîte d'information
-    if (backdrop) backdrop.classList.remove('active'); // Restaure la luminosité de l'écran
+function creerIconeMarqueur(couleur, numero, estActif = false) {
+    return L.divIcon({
+        className: 'custom-marker-wrapper',
+        html: `
+            <div class="custom-marker ${estActif ? 'marker-actif' : ''}" style="--marker-color: ${couleur};">
+                <span class="marker-number">${numero}</span>
+                <span class="marker-pulse"></span>
+            </div>
+        `,
+        iconSize: [34, 34],
+        iconAnchor: [17, 17],
+        popupAnchor: [0, -20]
+    });
 }
 
 /**
- * Déploie ou replie le menu déroulant accordéon de sélection des fonds de plan d'époque (Mode Justice).
- * Met à jour l'accessibilité ARIA (aria-expanded) pour les lecteurs d'écran.
+ * Crée une icône Leaflet pour les lieux de justice avec emoji de catégorie.
+ * @param {string} iconEmoji
+ * @param {string} couleur
+ * @returns {L.DivIcon}
  */
+function creerIconeJustice(iconEmoji, couleur) {
+    return L.divIcon({
+        className: 'custom-marker-wrapper',
+        html: `
+            <div class="justice-marker" style="--justice-color: ${couleur};">
+                <span class="justice-emoji">${iconEmoji}</span>
+            </div>
+        `,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+        popupAnchor: [0, -18]
+    });
+}
+
+// =============================================================================
+// PARTIE 4 : ÉPOQUES CARTOGRAPHIQUES & FONDS DE CARTE
+// =============================================================================
+
 function toggleDropdownFondsJustice() {
     const dropdown = document.getElementById('dropdown-fonds-justice');
     const wrapper = document.getElementById('justice-fond-wrapper');
     const btn = document.getElementById('btn-fond-justice');
     if (!dropdown) return;
-
-    // Bascule la classe 'open' et récupère l'état booléen résultant
     const estOuvert = dropdown.classList.toggle('open');
     if (wrapper) wrapper.classList.toggle('open', estOuvert);
-    // Met à jour l'attribut d'accessibilité pour malvoyants
     if (btn) btn.setAttribute('aria-expanded', estOuvert ? 'true' : 'false');
 }
 
-/**
- * Referme immédiatement le menu déroulant de sélection des fonds de plan historiques.
- */
 function fermerDropdownFondsJustice() {
     const dropdown = document.getElementById('dropdown-fonds-justice');
     const wrapper = document.getElementById('justice-fond-wrapper');
@@ -858,291 +936,240 @@ function fermerDropdownFondsJustice() {
     if (btn) btn.setAttribute('aria-expanded', 'false');
 }
 
-/**
- * Bascule dynamiquement l'époque cartographique affichée en mode Lieux de Justice & Répression :
- * 
- * @param {'esri'|'ign1950'|'etatmajor'|'ortho1950'} fondKey - Clé d'identification de l'époque cartographique :
- *   - 'esri' : Carte contemporaine vectorielle Esri Canvas (avec switch clair/sombre)
- *   - 'ign1950' : Carte topographique IGN 1950 de l'après-guerre et de la Libération de Lyon
- *   - 'etatmajor' : Carte d'État-Major militaire 1820-1866 gravée au XIXe siècle
- *   - 'ortho1950' : Mosaïque de photographies aériennes d'archive IGN 1950-1965
- * 
- * Avantage architectural :
- * Toutes les couches sont de véritables tuiles Leaflet déplaçables et zoomables.
- * Les marqueurs des lieux de justice restent superposés et cliquables au-dessus des cartes d'époque.
- */
-function choisirFondPlanJustice(fondKey) {
-    // 1. Fermeture du menu accordéon déroulant après sélection
-    fermerDropdownFondsJustice();
-    fondJusticeActif = fondKey; // Mémorisation de l'époque sélectionnée
+function toggleDropdownFondsPersonne() {
+    const dropdown = document.getElementById('dropdown-fonds-personne');
+    const wrapper = document.getElementById('personne-fond-wrapper');
+    const btn = document.getElementById('btn-fond-personne');
+    if (!dropdown) return;
+    const estOuvert = dropdown.classList.toggle('open');
+    if (wrapper) wrapper.classList.toggle('open', estOuvert);
+    if (btn) btn.setAttribute('aria-expanded', estOuvert ? 'true' : 'false');
+}
 
-    // 2. Mise à jour de la surbrillance visuelle de l'option active dans le menu
-    document.querySelectorAll('#dropdown-fonds-justice .fond-option').forEach(opt => {
+function fermerDropdownFondsPersonne() {
+    const dropdown = document.getElementById('dropdown-fonds-personne');
+    const wrapper = document.getElementById('personne-fond-wrapper');
+    const btn = document.getElementById('btn-fond-personne');
+    if (dropdown) dropdown.classList.remove('open');
+    if (wrapper) wrapper.classList.remove('open');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+}
+
+function fermerTousDropdownsFonds() {
+    fermerDropdownFondsJustice();
+    fermerDropdownFondsPersonne();
+}
+
+/**
+ * Change l'époque cartographique affichée sur Leaflet (Esri, IGN 1950, État-Major).
+ * @param {'esri'|'ign1950'|'etatmajor'} fondKey
+ */
+function annoncerAccessibilite(texte) {
+    const liveRegion = document.getElementById('a11y-live-region');
+    if (liveRegion && texte) {
+        liveRegion.textContent = '';
+        setTimeout(() => {
+            liveRegion.textContent = texte;
+        }, 50);
+    }
+}
+
+function choisirFondPlan(fondKey) {
+    fermerTousDropdownsFonds();
+    fondActif = fondKey;
+    fondJusticeActif = fondKey;
+
+    // Mise à jour visuelle des sélecteurs
+    document.querySelectorAll('.fond-option').forEach(opt => {
         opt.classList.toggle('active', opt.getAttribute('data-fond') === fondKey);
     });
 
-    // 3. Récupération des éléments du DOM
-    const btnText = document.getElementById('btn-fond-justice-text');
-    const bgMapImg = document.getElementById('map-image-background');
-    const themeSwitchWrapper = document.getElementById('theme-toggle-btn') || document.getElementById('theme-switch-wrapper');
-    const interactiveContent = document.getElementById('justice-interactive-content');
-    const imageNotice = document.getElementById('justice-image-notice');
+    // Synchronisation de la barre d'époque d'en-tête
+    document.querySelectorAll('.epoch-pill').forEach(pill => {
+        const estActif = (pill.getAttribute('data-fond') === fondKey);
+        pill.classList.toggle('active', estActif);
+        pill.setAttribute('aria-pressed', estActif ? 'true' : 'false');
+    });
 
-    // 4. Libellés clairs affichés sur le bouton principal du sélecteur
     const labels = {
-        'esri': 'Carte contemporaine',
-        'ign1950': 'Carte IGN 1950',
-        'etatmajor': 'Carte d\'État-Major',
-        'ortho1950': 'Photos aériennes 1950'
+        'esri': "Aujourd'hui",
+        'ign1950': '1950',
+        'etatmajor': '1820–1866'
     };
-    if (btnText && labels[fondKey]) {
-        btnText.textContent = labels[fondKey];
+
+    const btnTextJustice = document.getElementById('btn-fond-justice-text');
+    if (btnTextJustice && labels[fondKey]) btnTextJustice.textContent = labels[fondKey];
+
+    const btnTextPersonne = document.getElementById('btn-fond-personne-text');
+    if (btnTextPersonne && labels[fondKey]) btnTextPersonne.textContent = labels[fondKey];
+
+    if (labels[fondKey]) {
+        annoncerAccessibilite(`Époque cartographique active : ${labels[fondKey]}`);
     }
 
-    // 5. Masquage de tout arrière-plan statique au profit du moteur Leaflet
-    if (bgMapImg) bgMapImg.style.display = 'none';
+    // Application du thème sombre/clair choisi sur l'ensemble des cartes
+    changerFondCarte(modeFondCarte);
+    actualiserVisibiliteBoutonTheme(fondKey);
 
-    // 6. Remplacement propre de la couche cartographique de base sur Leaflet
+    // Permutation des couches Leaflet & Opacité à 80% sur toutes les cartes historiques
     if (map) {
-        // Retrait des anciennes couches pour éviter toute superposition inutile en mémoire
-        [tileEsriLight, tileEsriDark, tileIGN1950, tileEtatMajor, tileOrtho1950].forEach(couche => {
-            if (couche && map.hasLayer(couche)) {
-                map.removeLayer(couche);
-            }
+        [tileEsriLight, tileEsriDark, tileIGN1950, tileEtatMajor].forEach(couche => {
+            if (couche && map.hasLayer(couche)) map.removeLayer(couche);
         });
 
-        // Activation de la couche de tuiles sélectionnée
         if (fondKey === 'ign1950') {
-            if (tileIGN1950) tileIGN1950.addTo(map);
+            if (tileIGN1950) {
+                tileIGN1950.setOpacity(0.8);
+                tileIGN1950.addTo(map);
+            }
         } else if (fondKey === 'etatmajor') {
-            if (tileEtatMajor) tileEtatMajor.addTo(map);
-        } else if (fondKey === 'ortho1950') {
-            if (tileOrtho1950) tileOrtho1950.addTo(map);
+            if (tileEtatMajor) {
+                tileEtatMajor.setOpacity(0.8);
+                tileEtatMajor.addTo(map);
+            }
         } else {
-            // Carte contemporaine Esri (synchronisée avec le thème clair/sombre)
+            // Carte contemporaine Esri (opacité normale à 100%)
             if (modeFondCarte === 'dark') {
-                if (tileEsriDark) tileEsriDark.addTo(map);
+                if (tileEsriDark) {
+                    tileEsriDark.setOpacity(1.0);
+                    tileEsriDark.addTo(map);
+                }
             } else {
-                if (tileEsriLight) tileEsriLight.addTo(map);
+                if (tileEsriLight) {
+                    tileEsriLight.setOpacity(1.0);
+                    tileEsriLight.addTo(map);
+                }
             }
         }
     }
 
-    // 7. Maintien des filtres et de la liste des lieux interactifs sur toutes les époques
-    if (interactiveContent) interactiveContent.style.display = 'block';
-    if (imageNotice) imageNotice.style.display = 'none';
-
-    // 8. Préservation du bouton de thème UI dans le header
-    if (themeSwitchWrapper) themeSwitchWrapper.style.display = 'inline-flex';
-}
-
-/**
- * Ferme le volet latéral sur ordinateur (PC) lorsqu'on clique sur la croix ✕.
- * 
- * Fonctionnement technique :
- * - Ajoute la classe 'desktop-collapsed' sur #sidebar pour le translater hors de l'écran.
- * - Rend visible le bouton central bas 'Menu' pour permettre sa réouverture à tout moment.
- * - Déclenche map.invalidateSize() après l'animation CSS (360ms) pour adapter la surface de la carte.
- */
-function fermerSidebarDesktop() {
-    const sidebar = document.getElementById('sidebar');
-    const menuToggle = document.getElementById('menu-toggle');
-    if (sidebar) sidebar.classList.add('desktop-collapsed');
-    if (menuToggle) {
-        menuToggle.classList.add('pc-visible');
-        menuToggle.classList.remove('hidden');
-    }
-    invaliderTailleCarte();
-    setTimeout(() => {
-        invaliderTailleCarte();
-    }, 360);
-}
-
-/**
- * Réaffiche le volet latéral sur ordinateur (PC) après une fermeture.
- * 
- * Fonctionnement technique :
- * - Retire la classe 'desktop-collapsed' sur #sidebar pour réintégrer le volet latéral.
- * - Masque le bouton central bas 'Menu'.
- * - Recalcule la géométrie Leaflet (invaliderTailleCarte).
- */
-function ouvrirSidebarDesktop() {
-    const sidebar = document.getElementById('sidebar');
-    const menuToggle = document.getElementById('menu-toggle');
-    if (sidebar) sidebar.classList.remove('desktop-collapsed');
-    if (menuToggle) {
-        menuToggle.classList.remove('pc-visible');
-    }
-    invaliderTailleCarte();
-    setTimeout(() => {
-        invaliderTailleCarte();
-    }, 360);
-}
-
-/**
- * Détermine si le volet latéral d'informations est actuellement masqué ou replié.
- * 
- * @returns {boolean} true si le volet est fermé (sur PC via 'desktop-collapsed' ou sur mobile sans 'open')
- */
-function estVoletFerme() {
-    const sidebar = document.getElementById('sidebar');
-    if (!sidebar) return false;
-    if (window.innerWidth >= 768) {
-        return sidebar.classList.contains('desktop-collapsed');
-    } else {
-        return !sidebar.classList.contains('open');
-    }
-}
-
-/**
- * Ouvre automatiquement le volet d'information s'il était fermé (sur PC ou smartphone).
- * Appelé automatiquement lorsqu'un marqueur d'étape ou de lieu de justice est cliqué sur la carte.
- */
-function assurerVoletOuvert() {
-    const sidebar = document.getElementById('sidebar');
-    if (!sidebar) return;
-    if (window.innerWidth >= 768) {
-        if (sidebar.classList.contains('desktop-collapsed')) {
-            ouvrirSidebarDesktop();
+    // Mise à jour du filtrage temporel selon l'époque active sur le parcours de résistant
+    if (personnageActifId && dataPersonnes[personnageActifId]) {
+        if (etapeActiveIndex !== null) {
+            const etape = dataPersonnes[personnageActifId].etapes[etapeActiveIndex];
+            if (!pointExistePourFond(etape, fondKey)) {
+                etapeActiveIndex = null;
+                if (map) map.closePopup();
+            }
         }
-    } else {
-        if (!sidebar.classList.contains('open')) {
-            ouvrirMenuMobile();
+        afficherParcoursSurCarte(dataPersonnes[personnageActifId]);
+        actualiserFiltreTemporelEtapes();
+    } else if (map) {
+        // En vue Justice : fermer la bulle popup si le lieu ciblé n'existait pas à l'époque choisie
+        for (const catKey in dataLieuxJustice) {
+            const cat = dataLieuxJustice[catKey];
+            cat.lieux.forEach(l => {
+                if (!pointExistePourFond(l, fondKey) && l.marker && l.marker.isPopupOpen && l.marker.isPopupOpen()) {
+                    map.closePopup();
+                }
+            });
         }
     }
+
+    // Mise à jour du filtrage temporel sur les lieux de justice
+    actualiserMarqueursJustice();
+    afficherLieuxJusticeDansListe(filtreJusticeActif);
+    peuplerSelectGpsJustice(filtreJusticeActif);
+
+    // Recentre la vue sur l'ensemble des points de la carte active
+    setTimeout(() => {
+        recentrerVuePage();
+    }, 60);
 }
 
-// Fermeture du menu déroulant de fond au clic à l'extérieur
+// Fermeture des menus au clic extérieur
 document.addEventListener('click', (e) => {
-    const wrap = document.getElementById('justice-fond-wrapper');
-    if (wrap && !wrap.contains(e.target)) {
-        fermerDropdownFondsJustice();
+    const wrapJustice = document.getElementById('justice-fond-wrapper');
+    const wrapPerso = document.getElementById('personne-fond-wrapper');
+    const clicDansJustice = wrapJustice && wrapJustice.contains(e.target);
+    const clicDansPerso = wrapPerso && wrapPerso.contains(e.target);
+    if (!clicDansJustice && !clicDansPerso) {
+        fermerTousDropdownsFonds();
     }
 });
 
-// Écouteur global sur la touche Échap (Escape) pour fermer rapidement toute boîte ouverte
-window.addEventListener('keydown', (e) => {
-if (e.key === 'Escape') {
-fermerTousModals();
-}
-});
-
-// ==========================================================================
-// 7. NAVIGATION & CHANGEMENT DE PAGE (ACCUEIL ⟷ CARTE)
-// ==========================================================================
+// =============================================================================
+// PARTIE 5 : NAVIGATION PRINCIPALE (ACCUEIL ⟷ CARTE)
+// =============================================================================
 
 /**
- * Ouvre l'application cartographique interactive depuis la page d'accueil pour une figure historique :
- * 
- * Séquence d'exécution :
- * 1. Masque l'écran d'accueil (#landing display: none)
- * 2. Rend visible l'application cartographique (#app display: flex)
- * 3. Configure la barre de navigation supérieure (titre du résistant, bouton portrait)
- * 4. Initialise ou réutilise l'instance Leaflet (initMap)
- * 5. Ferme le volet par défaut pour offrir une vue plein écran immédiate de la carte
- * 6. Nettoie les calques obsolètes et réactive le fond contemporain Esri
- * 7. Après un délai de 150ms pour le rendu CSS, force le recalcul dimensionnel (map.invalidateSize)
- * 8. Charge le résistant sélectionné (selectionnerPersonne)
- * 
- * @param {'jean_moulin'|'klaus_barbie'|'lucie_aubrac'} id - Identifiant unique de la personnalité historique
+ * Lance l'application cartographique sur le parcours d'un résistant.
+ * @param {'jean_moulin'|'klaus_barbie'|'lucie_aubrac'} id
  */
 function ouvrirCarte(id) {
-    // 1. Transition d'écrans : masquage de l'accueil, affichage du conteneur cartographique
     document.getElementById('landing').style.display = 'none';
     const appEl = document.getElementById('app');
     appEl.style.display = 'flex';
 
-    // 2. Configuration des contrôles supérieurs spécifiques au mode Résistant
-    const btnPortrait = document.getElementById('btn-image-personnage');
-    const wrapFondJustice = document.getElementById('justice-fond-wrapper');
     const titleBadge = document.getElementById('header-context-title');
-    const themeSwitchWrap = document.getElementById('theme-toggle-btn') || document.getElementById('theme-switch-wrapper');
-    const bgImg = document.getElementById('map-image-background');
-
-    if (btnPortrait) btnPortrait.style.display = 'flex';
-    if (wrapFondJustice) wrapFondJustice.style.display = 'none';
-    if (themeSwitchWrap) themeSwitchWrap.style.display = 'flex';
-    if (bgImg) bgImg.style.display = 'none';
+    const subBadge = document.getElementById('header-context-sub');
+    if (subBadge) subBadge.textContent = "Parcours";
     if (id && dataPersonnes[id] && titleBadge) {
         titleBadge.textContent = dataPersonnes[id].nom;
     }
 
-    // 3. Initialisation de la carte Leaflet
     initMap();
 
-    // 4. Par défaut, repliement initial du volet pour offrir une vue dégagée de Lyon
+    const searchInput = document.getElementById('global-search-input');
+    const searchResults = document.getElementById('search-results');
+    if (searchInput) {
+        searchInput.value = '';
+        searchInput.placeholder = (id && dataPersonnes[id]) ? `Rechercher dans ce parcours...` : "Rechercher une étape...";
+    }
+    if (searchResults) searchResults.classList.remove('active');
+
+    // Volet fermé d'office au lancement pour dégager la carte
     if (window.innerWidth >= 768) {
         fermerSidebarDesktop();
     } else {
         fermerMenuMobile();
     }
 
-    // Synchronisation de l'attribut de thème visuel
     document.body.setAttribute('data-theme', modeFondCarte);
 
-    // 5. Nettoyage des couches historiques IGN au profit du fond contemporain Esri
-    if (map) {
-        [tileIGN1950, tileEtatMajor, tileOrtho1950].forEach(couche => {
-            if (couche && map.hasLayer(couche)) map.removeLayer(couche);
-        });
-        if (modeFondCarte === 'dark') {
-            if (map.hasLayer(tileEsriLight)) map.removeLayer(tileEsriLight);
-            if (!map.hasLayer(tileEsriDark)) tileEsriDark.addTo(map);
-        } else {
-            if (map.hasLayer(tileEsriDark)) map.removeLayer(tileEsriDark);
-            if (!map.hasLayer(tileEsriLight)) tileEsriLight.addTo(map);
-        }
-    }
-
-    // 6. Recalcul échelonné de la géométrie de la fenêtre Leaflet pour éviter tout artefact ou tuile grise sur GitHub Pages
-    invaliderTailleCarte();
+    // Initialisation sur le fond contemporain par défaut
+    choisirFondPlan('esri');
 
     setTimeout(() => {
-        invaliderTailleCarte();
+        map.invalidateSize();
 
-        // Masquage des calques de justice pour ne conserver que le résistant demandé
-        ['carceraux', 'juridiques', 'police'].forEach(cat => {
+        // Désactivation des calques de justice pour isoler le résistant
+        ['juridiques', 'carceraux', 'memoire', 'execution'].forEach(cat => {
             if (map && calquesJustice[cat] && map.hasLayer(calquesJustice[cat])) {
                 map.removeLayer(calquesJustice[cat]);
             }
-            const chk = document.getElementById(`toggle-${cat}`);
-            if (chk) chk.checked = false;
         });
-        mettreAJourBadgeJustice();
 
-        // 7. Déploiement des données du résistant (étapes, marqueurs, tracé)
         if (id && dataPersonnes[id]) {
-            if (titleBadge) titleBadge.textContent = dataPersonnes[id].nom;
             selectionnerPersonne(id);
         }
-    }, 120);
+    }, 150);
 }
 
 /**
- * Ouvre la carte en mode thématique "Lieux de Justice & Répression" (4e tuile de l'accueil) :
- * - Active la vue latérale dédiée avec filtres par catégorie (Prisons, Tribunaux, Police)
- * - Déploie les sélecteurs de fonds cartographiques historiques (IGN 1950, État-Major 1820, Photos aériennes)
- * - Initialise la carte et active simultanément les 10 lieux historiques
+ * Lance l'application cartographique sur le mode Lieux de Justice.
  */
 function ouvrirCarteJustice() {
-    // 1. Transition d'écrans
     document.getElementById('landing').style.display = 'none';
     const appEl = document.getElementById('app');
     appEl.style.display = 'flex';
 
-    // 2. Ajustement des éléments du bandeau supérieur
-    const btnPortrait = document.getElementById('btn-image-personnage');
-    const wrapFondJustice = document.getElementById('justice-fond-wrapper');
     const titleBadge = document.getElementById('header-context-title');
+    const subBadge = document.getElementById('header-context-sub');
+    if (subBadge) subBadge.textContent = "Patrimoine";
+    if (titleBadge) titleBadge.textContent = "Lieux de Justice";
+    annoncerAccessibilite("Affichage de la carte : Lieux de Justice");
 
-    if (btnPortrait) btnPortrait.style.display = 'none';
-    if (wrapFondJustice) wrapFondJustice.style.display = 'flex';
-    if (titleBadge) titleBadge.textContent = "Lieux de Justice & Répression";
-
-    // 3. Initialisation de la carte Leaflet
     initMap();
 
-    // 4. Repliement du volet par défaut à l'ouverture pour libérer la carte
+    const searchInput = document.getElementById('global-search-input');
+    const searchResults = document.getElementById('search-results');
+    if (searchInput) {
+        searchInput.value = '';
+        searchInput.placeholder = "Rechercher parmi les lieux de justice...";
+    }
+    if (searchResults) searchResults.classList.remove('active');
+
     if (window.innerWidth >= 768) {
         fermerSidebarDesktop();
     } else {
@@ -1151,455 +1178,167 @@ function ouvrirCarteJustice() {
 
     document.body.setAttribute('data-theme', modeFondCarte);
 
-    // 5. Recalcul échelonné et initialisation des calques après affichage CSS
-    invaliderTailleCarte();
-
     setTimeout(() => {
-        invaliderTailleCarte();
+        map.invalidateSize();
 
-        // Nettoyer les éventuels tracés de résistant précédents
+        // Nettoyage des tracés de résistant
         if (coucheActuelle) {
             map.removeLayer(coucheActuelle);
             coucheActuelle = null;
             marqueursActuels = [];
         }
-        if (coucheLigneItineraire) {
-            map.removeLayer(coucheLigneItineraire);
-            coucheLigneItineraire = null;
-        }
         personnageActifId = null;
         etapeActiveIndex = null;
 
-        // Basculer l'affichage du volet latéral sur la vue Justice
+        // Affichage de la vue Justice dans le volet
         const detailView = document.getElementById('sidebar-detail-view');
         const justiceView = document.getElementById('sidebar-justice-view');
         if (detailView) detailView.style.display = 'none';
         if (justiceView) justiceView.style.display = 'flex';
 
-        // Mettre à jour le texte du bouton d'ouverture mobile (texte seul, sans icône)
-        const menuToggle = document.getElementById('menu-toggle');
-        if (menuToggle) {
-            menuToggle.textContent = 'Menu';
-        }
+        actualiserTexteMenuToggle('Voir les lieux');
 
-        // Rétablir le fond vectoriel Esri standard par défaut avec switch visible
-        choisirFondPlanJustice('esri');
-
-        // Activer par défaut tous les lieux de justice
+        choisirFondPlan('esri');
         filtrerJustice('tous');
+        peuplerSelectGpsJustice('tous');
     }, 150);
 }
 
-// ==========================================================================
-// 8. MODULE DES LIEUX DE JUSTICE & RÉPRESSION
-// ==========================================================================
-
 /**
- * Filtre les lieux de justice affichés sur la carte Leaflet et dans la liste latérale :
- * - 'tous' : Affiche simultanément l'ensemble des 10 lieux historiques
- * - 'carceraux' : Affiche exclusivement les 4 prisons et lieux d'internement
- * - 'juridiques' : Affiche exclusivement les 3 cours d'exception et tribunaux
- * - 'police' : Affiche exclusivement les 3 centres de torture et sièges répressifs
- * 
- * @param {'tous'|'carceraux'|'juridiques'|'police'} categorie - Identifiant du filtre sélectionné par l'utilisateur
- */
-function filtrerJustice(categorie) {
-    // 1. Mise à jour de l'apparence active des boutons pilules de filtre
-    document.querySelectorAll('.filter-pill').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-filter') === categorie);
-    });
-
-    // 2. Initialisation de la boîte géographique Leaflet pour le recadrage automatique
-    const bounds = L.latLngBounds([]);
-
-    // 3. Activation ou désactivation des calques Leaflet selon le filtre
-    if (categorie === 'tous') {
-        ['carceraux', 'juridiques', 'police'].forEach(cat => {
-            basculerCalqueJustice(cat, true);
-            const chk = document.getElementById(`toggle-${cat}`);
-            if (chk) chk.checked = true;
-        });
-    } else {
-        ['carceraux', 'juridiques', 'police'].forEach(cat => {
-            const activer = (cat === categorie);
-            basculerCalqueJustice(cat, activer);
-            const chk = document.getElementById(`toggle-${cat}`);
-            if (chk) chk.checked = activer;
-        });
-    }
-
-    // 4. Régénération des cartes de bâtiments dans le volet déroulant
-    afficherLieuxJusticeDansListe(categorie);
-
-    // 5. Calcul des limites géographiques pour ajuster la vue
-    const activeCats = (categorie === 'tous') ? ['carceraux', 'juridiques', 'police'] : [categorie];
-    activeCats.forEach(cat => {
-        if (dataLieuxJustice[cat]) {
-            dataLieuxJustice[cat].lieux.forEach(l => {
-                bounds.extend(l.coords);
-            });
-        }
-    });
-
-    // 6. Recadrage fluide de la caméra Leaflet sur l'emprise des lieux sélectionnés
-    if (bounds.isValid() && map) {
-        map.fitBounds(bounds, {
-            padding: [50, 50],
-            maxZoom: 14
-        });
-    }
-}
-
-/**
- * Génère dynamiquement les fiches HTML de chaque lieu historique dans la liste du volet latéral.
- * 
- * @param {string} filtre - Identifiant de la catégorie affichée ('tous', 'carceraux', 'juridiques', 'police')
- */
-function afficherLieuxJusticeDansListe(filtre) {
-    // 1. Récupération du conteneur parent dans le DOM
-    const conteneur = document.getElementById('liste-lieux-justice');
-    const titleEl = document.getElementById('justice-list-title');
-    if (!conteneur) return;
-    conteneur.innerHTML = ''; // Réinitialisation propre de la liste avant réinsertion
-
-    // 2. Sélection des catégories à parcourir
-    const categories = (filtre === 'tous') ? ['carceraux', 'juridiques', 'police'] : [filtre];
-
-    // 3. Dictionnaire des titres avec compteurs
-    const titresFiltres = {
-        'tous': 'Tous les lieux historiques (10)',
-        'carceraux': 'Prisons & Lieux carcéraux (4)',
-        'juridiques': 'Tribunaux & Lieux juridiques (3)',
-        'police': 'Lieux de Police & Répression (3)'
-    };
-
-    if (titleEl && titresFiltres[filtre]) {
-        titleEl.textContent = titresFiltres[filtre];
-    }
-
-    // 4. Création des cartes pour chaque lieu
-    categories.forEach(catKey => {
-        const cat = dataLieuxJustice[catKey];
-        if (!cat) return;
-
-        cat.lieux.forEach((lieu, idx) => {
-            const card = document.createElement('div');
-            card.className = 'lieu-justice-card';
-            card.setAttribute('data-cat', catKey);
-            card.setAttribute('data-index', idx);
-            card.innerHTML = `
-                <div class="lieu-badge" style="background-color: ${cat.color};">
-                    ${cat.icon}
-                </div>
-                <div class="lieu-info">
-                    <div class="lieu-header">
-                        <span class="lieu-titre">${lieu.nom}</span>
-                        <span class="lieu-cat-tag" style="color: ${cat.color};">${cat.nomCategorie}</span>
-                    </div>
-                    <span class="lieu-adresse">📍 ${lieu.adresse}</span>
-                    <p class="lieu-desc">${lieu.role}</p>
-                </div>
-            `;
-
-            // Clic sur la carte : focalise la caméra et déploie le popup
-            card.addEventListener('click', () => {
-                focusSurLieuJustice(catKey, idx);
-            });
-
-            conteneur.appendChild(card);
-        });
-    });
-}
-
-/**
- * Centre la caméra Leaflet sur un lieu de justice et déploie sa bulle popup descriptive :
- * - Déplace la carte via une trajectoire aérienne fluide (map.flyTo)
- * - Assure l'ouverture automatique de l'infobulle (popup)
- * - Sur smartphone, replie le tiroir pour laisser admirer le bâtiment
- * 
- * @param {'carceraux'|'juridiques'|'police'} catKey - Catégorie du lieu sélectionné
- * @param {number} idx - Index du lieu au sein du tableau de sa catégorie
- */
-function focusSurLieuJustice(catKey, idx) {
-    const cat = dataLieuxJustice[catKey];
-    if (!cat || !cat.lieux[idx]) return;
-    const lieu = cat.lieux[idx];
-
-    // Met en surbrillance la carte dans la liste déroulante
-    mettreEnValeurLieuJusticeDansListe(catKey, idx);
-
-    // Active automatiquement le calque s'il était masqué
-    if (!map.hasLayer(calquesJustice[catKey])) {
-        basculerCalqueJustice(catKey, true);
-    }
-
-    // Animation aérienne vers les coordonnées du lieu (zoom précis niveau 16)
-    map.flyTo(lieu.coords, 16, {
-        duration: 0.8
-    });
-
-    // Déploiement automatique du popup après la fin du vol de caméra (850ms)
-    setTimeout(() => {
-        if (lieu.marker) {
-            lieu.marker.openPopup();
-        }
-    }, 850);
-
-    // Sur smartphone, fermeture du tiroir pour libérer la vue cartographique
-    if (window.innerWidth <= 768) {
-        fermerMenuMobile();
-    }
-}
-
-/**
- * Met en surbrillance visuelle la fiche d'un lieu de justice dans le volet latéral
- * et déclenche un défilement vertical centré fluide (scrollIntoView).
- * 
- * @param {'carceraux'|'juridiques'|'police'} catKey - Identifiant de la catégorie
- * @param {number} idx - Index numérique du lieu
- */
-function mettreEnValeurLieuJusticeDansListe(catKey, idx) {
-    let activeCard = document.querySelector(`.lieu-justice-card[data-cat="${catKey}"][data-index="${idx}"]`);
-    // Si la carte n'est pas trouvée (ex: filtre restrictif), réinitialise sur 'tous'
-    if (!activeCard) {
-        afficherLieuxJusticeDansListe('tous');
-        document.querySelectorAll('.filter-pill').forEach(btn => {
-            btn.classList.toggle('active', btn.getAttribute('data-filter') === 'tous');
-        });
-        activeCard = document.querySelector(`.lieu-justice-card[data-cat="${catKey}"][data-index="${idx}"]`);
-    }
-
-    // Applique la classe 'active' uniquement sur la carte ciblée
-    document.querySelectorAll('.lieu-justice-card').forEach(card => {
-        const match = (card.getAttribute('data-cat') === catKey && card.getAttribute('data-index') == idx);
-        card.classList.toggle('active', match);
-    });
-
-    // Défilement automatique centré dans la zone visible
-    if (activeCard) {
-        activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-}
-
-/**
- * Réinitialise l'application et opère le retour complet vers la page d'accueil :
- * - Masque l'interface cartographique (#app) et réaffiche l'écran d'accueil (#landing)
- * - Ferme l'ensemble des panneaux, tiroirs et modales ouverts
- * - Réinitialise les variables d'état (personnage actif, étape courante, itinéraires GPS)
- * - Libère la mémoire en retirant les calques et polylignes de Leaflet
+ * Retourne à la page d'accueil et réinitialise l'état temporaire.
  */
 function retourAccueil() {
-    // 1. Basculement des vues plein écran
     document.getElementById('app').style.display = 'none';
     document.getElementById('landing').style.display = 'flex';
 
-    // 2. Fermeture des sous-menus et boîtes de dialogue
     fermerMenuMobile();
     fermerTousModals();
-    fermerDropdownFondsJustice();
+    fermerTousDropdownsFonds();
 
-    const bgImg = document.getElementById('map-image-background');
-    if (bgImg) bgImg.style.display = 'none';
+    const searchInput = document.getElementById('global-search-input');
+    const searchResults = document.getElementById('search-results');
+    if (searchInput) searchInput.value = '';
+    if (searchResults) searchResults.classList.remove('active');
+    toggleSearchHeader(false);
 
-    // 3. Réinitialisation de l'état du volet et du bouton Menu
+    const landingSearch = document.getElementById('landing-search-input');
+    const landingResults = document.getElementById('landing-search-results');
+    if (landingSearch) landingSearch.value = '';
+    if (landingResults) landingResults.classList.remove('active');
+
     const sidebar = document.getElementById('sidebar');
     if (sidebar) sidebar.classList.remove('desktop-collapsed');
 
     const menuToggle = document.getElementById('menu-toggle');
     if (menuToggle) {
-        menuToggle.classList.remove('pc-visible');
-        menuToggle.classList.remove('hidden');
-        menuToggle.textContent = 'Menu';
+        menuToggle.classList.remove('active');
+        actualiserTexteMenuToggle('Voir les étapes');
     }
 
-    // 4. Masquage des sections du volet latéral
     const detailView = document.getElementById('sidebar-detail-view');
     const justiceView = document.getElementById('sidebar-justice-view');
     if (detailView) detailView.style.display = 'none';
     if (justiceView) justiceView.style.display = 'none';
 
-    // 5. Nettoyage de la mémoire et suppression des calques Leaflet
+    // Nettoyage des calques actifs et réinitialisation du fond contemporain
     if (coucheActuelle && map) {
         map.removeLayer(coucheActuelle);
         coucheActuelle = null;
     }
-    if (coucheLigneItineraire && map) {
-        map.removeLayer(coucheLigneItineraire);
-        coucheLigneItineraire = null;
-    }
-
-    // 6. Remise à zéro des variables d'état globales
+    marqueursActuels = [];
     personnageActifId = null;
     etapeActiveIndex = null;
-    trajetSelectionne = 'all';
-    routesAlternativesRecues = [];
-    varianteActiveIndex = 0;
+    choisirFondPlan('esri');
 }
 
-// ==========================================================================
-// 9. GESTION DU TIROIR MOBILE (Bottom Sheet)
-// ==========================================================================
-
 /**
- * Ouvre ou ferme le volet latéral/tiroir inférieur selon le contexte (ordinateur ou smartphone) :
- * - Sur PC (largeur >= 768px) : alterne entre 'desktop-collapsed' et l'état déployé.
- * - Sur Mobile (largeur < 768px) : alterne entre 'open' et l'état replié en bas d'écran.
+ * Génère le bloc HTML des sources historiques pour une étape ou un lieu.
+ * Supporte une ou plusieurs sources sous forme de tableau ou de chaîne de caractères.
+ * @param {Object} item
+ * @param {boolean} [estPopup=false]
+ * @returns {string}
  */
-function toggleMenu() {
-    const sidebar = document.getElementById('sidebar');
-    if (!sidebar) return;
+function genererSourcesHtml(item, estPopup = false) {
+    if (!item) return '';
+    let sourcesList = [];
 
-    if (window.innerWidth >= 768) {
-        // Mode Ordinateur (PC)
-        if (sidebar.classList.contains('desktop-collapsed')) {
-            ouvrirSidebarDesktop();
+    if (Array.isArray(item.sources) && item.sources.length > 0) {
+        sourcesList = item.sources;
+    } else if (Array.isArray(item.source) && item.source.length > 0) {
+        sourcesList = item.source;
+    } else if (typeof item.source === 'string' && item.source.trim() !== '') {
+        if (item.source.includes(';') || item.source.includes(' | ')) {
+            sourcesList = item.source.split(/[;|]/).map(s => s.trim()).filter(Boolean);
         } else {
-            fermerSidebarDesktop();
+            sourcesList = [item.source.trim()];
         }
+    } else if (typeof item.sources === 'string' && item.sources.trim() !== '') {
+        sourcesList = [item.sources.trim()];
+    }
+
+    if (sourcesList.length === 0) return '';
+
+    const prefixClass = estPopup ? 'popup' : 'point';
+    const labelTexte = sourcesList.length > 1 ? 'Sources utilisées :' : 'Source utilisée :';
+
+    let contenuSourcesHtml = '';
+    if (sourcesList.length === 1) {
+        contenuSourcesHtml = `<span class="${prefixClass}-source-text"><strong>${labelTexte}</strong> ${sourcesList[0]}</span>`;
     } else {
-        // Mode Mobile (Smartphone / Tablette)
-        if (sidebar.classList.contains('open')) {
-            fermerMenuMobile();
-        } else {
-            ouvrirMenuMobile();
-        }
+        const itemsHtml = sourcesList.map(s => `<li>${s}</li>`).join('');
+        contenuSourcesHtml = `
+            <div class="${prefixClass}-source-text">
+                <strong>${labelTexte}</strong>
+                <ul class="point-source-list">${itemsHtml}</ul>
+            </div>
+        `;
     }
+
+    const boutonHtml = estPopup
+        ? `<button type="button" class="btn-popup-source-link" onclick="ouvrirModalMentionsLegales('sources')" title="Consulter les mentions légales et sources">Consulter ↗</button>`
+        : `<button type="button" class="btn-point-source-link" onclick="event.stopPropagation(); ouvrirModalMentionsLegales('sources')" title="Consulter les mentions légales et sources">Consulter ↗</button>`;
+
+    return `
+        <div class="${prefixClass}-source-box ${sourcesList.length > 1 ? 'multiple-sources' : ''}">
+            ${contenuSourcesHtml}
+            ${boutonHtml}
+        </div>
+    `;
 }
 
-/**
- * Déploie le tiroir inférieur d'information sur smartphone :
- * - Ajoute la classe 'open' au conteneur #sidebar pour le translater vers le haut (translateY(0))
- * - Active le voile sombre semi-transparent #sidebar-backdrop
- * - Masque temporairement le bouton flottant d'ouverture #menu-toggle
- * - Ferme toutes les fenêtres modales superposées
- */
-function ouvrirMenuMobile() {
-    const sidebar = document.getElementById('sidebar');
-    const backdrop = document.getElementById('sidebar-backdrop');
-    const menuToggle = document.getElementById('menu-toggle');
-
-    if (sidebar) {
-        sidebar.classList.add('open');
-        sidebar.style.transform = ''; // Réinitialise les styles inline résiduels des gestes tactiles
-    }
-    if (backdrop) backdrop.classList.add('active');
-    if (menuToggle) menuToggle.classList.add('hidden');
-
-    fermerTousModals();
-    invaliderTailleCarte();
-}
+// =============================================================================
+// PARTIE 6 : MODULE PARCOURS RÉSISTANTS
+// =============================================================================
 
 /**
- * Referme le tiroir inférieur d'information sur smartphone et rétablit l'état de repos :
- * - Retire la classe 'open' du conteneur #sidebar
- * - Réinitialise les transitions CSS et la translation tactile
- * - Désactive le voile sombre d'arrière-plan
- * - Réaffiche le bouton flottant #menu-toggle
- */
-function fermerMenuMobile() {
-    const sidebar = document.getElementById('sidebar');
-    const backdrop = document.getElementById('sidebar-backdrop');
-    const menuToggle = document.getElementById('menu-toggle');
-
-    if (sidebar) {
-        sidebar.style.transform = '';
-        sidebar.style.transition = '';
-        sidebar.classList.remove('open');
-    }
-    if (backdrop) {
-        backdrop.classList.remove('active');
-        backdrop.style.opacity = '';
-    }
-    if (menuToggle) menuToggle.classList.remove('hidden');
-    invaliderTailleCarte();
-}
-
-// ==========================================================================
-// 10. AFFICHAGE DES PARCOURS RÉSISTANTS
-// ==========================================================================
-
-/**
- * Active et configure l'intégralité du parcours d'une figure historique :
- * 
- * Étapes détaillées :
- * 1. Mémorise l'identifiant du personnage actif
- * 2. Nettoie les précédents tracés routiers et couches d'itinéraires
- * 3. Réinitialise les compteurs de distance, de durée et l'interrupteur GPS (désactivé par défaut)
- * 4. Remplit dynamiquement la liste des étapes et des tronçons disponibles
- * 5. Injecte la biographie et la description patrimoniale dans le volet latéral
- * 6. Trace sur Leaflet la ligne stylisée et les marqueurs numérotés
- * 
- * @param {'jean_moulin'|'klaus_barbie'|'lucie_aubrac'} id - Identifiant de la figure historique dans dataPersonnes
+ * Configure et affiche le parcours complet d'une figure historique.
+ * @param {'jean_moulin'|'klaus_barbie'|'lucie_aubrac'} id
  */
 function selectionnerPersonne(id) {
     personnageActifId = id;
     etapeActiveIndex = null;
     const personne = dataPersonnes[id];
+    if (!personne) return;
 
-    // 1. Suppression du tracé d'itinéraire précédent
-    if (coucheLigneItineraire && map) {
-        map.removeLayer(coucheLigneItineraire);
-        coucheLigneItineraire = null;
-    }
+    // Mise à jour du bouton d'ouverture du volet
+    actualiserTexteMenuToggle('Voir les étapes');
 
-    // 2. Réinitialisation des indicateurs de la boîte de navigation
-    const distEl = document.getElementById('itineraire-distance');
-    const dureeEl = document.getElementById('itineraire-duree');
-    const btnIti = document.getElementById('btn-calculer-itineraire');
-    const propList = document.getElementById('itineraire-propositions-list');
-    const toggleIti = document.getElementById('toggle-itineraire-actif');
-    const toggleLabel = document.getElementById('itineraire-toggle-label');
-
-    if (distEl) distEl.textContent = '-- km';
-    if (dureeEl) dureeEl.textContent = '-- min';
-    if (btnIti) btnIti.innerHTML = `🗺️ Calculer les itinéraires (${modeTransportActuel === 'foot' ? 'À pied' : 'À vélo'})`;
-    if (propList) propList.innerHTML = '';
-
-    // 3. Navigation GPS désactivée d'office par défaut et boîte repliée
-    itineraireEstVisible = false;
-    if (toggleIti) toggleIti.checked = false;
-    if (toggleLabel) {
-        toggleLabel.textContent = 'Tracé inactif';
-        toggleLabel.classList.remove('active');
-    }
-    const itiBox = document.getElementById('itineraire-box');
-    if (itiBox) itiBox.classList.add('minimized');
-
-    // 4. Alimentation du menu déroulant des tronçons d'étapes
-    peuplerSelectTrajets(personne);
-    varianteActiveIndex = 0;
-
-    // 5. Mise à jour du libellé du bouton mobile ("Voir les étapes")
-    const menuToggle = document.getElementById('menu-toggle');
-    if (menuToggle) {
-        menuToggle.textContent = 'Voir les étapes';
-    }
-
-    // 6. Affichage de la vue détaillée dans le volet (photo, bio, citation, étapes)
+    // Remplissage du sélecteur GPS et des données du panneau
+    peuplerSelectGpsPersonne(personne);
     afficherVueDetail(personne);
-
-    // 7. Rendu visuel cartographique Leaflet (marqueurs radar, polylignes doubles)
     afficherParcoursSurCarte(personne);
 }
 
 /**
- * Construit et injecte les informations biographiques et les étapes dans le panneau latéral :
- * - Affiche la vue résistant (#sidebar-detail-view) et masque la vue justice
- * - Injecte la photographie, le titre officiel, la citation et la biographie
- * - Note ergonomique : La biographie est située AVANT la liste des étapes
- * - Crée dynamiquement chaque carte d'étape numérotée et cliquable
- * 
- * @param {Object} personne - Fiche biographique complète issue du registre dataPersonnes
+ * Remplit la fiche détaillée et la liste des étapes dans le panneau latéral.
+ * @param {Object} personne
  */
 function afficherVueDetail(personne) {
     const justiceView = document.getElementById('sidebar-justice-view');
     const detailView = document.getElementById('sidebar-detail-view');
-
-    // 1. Basculement de l'affichage des panneaux
     if (justiceView) justiceView.style.display = 'none';
     if (detailView) detailView.style.display = 'flex';
 
-    // 2. Remplissage des champs d'identité et de médiation
     const photoEl = document.getElementById('detail-photo');
     const nomEl = document.getElementById('detail-nom');
     const roleEl = document.getElementById('detail-role');
@@ -1615,111 +1354,216 @@ function afficherVueDetail(personne) {
     if (quoteEl) quoteEl.textContent = personne.quote;
     if (bioEl) bioEl.textContent = personne.bio;
 
-    // 3. Construction dynamique de la liste des étapes cliquables
     const listeEtapesEl = document.getElementById('liste-etapes');
     if (!listeEtapesEl) return;
-    listeEtapesEl.innerHTML = ''; // Nettoyage de l'ancienne liste
+    listeEtapesEl.innerHTML = '';
 
     personne.etapes.forEach((etape, index) => {
         const item = document.createElement('div');
         item.className = 'etape-card';
         item.setAttribute('data-index', index);
+        item.setAttribute('data-existe-fond', pointExistePourFond(etape, fondActif) ? '1' : '0');
+
+        const sourceEtapeHtml = genererSourcesHtml(etape, false);
+
         item.innerHTML = `
-            <div class="etape-number" style="background-color: ${personne.color};">
-                ${index + 1}
-            </div>
+            <div class="etape-number" style="background-color: ${personne.color};">${index + 1}</div>
             <div class="etape-info">
                 <div class="etape-header">
                     <span class="etape-titre">${etape.titre}</span>
                     <span class="etape-date">${etape.date}</span>
                 </div>
-                <span class="etape-lieu">📍 ${etape.lieu}</span>
+                <span class="etape-lieu"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-1px;margin-right:3px;" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>${etape.lieu}</span>
                 <p class="etape-desc">${etape.desc}</p>
+                ${sourceEtapeHtml}
             </div>
         `;
 
-        // Au clic sur une étape : recentre la carte Leaflet et déploie le popup
         item.addEventListener('click', () => {
             focusSurEtape(index);
         });
 
         listeEtapesEl.appendChild(item);
     });
+
+    actualiserFiltreTemporelEtapes();
 }
 
 /**
- * Dessine sur la carte Leaflet le tracé patrimonial du résistant et ses marqueurs numérotés :
- * - Double polyligne : halo lumineux semi-transparent + ligne de guidage tiretée
- * - Marqueurs interactifs avec onde pulsante et popup d'information historique
- * - Recentrage automatique de la caméra sur l'emprise du parcours (map.fitBounds)
- * 
- * @param {Object} personne - Fiche historique du résistant contenant traceline et étapes
+ * Actualise l'affichage des étapes et options GPS selon le filtre temporel de la carte active.
+ */
+function actualiserFiltreTemporelEtapes() {
+    if (!personnageActifId || !dataPersonnes[personnageActifId]) return;
+    const perso = dataPersonnes[personnageActifId];
+
+    // Cartes d'étapes dans la barre latérale
+    const cards = document.querySelectorAll('#liste-etapes .etape-card');
+    cards.forEach((card, idx) => {
+        const etape = perso.etapes[idx];
+        const visible = etape ? pointExistePourFond(etape, fondActif) : true;
+        card.style.display = visible ? '' : 'none';
+    });
+
+    // Sélecteur GPS
+    const selPerso = document.getElementById('select-gps-point-personne');
+    if (selPerso) {
+        Array.from(selPerso.options).forEach((opt, idx) => {
+            const etape = perso.etapes[idx];
+            if (etape) {
+                const visible = pointExistePourFond(etape, fondActif);
+                opt.style.display = visible ? '' : 'none';
+                opt.disabled = !visible;
+            }
+        });
+        if (selPerso.selectedOptions.length && selPerso.selectedOptions[0].disabled) {
+            const premierValide = Array.from(selPerso.options).find(o => !o.disabled);
+            if (premierValide) selPerso.value = premierValide.value;
+        }
+    }
+}
+
+/**
+ * Recentre la vue de la carte sur l'ensemble des points de la page active (au lieu d'un point isolé).
+ */
+function recentrerVuePage() {
+    if (!map) return;
+    if (personnageActifId && dataPersonnes[personnageActifId]) {
+        const etapesAffichees = dataPersonnes[personnageActifId].etapes.filter(e => pointExistePourFond(e, fondActif));
+        const coords = etapesAffichees.map(e => e.coords);
+        if (coords.length > 0) {
+            map.fitBounds(L.latLngBounds(coords), {
+                padding: [60, 60],
+                maxZoom: 15
+            });
+        }
+    } else {
+        const bounds = L.latLngBounds([]);
+        const activeCats = (filtreJusticeActif === 'tous') ? ['carceraux', 'juridiques', 'police'] : [filtreJusticeActif];
+        activeCats.forEach(cat => {
+            if (dataLieuxJustice[cat]) {
+                dataLieuxJustice[cat].lieux.forEach(l => {
+                    if (pointExistePourFond(l, fondActif)) {
+                        bounds.extend(l.coords);
+                    }
+                });
+            }
+        });
+        if (bounds.isValid()) {
+            map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+        }
+    }
+}
+
+/**
+ * Déplace la carte de manière fluide pour centrer la page flottante (popup) sur l'écran.
+ * @param {L.Marker} marker
+ */
+function centrerCarteSurPopup(marker) {
+    if (!map || !marker) return;
+
+    // Si le marqueur est hors de la vue actuelle, amener d'abord la vue à proximité
+    if (!map.getBounds().contains(marker.getLatLng())) {
+        map.panTo(marker.getLatLng(), { animate: false });
+    }
+
+    if (!marker.isPopupOpen()) {
+        marker.openPopup();
+    }
+
+    const ajusterCentrage = () => {
+        const popup = marker.getPopup();
+        const popupEl = popup ? popup.getElement() : null;
+        if (!popupEl || !map) return;
+
+        const mapRect = map.getContainer().getBoundingClientRect();
+        const popupRect = popupEl.getBoundingClientRect();
+
+        // Centre géométrique de la popup flottante
+        const currentCenterX = popupRect.left + popupRect.width / 2;
+        const currentCenterY = popupRect.top + popupRect.height / 2;
+
+        // Centre géométrique de l'écran visible (conteneur de la carte)
+        const targetCenterX = mapRect.left + mapRect.width / 2;
+        const targetCenterY = mapRect.top + mapRect.height / 2;
+
+        const deltaX = currentCenterX - targetCenterX;
+        const deltaY = currentCenterY - targetCenterY;
+
+        // Déplacement animé de la carte pour caler le centre de la popup au centre de l'écran
+        if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
+            map.panBy([deltaX, deltaY], {
+                animate: true,
+                duration: 0.45
+            });
+        }
+    };
+
+    requestAnimationFrame(() => {
+        ajusterCentrage();
+        setTimeout(ajusterCentrage, 120);
+    });
+}
+
+/**
+ * Positionne les marqueurs des étapes avec gestion du filtre temporel selon la carte active (sans lignes reliant les points).
+ * @param {Object} personne
  */
 function afficherParcoursSurCarte(personne) {
     if (!map) return;
 
-    // 1. Suppression de l'ancien calque de parcours s'il existe
     if (coucheActuelle) {
         map.removeLayer(coucheActuelle);
     }
     marqueursActuels = [];
 
+    const etapesAffichees = personne.etapes.filter(etape => pointExistePourFond(etape, fondActif));
+    const coordsTraces = etapesAffichees.map(e => e.coords);
     const groupeCalque = L.layerGroup();
 
-    // 2. Ligne de fond lumineuse (halo large de 8px avec opacité douce)
-    const ligneFond = L.polyline(personne.traceline, {
-        color: personne.color,
-        weight: 8,
-        opacity: 0.35,
-        lineCap: 'round'
-    });
-    groupeCalque.addLayer(ligneFond);
+    // Pas de pointillés reliant les points : seuls les marqueurs d'étapes sont affichés
 
-    // 3. Ligne principale nette et stylisée avec tirets (8px de trait, 6px d'espace)
-    const polyline = L.polyline(personne.traceline, {
-        color: personne.color,
-        weight: 4,
-        opacity: 0.95,
-        dashArray: '8, 6',
-        lineCap: 'round'
-    });
-    groupeCalque.addLayer(polyline);
-
-    // 4. Placement des marqueurs numérotés pour chaque étape
     personne.etapes.forEach((etape, index) => {
+        if (!pointExistePourFond(etape, fondActif)) return;
+
         const customIcon = creerIconeMarqueur(personne.color, index + 1, false);
         const marker = L.marker(etape.coords, { icon: customIcon });
 
-        // Bulle d'information popup Leaflet
+        const sourceEtapePopupHtml = genererSourcesHtml(etape, true);
+
         const popupContent = `
             <div class="popup-bubble">
                 <div class="popup-badge" style="background: ${personne.color}">Étape ${index + 1} • ${etape.date}</div>
                 <h3 class="popup-title">${etape.titre}</h3>
-                <div class="popup-place">📍 ${etape.lieu}</div>
+                <div class="popup-place"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-1px;margin-right:4px;" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>${etape.lieu}</div>
                 <p class="popup-text">${etape.desc}</p>
+                ${sourceEtapePopupHtml}
             </div>
         `;
 
+        // autoPan: false garantit que le clic sur le point ne décale pas la carte
         marker.bindPopup(popupContent, {
             className: 'custom-leaflet-popup',
-            maxWidth: 300
+            maxWidth: 300,
+            autoPan: false
         });
 
-        // Clic sur le marqueur sur la carte :
-        // Ouvre le volet s'il était fermé, surligne l'étape et la fait défiler
+        // Clic sur marqueur : la carte bouge de façon à centrer la page flottante (popup) sur l'écran
         marker.on('click', () => {
-            const etaitFerme = estVoletFerme();
-            if (etaitFerme) {
-                assurerVoletOuvert();
-            }
             mettreEnValeurEtapeDansListe(index);
-            const delai = etaitFerme ? 300 : 60;
-            setTimeout(() => {
-                const carteActive = document.querySelector(`.etape-card[data-index="${index}"]`);
-                if (carteActive) {
-                    carteActive.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }, delai);
+
+            const selPerso = document.getElementById('select-gps-point-personne');
+            if (selPerso) selPerso.value = index;
+
+            centrerCarteSurPopup(marker);
+
+            const sidebar = document.getElementById('sidebar');
+            const estOuvert = sidebar && (window.innerWidth >= 768 ? !sidebar.classList.contains('desktop-collapsed') : sidebar.classList.contains('open'));
+            if (estOuvert) {
+                setTimeout(() => {
+                    const carteActive = document.querySelector(`.etape-card[data-index="${index}"]`);
+                    if (carteActive) carteActive.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 60);
+            }
         });
 
         groupeCalque.addLayer(marker);
@@ -1729,774 +1573,680 @@ function afficherParcoursSurCarte(personne) {
     groupeCalque.addTo(map);
     coucheActuelle = groupeCalque;
 
-// Cadrage automatique de la caméra sur l'ensemble de la ligne tracée
-map.fitBounds(polyline.getBounds(), {
-padding: [60, 60],
-maxZoom: 15
-});
-}
-
-/**
- * Centre la caméra Leaflet sur une étape spécifique et déploie son infobulle :
- * - Agrandit l'icône du marqueur ciblé pour la faire ressortir visuellement (classe marker-actif)
- * - Met en valeur l'étape dans la liste latérale et déclenche un défilement automatique
- * - Anime le déplacement de caméra (map.flyTo) vers les coordonnées de l'étape
- * - Ouvre la bulle popup d'information historique
- * 
- * @param {number} index - Index numérique de l'étape (0 correspond à l'étape 1)
- */
-function focusSurEtape(index) {
-    if (!marqueursActuels[index] || !personnageActifId) return;
-
-    etapeActiveIndex = index;
-    const { marker, coords } = marqueursActuels[index];
-    const personne = dataPersonnes[personnageActifId];
-
-    // 1. Mise en valeur visuelle du marqueur sélectionné sur la carte
-    marqueursActuels.forEach((item, i) => {
-        item.marker.setIcon(creerIconeMarqueur(personne.color, i + 1, i === index));
-    });
-
-    // 2. Mise en surbrillance de la carte d'étape dans la liste
-    mettreEnValeurEtapeDansListe(index);
-
-    // 3. Vol de caméra animé vers le lieu historique (zoom niveau 15)
-    map.flyTo(coords, 15, {
-        duration: 0.8
-    });
-
-    // 4. Ouverture automatique du popup après l'atterrissage de la caméra
-    setTimeout(() => {
-        marker.openPopup();
-    }, 850);
-
-    // Sur smartphone, replie le tiroir pour laisser la vue sur le monument
-    if (window.innerWidth <= 768) {
-        fermerMenuMobile();
+    if (coordsTraces.length > 0) {
+        map.fitBounds(L.latLngBounds(coordsTraces), {
+            padding: [60, 60],
+            maxZoom: 15
+        });
     }
 }
 
 /**
- * Met en valeur la carte d'étape correspondante dans la liste du volet latéral
- * et opère un défilement automatique pour l'amener dans le champ de vision.
- * 
- * @param {number} index - Index numérique de l'étape à surligner
+ * Affiche la bulle popup de l'étape et centre la page flottante sur l'écran.
+ * @param {number} index
+ */
+function focusSurEtape(index) {
+    const cible = marqueursActuels.find(m => m && m.index === index);
+    if (!cible || !personnageActifId) return;
+
+    etapeActiveIndex = index;
+    const { marker } = cible;
+    const personne = dataPersonnes[personnageActifId];
+
+    marqueursActuels.forEach(item => {
+        if (item && item.marker) {
+            item.marker.setIcon(creerIconeMarqueur(personne.color, item.index + 1, item.index === index));
+        }
+    });
+
+    mettreEnValeurEtapeDansListe(index);
+    if (personne && personne.etapes && personne.etapes[index]) {
+        annoncerAccessibilite(`Étape ${index + 1} : ${personne.etapes[index].titre} à ${personne.etapes[index].lieu}`);
+    }
+
+    if (window.innerWidth <= 768) {
+        fermerMenuMobile();
+    }
+
+    // Déplace la carte de façon à centrer la page flottante (popup) sur l'écran
+    centrerCarteSurPopup(marker);
+}
+
+/**
+ * Met en valeur l'étape active dans la liste latérale.
+ * @param {number} index
  */
 function mettreEnValeurEtapeDansListe(index) {
-    // 1. Basculement de la classe CSS 'active' sur la carte sélectionnée
     const cartes = document.querySelectorAll('.etape-card');
     cartes.forEach((carte, i) => {
         carte.classList.toggle('active', i === index);
     });
 
-    // 2. Défilement automatique fluide vers la carte active
     const carteActive = document.querySelector(`.etape-card[data-index="${index}"]`);
-    if (carteActive) {
+    const sidebar = document.getElementById('sidebar');
+    const estOuvert = sidebar && (window.innerWidth >= 768 ? !sidebar.classList.contains('desktop-collapsed') : sidebar.classList.contains('open'));
+    if (carteActive && estOuvert) {
         carteActive.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 }
 
-// ==========================================================================
-// 11. MOTEUR D'ITINÉRAIRE ROUTIER RÉEL & MULTI-ROUTES
-// ==========================================================================
+// =============================================================================
+// PARTIE 7 : MODULE LIEUX DE JUSTICE
+// =============================================================================
 
 /**
- * Modifie le mode de déplacement urbain actif (À pied ou À vélo) :
- * - Met à jour l'apparence des boutons de sélection
- * - Recalcule instantanément les estimations de temps et de distance
- * 
- * @param {'foot'|'bike'} mode - Mode de transport : 'foot' (marche piétonne) ou 'bike' (cyclable)
+ * Initialise les groupes de calques des Lieux de Justice.
  */
-function changerModeTransport(mode) {
-    modeTransportActuel = mode;
+function initCalquesJustice() {
+    for (const catKey in dataLieuxJustice) {
+        const cat = dataLieuxJustice[catKey];
+        const group = L.layerGroup();
 
-    // 1. Synchronisation visuelle des boutons pilules (classe 'active')
-    document.getElementById('mode-foot')?.classList.toggle('active', mode === 'foot');
-    document.getElementById('mode-bike')?.classList.toggle('active', mode === 'bike');
+        cat.lieux.forEach((lieu, idx) => {
+            const icon = creerIconeJustice(cat.icon, cat.color);
+            const marker = L.marker(lieu.coords, { icon: icon });
 
-    // 2. Actualisation des temps de parcours
-    if (routesAlternativesRecues && routesAlternativesRecues.length > 0) {
-        actualiserAffichageToutesRoutes();
-    } else if (personnageActifId && dataPersonnes[personnageActifId]) {
-        calculerEtAfficherItineraire();
+            const nomEchappe = lieu.nom.replace(/'/g, "\\'");
+            const sourceLieuPopupHtml = genererSourcesHtml(lieu, true);
+
+            const popupContent = `
+                <div class="popup-bubble">
+                    <div class="popup-badge" style="background: ${cat.color}">
+                        ${cat.nomCategorie}
+                    </div>
+                    <h3 class="popup-title">${lieu.nom}</h3>
+                    ${lieu.dates ? `<div class="popup-date">${lieu.dates}</div>` : ''}
+                    <div class="popup-place"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-1px;margin-right:4px;" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>${lieu.adresse}</div>
+                    <p class="popup-text">${lieu.role}</p>
+                    ${sourceLieuPopupHtml}
+                    <div class="popup-gps-box">
+                        <button type="button" class="btn-popup-gps" onclick="ouvrirPointDansGPS(${lieu.coords[0]}, ${lieu.coords[1]}, '${nomEchappe}')" title="Ouvrir ce lieu dans l'application GPS">
+                            Ouvrir ce lieu dans le GPS →
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // autoPan: false garantit que le clic sur le point ne décale pas la carte
+            marker.bindPopup(popupContent, {
+                className: 'custom-leaflet-popup',
+                maxWidth: 320,
+                autoPan: false
+            });
+
+            // Clic sur marqueur : la carte bouge de façon à centrer la page flottante (popup) sur l'écran
+            marker.on('click', () => {
+                mettreEnValeurLieuJusticeDansListe(catKey, idx);
+
+                const selJustice = document.getElementById('select-gps-point-justice');
+                if (selJustice) selJustice.value = `${catKey}_${idx}`;
+
+                centrerCarteSurPopup(marker);
+
+                const sidebar = document.getElementById('sidebar');
+                const estOuvert = sidebar && (window.innerWidth >= 768 ? !sidebar.classList.contains('desktop-collapsed') : sidebar.classList.contains('open'));
+                if (estOuvert) {
+                    setTimeout(() => {
+                        const card = document.querySelector(`.lieu-justice-card[data-cat="${catKey}"][data-index="${idx}"]`);
+                        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 60);
+                }
+            });
+
+            lieu.marker = marker;
+            group.addLayer(marker);
+        });
+
+        calquesJustice[catKey] = group;
     }
 }
 
 /**
- * Calcule la durée réaliste de déplacement selon la distance routière et le mode choisi :
- * - Mode 'foot' (À pied) : vitesse moyenne de 4.5 km/h (adaptée aux ruelles et dénivelés de Lyon)
- * - Mode 'bike' (À vélo) : vitesse moyenne de 15.0 km/h (réseau cyclable lyonnais et feux urbains)
- * 
- * @param {number} distanceMetres - Distance totale de l'itinéraire mesurée en mètres
- * @param {'foot'|'bike'} mode - Mode de locomotion ('foot' ou 'bike')
- * @returns {{ distKm: string, dureeTexte: string, totalMinutes: number }} Objet avec distance formatée, durée textuelle et total de minutes
+ * Met à jour les calques de lieux de justice pour n'afficher que les marqueurs existant à l'époque active.
  */
-function calculerDureeSelonMode(distanceMetres, mode) {
-    // Vitesse moyenne en km/h
-    const vitesseKmh = mode === 'bike' ? 15.0 : 4.5;
-    // Conversion en kilomètres
-    const distKm = distanceMetres / 1000;
-    // Temps théorique en heures
-    const heures = distKm / vitesseKmh;
-    // Durée arrondie en minutes (minimum 1 minute)
-    const totalMinutes = Math.max(1, Math.round(heures * 60));
-    // Extraction des heures et minutes pour affichage lisible
-    const h = Math.floor(totalMinutes / 60);
-    const m = totalMinutes % 60;
-    const dureeTexte = h > 0 ? `${h}h ${m < 10 ? '0' : ''}${m} min` : `${m} min`;
-
-    return {
-        distKm: distKm.toFixed(1),
-        dureeTexte,
-        totalMinutes
-    };
+function actualiserMarqueursJustice() {
+    if (!map) return;
+    for (const catKey in dataLieuxJustice) {
+        const cat = dataLieuxJustice[catKey];
+        const group = calquesJustice[catKey];
+        if (!group) continue;
+        group.clearLayers();
+        cat.lieux.forEach(lieu => {
+            if (pointExistePourFond(lieu, fondActif) && lieu.marker) {
+                group.addLayer(lieu.marker);
+            }
+        });
+    }
 }
 
 /**
- * Alimente dynamiquement le menu déroulant de sélection des tronçons de route :
- * - Option globale : parcours complet (toutes les étapes consécutives)
- * - Options segmentées : étape par étape (ex: Étape 1 ➔ Étape 2)
- * 
- * @param {Object} personne - Fiche historique du résistant contenant sa liste d'étapes
+ * Active ou désactive un calque de justice spécifique.
+ * @param {'carceraux'|'juridiques'|'police'} categorie
+ * @param {boolean} activer
  */
-function peuplerSelectTrajets(personne) {
-    const select = document.getElementById('select-itineraire-trajet');
-    if (!select || !personne || !personne.etapes) return;
+function basculerCalqueJustice(categorie, activer) {
+    if (!map || !calquesJustice[categorie]) return;
 
-    select.innerHTML = ''; // Réinitialisation des options
-
-    // 1. Option Parcours complet (Toutes les étapes)
-    const optAll = document.createElement('option');
-    optAll.value = 'all';
-    optAll.textContent = `🏁 Parcours complet (Toutes les étapes : 1 à ${personne.etapes.length})`;
-    select.appendChild(optAll);
-
-    // 2. Options détaillées tronçon par tronçon (Étape i -> Étape i+1)
-    for (let i = 0; i < personne.etapes.length - 1; i++) {
-        const e1 = personne.etapes[i];
-        const e2 = personne.etapes[i + 1];
-        const opt = document.createElement('option');
-        opt.value = `${i}-${i + 1}`;
-        opt.textContent = `📍 Étape ${i + 1} ➔ ${i + 2} : ${e1.titre} ➔ ${e2.titre}`;
-        select.appendChild(opt);
-    }
-
-    trajetSelectionne = 'all';
-    select.value = 'all';
-}
-
-/**
- * Extrait la liste des coordonnées géographiques correspondant au trajet actuellement sélectionné.
- * 
- * @param {Object} personne - Fiche historique du résistant avec étapes
- * @returns {Array<[number, number]>} Tableau de coordonnées géographiques [[latitude, longitude], ...]
- */
-function obtenirCoordonneesTrajetActif(personne) {
-    if (!personne || !personne.etapes || personne.etapes.length === 0) return [];
-
-    // Si le parcours complet est demandé, extrait toutes les étapes
-    if (trajetSelectionne === 'all') {
-        return personne.etapes.map(e => e.coords);
-    }
-
-    // Si un tronçon spécifique est sélectionné (format "0-1", "1-2")
-    const parts = trajetSelectionne.split('-');
-    if (parts.length === 2) {
-        const i1 = parseInt(parts[0], 10);
-        const i2 = parseInt(parts[1], 10);
-        if (!isNaN(i1) && !isNaN(i2) && personne.etapes[i1] && personne.etapes[i2]) {
-            return [personne.etapes[i1].coords, personne.etapes[i2].coords];
-        }
-    }
-
-    return personne.etapes.map(e => e.coords);
-}
-
-/**
- * Gestionnaire d'événement déclenché lors d'un changement de sélection dans la liste des trajets.
- * 
- * @param {string} valeur - Valeur choisie dans le menu déroulant ('all' ou 'i-j')
- */
-function changerTrajetSelectionne(valeur) {
-    trajetSelectionne = valeur;
-    varianteActiveIndex = 0; // Réinitialise sur la proposition principale (la plus rapide)
-    calculerEtAfficherItineraire();
-}
-
-/**
- * Active ou désactive l'affichage du tracé d'itinéraire sur la carte Leaflet
- * via l'interrupteur switch On/Off de l'en-tête de boîte.
- */
-function basculerVisibiliteItineraire() {
-    const toggle = document.getElementById('toggle-itineraire-actif');
-    const label = document.getElementById('itineraire-toggle-label');
-    if (!toggle) return;
-
-    itineraireEstVisible = toggle.checked;
-
-    // Mise à jour de l'étiquette descriptive
-    if (label) {
-        label.textContent = itineraireEstVisible ? 'Tracé actif' : 'Désactivé';
-        label.classList.toggle('active', itineraireEstVisible);
-    }
-
-    if (!itineraireEstVisible) {
-        // Retrait immédiat de la couche routière de la carte Leaflet
-        if (coucheLigneItineraire && map) {
-            map.removeLayer(coucheLigneItineraire);
-            coucheLigneItineraire = null;
+    if (activer) {
+        if (!map.hasLayer(calquesJustice[categorie])) {
+            calquesJustice[categorie].addTo(map);
         }
     } else {
-        // Réaffichage immédiat de la route sélectionnée
-        if (routesAlternativesRecues && routesAlternativesRecues.length > 0 && dataPersonnes[personnageActifId]) {
-            tracerLigneItineraireSurCarte(routesAlternativesRecues, varianteActiveIndex, dataPersonnes[personnageActifId].color);
-        } else {
-            calculerEtAfficherItineraire();
+        if (map.hasLayer(calquesJustice[categorie])) {
+            map.removeLayer(calquesJustice[categorie]);
         }
     }
 }
 
 /**
- * Réduit (minimise) ou déploie la boîte de contrôle de navigation GPS :
- * - Bascule la classe CSS '.minimized' sur le conteneur #itineraire-box
- * - Génère un badge compact de résumé (ex: 🚲 4.2 km • 17 min) lorsque la boîte est repliée
+ * Filtre les lieux de justice par catégorie ('tous', 'carceraux', 'juridiques', 'police').
+ * @param {string} categorie
  */
-function toggleMinimiserItineraire() {
-    const box = document.getElementById('itineraire-box');
-    const miniSummary = document.getElementById('itineraire-mini-summary');
-    if (!box) return;
+function filtrerJustice(categorie) {
+    filtreJusticeActif = categorie;
 
-    const estMinimise = box.classList.toggle('minimized');
-
-    if (miniSummary) {
-        if (estMinimise) {
-            // Affichage du résumé compact sur la ligne d'en-tête
-            const activeRoute = (routesAlternativesRecues && routesAlternativesRecues[varianteActiveIndex]) 
-                ? routesAlternativesRecues[varianteActiveIndex] 
-                : null;
-            if (activeRoute) {
-                const iconMode = modeTransportActuel === 'bike' ? '🚲' : '🚶‍♂️';
-                miniSummary.textContent = `${iconMode} ${activeRoute.distKm} km • ${activeRoute.dureeTexte}`;
-                miniSummary.style.display = 'inline-block';
-            } else {
-                miniSummary.style.display = 'none';
-            }
-        } else {
-            // Masque le résumé lorsque la boîte est déployée
-            miniSummary.style.display = 'none';
-        }
-    }
-}
-
-/**
- * Met à jour le texte du résumé compact si la boîte GPS est actuellement repliée.
- */
-function actualiserMiniSummarySiMinimise() {
-    const box = document.getElementById('itineraire-box');
-    const miniSummary = document.getElementById('itineraire-mini-summary');
-    if (!box || !miniSummary) return;
-
-    if (box.classList.contains('minimized')) {
-        const activeRoute = (routesAlternativesRecues && routesAlternativesRecues[varianteActiveIndex]) 
-            ? routesAlternativesRecues[varianteActiveIndex] 
-            : null;
-        if (activeRoute) {
-            const iconMode = modeTransportActuel === 'bike' ? '🚲' : '🚶‍♂️';
-            miniSummary.textContent = `${iconMode} ${activeRoute.distKm} km • ${activeRoute.dureeTexte}`;
-            miniSummary.style.display = 'inline-block';
-        }
-    }
-}
-
-/**
- * Recalcule et actualise les durées estimées de l'ensemble des propositions d'itinéraires
- * lors d'un changement de mode de locomotion (À pied ⟷ À vélo).
- */
-function actualiserAffichageToutesRoutes() {
-    if (!routesAlternativesRecues || routesAlternativesRecues.length === 0) return;
-
-    // Recalcule la durée de chaque proposition
-    routesAlternativesRecues.forEach(r => {
-        const dureeInfo = calculerDureeSelonMode(r.distanceMetres, modeTransportActuel);
-        r.dureeTexte = dureeInfo.dureeTexte;
-        r.distKm = dureeInfo.distKm;
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-filter') === categorie);
     });
 
-    // Mettre à jour les statistiques de la route actuellement active
-    const activeRoute = routesAlternativesRecues[varianteActiveIndex] || routesAlternativesRecues[0];
-    const distEl = document.getElementById('itineraire-distance');
-    const dureeEl = document.getElementById('itineraire-duree');
-    if (distEl) distEl.textContent = `${activeRoute.distKm} km`;
-    if (dureeEl) dureeEl.textContent = `~${activeRoute.dureeTexte}`;
+    actualiserMarqueursJustice();
 
-    // Met à jour les cartes d'itinéraires dans la liste
-    afficherCartesPropositions();
+    const bounds = L.latLngBounds([]);
+
+    if (categorie === 'tous') {
+        ['juridiques', 'carceraux', 'memoire', 'execution'].forEach(cat => basculerCalqueJustice(cat, true));
+    } else {
+        ['juridiques', 'carceraux', 'memoire', 'execution'].forEach(cat => basculerCalqueJustice(cat, cat === categorie));
+    }
+
+    afficherLieuxJusticeDansListe(categorie);
+    peuplerSelectGpsJustice(categorie);
+
+    const activeCats = (categorie === 'tous') ? ['juridiques', 'carceraux', 'memoire', 'execution'] : [categorie];
+    activeCats.forEach(cat => {
+        if (dataLieuxJustice[cat]) {
+            dataLieuxJustice[cat].lieux.forEach(l => {
+                if (pointExistePourFond(l, fondActif)) {
+                    bounds.extend(l.coords);
+                }
+            });
+        }
+    });
+
+    if (bounds.isValid() && map) {
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+    }
 }
 
 /**
- * Construit dynamiquement les fiches interactives des 3 itinéraires proposés (style Google Maps) :
- * Chaque fiche présente :
- * - Le nom de l'itinéraire (ex: "Itinéraire 1 : Le plus rapide")
- * - Un badge "Recommandé" pour le trajet optimal
- * - La description du parcours (axes centraux, quais de Saône ou berges du Rhône)
- * - La distance en kilomètres et la durée estimée selon le mode actif
+ * Génère les cartes des lieux de justice dans le panneau latéral.
+ * @param {string} filtre
  */
-function afficherCartesPropositions() {
-    const container = document.getElementById('itineraire-propositions-list');
-    if (!container) return;
+function afficherLieuxJusticeDansListe(filtre) {
+    const conteneur = document.getElementById('liste-lieux-justice');
+    const titleEl = document.getElementById('justice-list-title');
+    if (!conteneur) return;
+    conteneur.innerHTML = '';
 
-    container.innerHTML = ''; // Nettoyage de la liste avant réinsertion
+    const categories = (filtre === 'tous') ? ['juridiques', 'carceraux', 'memoire', 'execution'] : [filtre];
 
-    // Parcourt les variantes calculées pour créer chaque carte
-    routesAlternativesRecues.forEach((r, idx) => {
-        const estActif = idx === varianteActiveIndex;
-        const card = document.createElement('div');
-        card.className = `itineraire-proposition-card ${estActif ? 'active' : ''}`;
-        card.title = `Cliquer pour choisir ${r.nom}`;
-        // Au clic sur la carte, active la variante correspondante
-        card.onclick = () => selectionnerVarianteRoute(idx);
+    let nbVisibles = 0;
+    categories.forEach(catKey => {
+        const cat = dataLieuxJustice[catKey];
+        if (cat) {
+            nbVisibles += cat.lieux.filter(l => pointExistePourFond(l, fondActif)).length;
+        }
+    });
 
-        card.innerHTML = `
-            <div class="prop-info">
-                <div class="prop-title-row">
-                    <span class="prop-name">${r.nom}</span>
-                    ${r.estRecommande ? '<span class="prop-badge-rec">Recommandé</span>' : ''}
+    const titresFiltres = {
+        'tous': `Tous les lieux historiques (${nbVisibles})`,
+        'juridiques': `Palais de Justice (${nbVisibles})`,
+        'carceraux': `Prisons (${nbVisibles})`,
+        'memoire': `Lieux de mémoire (${nbVisibles})`,
+        'execution': `Lieux d'exécution (${nbVisibles})`
+    };
+
+    if (titleEl && titresFiltres[filtre]) titleEl.textContent = titresFiltres[filtre];
+
+    categories.forEach(catKey => {
+        const cat = dataLieuxJustice[catKey];
+        if (!cat) return;
+
+        cat.lieux.forEach((lieu, idx) => {
+            if (!pointExistePourFond(lieu, fondActif)) return;
+
+            const card = document.createElement('div');
+            card.className = 'lieu-justice-card';
+            card.setAttribute('data-cat', catKey);
+            card.setAttribute('data-index', idx);
+            card.setAttribute('data-existe-fond', '1');
+
+            const sourceLieuHtml = genererSourcesHtml(lieu, false);
+
+            card.innerHTML = `
+                <div class="lieu-badge" style="background-color: ${cat.color};">${idx + 1}</div>
+                <div class="lieu-info">
+                    <div class="lieu-header">
+                        <span class="lieu-titre">${lieu.nom}</span>
+                        <span class="lieu-cat-tag" style="color: ${cat.color};">${cat.nomCategorie}</span>
+                    </div>
+                    <div class="lieu-meta-row">
+                        ${lieu.dates ? `<span class="lieu-dates-tag">${lieu.dates}</span>` : ''}
+                        <span class="lieu-adresse"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-1px;margin-right:3px;" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>${lieu.adresse}</span>
+                    </div>
+                    <p class="lieu-desc">${lieu.role}</p>
+                    ${sourceLieuHtml}
                 </div>
-                <span class="prop-desc">${r.desc}</span>
-            </div>
-            <div class="prop-metrics">
-                <span class="prop-time">${r.dureeTexte}</span>
-                <span class="prop-distance">${r.distKm} km</span>
-            </div>
-        `;
+            `;
 
-        container.appendChild(card);
+            card.addEventListener('click', () => {
+                focusSurLieuJustice(catKey, idx);
+            });
+
+            conteneur.appendChild(card);
+        });
     });
 }
 
 /**
- * Sélectionne l'une des propositions d'itinéraire (0, 1 ou 2) :
- * - Active la carte correspondante dans l'interface latérale
- * - Met à jour les compteurs globaux (distance et durée)
- * - Redessine la ligne active sur la carte Leaflet avec halo lumineux
- * 
- * @param {number} index - Numéro d'index de la route choisie (0 = Rapide, 1 = Saône, 2 = Rhône)
+ * Centre la carte sur un lieu de justice et ouvre sa bulle popup.
+ * @param {string} catKey
+ * @param {number} idx
  */
-function selectionnerVarianteRoute(index) {
-    if (!routesAlternativesRecues || !routesAlternativesRecues[index]) return;
-    varianteActiveIndex = index;
+function focusSurLieuJustice(catKey, idx) {
+    const cat = dataLieuxJustice[catKey];
+    if (!cat || !cat.lieux[idx]) return;
+    const lieu = cat.lieux[idx];
 
-    // 1. Mise à jour de la classe CSS active sur toutes les cartes
-    document.querySelectorAll('.itineraire-proposition-card').forEach((card, idx) => {
-        card.classList.toggle('active', idx === index);
-    });
+    mettreEnValeurLieuJusticeDansListe(catKey, idx);
+    annoncerAccessibilite(`Lieu de Justice sélectionné : ${lieu.nom}, ${lieu.adresse}`);
 
-    // 2. Actualisation des indicateurs de la boîte
-    const route = routesAlternativesRecues[index];
-    const distEl = document.getElementById('itineraire-distance');
-    const dureeEl = document.getElementById('itineraire-duree');
-    if (distEl) distEl.textContent = `${route.distKm} km`;
-    if (dureeEl) dureeEl.textContent = `~${route.dureeTexte}`;
-    actualiserMiniSummarySiMinimise();
+    if (!map.hasLayer(calquesJustice[catKey])) {
+        basculerCalqueJustice(catKey, true);
+    }
 
-    // 3. Dessin sur la carte Leaflet si le tracé est actuellement visible
-    if (itineraireEstVisible && dataPersonnes[personnageActifId]) {
-        tracerLigneItineraireSurCarte(routesAlternativesRecues, index, dataPersonnes[personnageActifId].color);
+    if (window.innerWidth <= 768) {
+        fermerMenuMobile();
+    }
+
+    // Déplace la carte de façon à centrer la page flottante (popup) sur l'écran
+    if (lieu.marker) {
+        centrerCarteSurPopup(lieu.marker);
     }
 }
 
 /**
- * Calcule et propose simultanément 3 itinéraires routiers réels suivant la voirie de Lyon :
- * 1. "Itinéraire 1 : Le plus rapide" (trajet direct par les grands axes urbains)
- * 2. "Itinéraire 2 : Quais de Saône" (voie douce longeant les berges de la Saône)
- * 3. "Itinéraire 3 : Berges du Rhône" (voie aérée et cyclable longeant le Rhône)
- * 
- * Fonctionnement technique :
- * - Fonction asynchrone (async/await) garantissant une interface fluide sans figer le navigateur
- * - Interroge l'API Open Source OSRM (OpenStreetMap)
- * - AbortController avec temporisation de 6.5s en cas de latence réseau
- * - Promise.allSettled pour exécuter les 3 variantes en parallèle
- * - Fallback géodésique automatique en cas de panne réseau ou de consultation hors-ligne
+ * Met en valeur un lieu de justice dans la liste latérale.
+ * @param {string} catKey
+ * @param {number} idx
  */
-async function calculerEtAfficherItineraire() {
+function mettreEnValeurLieuJusticeDansListe(catKey, idx) {
+    let activeCard = document.querySelector(`.lieu-justice-card[data-cat="${catKey}"][data-index="${idx}"]`);
+    if (!activeCard) {
+        afficherLieuxJusticeDansListe('tous');
+        document.querySelectorAll('.filter-pill').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-filter') === 'tous');
+        });
+        activeCard = document.querySelector(`.lieu-justice-card[data-cat="${catKey}"][data-index="${idx}"]`);
+    }
+
+    document.querySelectorAll('.lieu-justice-card').forEach(card => {
+        const match = (card.getAttribute('data-cat') === catKey && card.getAttribute('data-index') == idx);
+        card.classList.toggle('active', match);
+    });
+
+    const sidebar = document.getElementById('sidebar');
+    const estOuvert = sidebar && (window.innerWidth >= 768 ? !sidebar.classList.contains('desktop-collapsed') : sidebar.classList.contains('open'));
+    if (activeCard && estOuvert) {
+        activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+// =============================================================================
+// PARTIE 8 : VOLET LATÉRAL & MODALES FLOTTANTES
+// =============================================================================
+
+/**
+ * Met à jour le texte du bouton de menu dans le dock inférieur sans détruire l'icône.
+ * @param {string} texte
+ */
+function actualiserTexteMenuToggle(texte) {
+    const menuToggle = document.getElementById('menu-toggle');
+    if (!menuToggle) return;
+    const textSpan = menuToggle.querySelector('.menu-text');
+    if (textSpan) {
+        textSpan.textContent = texte;
+    } else {
+        menuToggle.innerHTML = `<span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></span> <span class="menu-text">${texte}</span>`;
+    }
+}
+
+/**
+ * Ouvre ou ferme le volet d'informations (desktop ou mobile).
+ */
+function toggleMenu() {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+
+    if (window.innerWidth >= 768) {
+        if (sidebar.classList.contains('desktop-collapsed')) {
+            ouvrirSidebarDesktop();
+        } else {
+            fermerSidebarDesktop();
+        }
+    } else {
+        if (sidebar.classList.contains('open')) {
+            fermerMenuMobile();
+        } else {
+            ouvrirMenuMobile();
+        }
+    }
+}
+
+function fermerSidebarDesktop() {
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('menu-toggle');
+    if (sidebar) sidebar.classList.add('desktop-collapsed');
+    if (menuToggle) menuToggle.classList.remove('active');
+    actualiserTexteMenuToggle(personnageActifId ? 'Voir les étapes' : 'Voir les lieux');
+    invaliderTailleCarte();
+    setTimeout(() => invaliderTailleCarte(), 360);
+}
+
+function ouvrirSidebarDesktop() {
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('menu-toggle');
+    if (sidebar) sidebar.classList.remove('desktop-collapsed');
+    if (menuToggle) menuToggle.classList.add('active');
+    actualiserTexteMenuToggle('Masquer');
+    invaliderTailleCarte();
+    setTimeout(() => invaliderTailleCarte(), 360);
+}
+
+function ouvrirMenuMobile() {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const menuToggle = document.getElementById('menu-toggle');
+
+    if (sidebar) {
+        sidebar.classList.add('open');
+        sidebar.style.transform = '';
+    }
+    if (backdrop) backdrop.classList.add('active');
+    if (menuToggle) menuToggle.classList.add('active');
+
+    fermerTousModals();
+}
+
+function fermerMenuMobile() {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const menuToggle = document.getElementById('menu-toggle');
+
+    if (sidebar) {
+        sidebar.style.transform = '';
+        sidebar.style.transition = '';
+        sidebar.classList.remove('open');
+    }
+    if (backdrop) {
+        backdrop.classList.remove('active');
+        backdrop.style.opacity = '';
+    }
+    if (menuToggle) menuToggle.classList.remove('active');
+}
+
+/**
+ * Indique si le volet est fermé (PC ou smartphone).
+ * @returns {boolean}
+ */
+function estVoletFerme() {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return false;
+    return (window.innerWidth >= 768)
+        ? sidebar.classList.contains('desktop-collapsed')
+        : !sidebar.classList.contains('open');
+}
+
+/**
+ * Ferme le volet latéral quelle que soit la taille d'écran.
+ * Appelé depuis le bouton ✕ et la zone de poignée tactile.
+ */
+function fermerVolet() {
+    if (window.innerWidth >= 768) {
+        fermerSidebarDesktop();
+    } else {
+        fermerMenuMobile();
+    }
+}
+window.fermerVolet = fermerVolet;
+
+
+
+function ouvrirModalMentionsLegales(section) {
+    const modal = document.getElementById('modal-mentions-legales');
+    const backdrop = document.getElementById('legal-backdrop');
+    if (modal) modal.classList.add('open');
+    if (backdrop) backdrop.classList.add('active');
+    document.body.classList.add('modal-open');
+    annoncerAccessibilite("Ouverture des mentions légales et sources");
+
+    if (section === 'sources') {
+        setTimeout(() => {
+            const sourcesSection = document.getElementById('legal-sources-section');
+            if (sourcesSection) {
+                sourcesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 120);
+    }
+}
+
+function fermerModalMentionsLegales() {
+    const modal = document.getElementById('modal-mentions-legales');
+    const backdrop = document.getElementById('legal-backdrop');
+    if (modal) modal.classList.remove('open');
+    if (backdrop) backdrop.classList.remove('active');
+    document.body.classList.remove('modal-open');
+}
+
+function fermerTousModals() {
+    toggleSearchHeader(false);
+    fermerModalMentionsLegales();
+    document.getElementById('modal-backdrop')?.classList.remove('active');
+    fermerTousDropdownsFonds();
+}
+
+// Touche Échap pour fermer les panneaux ouverts
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') fermerTousModals();
+});
+
+// =============================================================================
+// PARTIE 9 : INTÉGRATION GPS NATIVE (GOOGLE MAPS & APPLE MAPS)
+// =============================================================================
+
+/**
+ * Ouvre un point précis dans le GPS natif (Apple Maps sur iOS, Google Maps ailleurs).
+ * @param {number} lat
+ * @param {number} lng
+ * @param {string} [titre]
+ */
+function ouvrirPointDansGPS(lat, lng, titre) {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    const label = titre ? encodeURIComponent(titre) : `${lat},${lng}`;
+    const url = isIOS
+        ? `https://maps.apple.com/?daddr=${lat},${lng}&q=${label}&dirflg=w`
+        : `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`;
+
+    window.open(url, '_blank');
+}
+
+/**
+ * Ouvre l'ensemble des étapes du parcours actif dans le GPS.
+ */
+function ouvrirTousPointsDansGPS() {
     if (!personnageActifId || !dataPersonnes[personnageActifId]) return;
-
-    const personne = dataPersonnes[personnageActifId];
-    const btn = document.getElementById('btn-calculer-itineraire');
-    const distEl = document.getElementById('itineraire-distance');
-    const dureeEl = document.getElementById('itineraire-duree');
-
-    // 1. Indication visuelle de chargement sur le bouton d'action
-    if (btn) {
-        btn.classList.add('loading');
-        btn.innerHTML = '⏳ Recherche des itinéraires...';
-    }
-
-    // 2. Récupération des points de passage selon le trajet choisi (parcours complet ou tronçon)
-    const baseCoords = obtenirCoordonneesTrajetActif(personne);
-    if (!baseCoords || baseCoords.length < 2) {
-        if (btn) btn.classList.remove('loading');
+    const etapesVisibles = dataPersonnes[personnageActifId].etapes.filter(e => pointExistePourFond(e, fondActif));
+    const coords = etapesVisibles.map(e => e.coords);
+    if (!coords || coords.length === 0) return;
+    if (coords.length === 1) {
+        ouvrirPointDansGPS(coords[0][0], coords[0][1], etapesVisibles[0].titre);
         return;
     }
-
-    // 3. Préparation des 3 variantes d'itinéraires urbains
-    // Variante 1 : Directe
-    const planDirect = {
-        nom: "Itinéraire 1 : Le plus rapide",
-        desc: "Trajet le plus direct par les axes centraux",
-        estRecommande: true,
-        pts: baseCoords
-    };
-
-    // Variante 2 : Quais de Saône
-    let ptsSaone = [];
-    if (baseCoords.length === 2) {
-        const midLat = (baseCoords[0][0] + baseCoords[1][0]) / 2;
-        const saonePt = [midLat, Math.min(baseCoords[0][1], 4.8280)];
-        ptsSaone = [baseCoords[0], saonePt, baseCoords[1]];
-    } else {
-        ptsSaone = [baseCoords[0], [45.7680, 4.8280], ...baseCoords.slice(1)];
-    }
-    const planSaone = {
-        nom: "Itinéraire 2 : Quais de Saône",
-        desc: "Voie douce pittoresque le long de la Saône",
-        estRecommande: false,
-        pts: ptsSaone
-    };
-
-    // Variante 3 : Berges du Rhône
-    let ptsRhone = [];
-    if (baseCoords.length === 2) {
-        const midLat = (baseCoords[0][0] + baseCoords[1][0]) / 2;
-        const rhonePt = [midLat, Math.max(baseCoords[0][1], 4.8430)];
-        ptsRhone = [baseCoords[0], rhonePt, baseCoords[1]];
-    } else {
-        ptsRhone = [baseCoords[0], [45.7620, 4.8420], ...baseCoords.slice(1)];
-    }
-    const planRhone = {
-        nom: "Itinéraire 3 : Berges du Rhône",
-        desc: "Parcours aéré par les voies des berges du Rhône",
-        estRecommande: false,
-        pts: ptsRhone
-    };
-
-    const plans = [planDirect, planSaone, planRhone];
-
-    /**
-     * Envoie une requête réseau HTTP à l'API OSRM pour un profil d'itinéraire donné :
-     * 
-     * @param {{ nom: string, desc: string, estRecommande: boolean, pts: Array<[number, number]> }} plan - Configuration de la route
-     * @returns {Promise<Object>} Promesse résolue avec géométrie GeoJSON, distance et durée
-     */
-    async function fetchOsrmPlan(plan) {
-        // Format OSRM : longitude,latitude séparées par des points-virgules
-        const coordsStr = plan.pts.map(c => `${c[1]},${c[0]}`).join(';');
-        const url = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?overview=full&geometries=geojson`;
-
-        // Interruption automatique après 3,5 secondes en cas de latence sur le serveur public OSRM
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3500);
-
-        try {
-            const resp = await fetch(url, { signal: controller.signal });
-            clearTimeout(timeoutId);
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-            const data = await resp.json();
-            if (data.code !== 'Ok' || !data.routes || data.routes.length === 0) throw new Error('Pas de route');
-
-            const r = data.routes[0];
-            // Conversion GeoJSON [longitude, latitude] vers coordonnées Leaflet [latitude, longitude]
-            const latLngs = r.geometry.coordinates.map(coord => [coord[1], coord[0]]);
-            const dureeInfo = calculerDureeSelonMode(r.distance, modeTransportActuel);
-
-            return {
-                nom: plan.nom,
-                desc: plan.desc,
-                estRecommande: plan.estRecommande,
-                distanceMetres: r.distance,
-                distKm: dureeInfo.distKm,
-                dureeTexte: dureeInfo.dureeTexte,
-                latLngs: latLngs,
-                pointsWaypoints: plan.pts
-            };
-        } catch (e) {
-            clearTimeout(timeoutId);
-            throw e;
-        }
-    }
-
-    try {
-        // 4. Exécution parallèle des 3 requêtes OSRM
-        const resultats = await Promise.allSettled(plans.map(p => fetchOsrmPlan(p)));
-        const routesValides = [];
-
-        resultats.forEach(res => {
-            if (res.status === 'fulfilled' && res.value) {
-                routesValides.push(res.value);
-            }
-        });
-
-        if (routesValides.length > 0) {
-            routesAlternativesRecues = routesValides;
-            varianteActiveIndex = 0;
-
-            // 5. Génération des cartes de choix de routes
-            afficherCartesPropositions();
-
-            // 6. Mise à jour des statistiques de l'itinéraire sélectionné
-            const activeRoute = routesValides[0];
-            if (distEl) distEl.textContent = `${activeRoute.distKm} km`;
-            if (dureeEl) dureeEl.textContent = `~${activeRoute.dureeTexte}`;
-
-            // 7. Tracé sur la carte Leaflet si la visibilité est activée
-            if (itineraireEstVisible) {
-                tracerLigneItineraireSurCarte(routesValides, 0, personne.color);
-            }
-
-            // 8. Notification visuelle de confirmation sur le bouton
-            if (btn) {
-                const labelMode = modeTransportActuel === 'foot' ? 'à pied' : 'à vélo';
-                btn.innerHTML = `✅ ${routesValides.length} itinéraires trouvés (${labelMode})`;
-                setTimeout(() => {
-                    if (btn) btn.innerHTML = '🗺️ Actualiser les itinéraires';
-                }, 2500);
-            }
-        } else {
-            throw new Error('Aucun itinéraire OSRM disponible');
-        }
-    } catch (err) {
-        // En cas de panne de serveur ou d'absence d'internet : bascule sur le calcul géodésique
-        console.warn('Routage OSRM indisponible ou hors-ligne, utilisation du tracé historique estimé :', err);
-        appliquerFallbackItineraire(personne);
-    } finally {
-        if (btn) btn.classList.remove('loading');
-    }
+    ouvrirItineraireMultiPointsDansGPS(coords);
 }
 
 /**
-/**
- * Dessine sur la carte Leaflet la route active sélectionnée et les routes alternatives :
- * - Itinéraires alternatifs inactifs : polylignes grises tiretées discrètes, directement
- *   cliquables sur la carte Leaflet pour permuter d'itinéraire
- * - Itinéraire principal actif : tracé triple couche combinant une ombre sombre pour le contraste,
- *   un halo lumineux de couleur patrimoniale et un trait plein net
- * - Recentrage automatique de la vue cartographique sur l'emprise du tracé
- * 
- * @param {Array<Object>} routes - Tableau des objets routes issus du calcul OSRM ou du repli
- * @param {number} activeIndex - Index numérique de la route à mettre en surbrillance (0, 1 ou 2)
- * @param {string} couleur - Code hexadécimal de couleur associé au personnage actif
+ * Ouvre l'ensemble des lieux de justice sélectionnés dans le GPS.
  */
-function tracerLigneItineraireSurCarte(routes, activeIndex, couleur) {
-    if (!map) return;
+function ouvrirTousLieuxJusticeDansGPS() {
+    const lieuxCoords = [];
+    const categories = (filtreJusticeActif && filtreJusticeActif !== 'tous')
+        ? [filtreJusticeActif]
+        : ['juridiques', 'carceraux', 'memoire', 'execution'];
 
-    // 1. Suppression du calque d'itinéraire précédent pour éviter toute superposition
-    if (coucheLigneItineraire) {
-        map.removeLayer(coucheLigneItineraire);
-        coucheLigneItineraire = null;
-    }
-
-    if (!routes || routes.length === 0) return;
-
-    const groupeLigne = L.layerGroup();
-
-    // 2. Traçage des routes secondaires inactives (lignes grises tiretées cliquables)
-    routes.forEach((r, idx) => {
-        if (idx !== activeIndex && r.latLngs && r.latLngs.length > 0) {
-            const ligneInactive = L.polyline(r.latLngs, {
-                color: '#64748b',
-                weight: 5,
-                opacity: 0.6,
-                lineCap: 'round',
-                lineJoin: 'round',
-                dashArray: '3, 6'
+    categories.forEach(catKey => {
+        if (dataLieuxJustice[catKey]) {
+            dataLieuxJustice[catKey].lieux.forEach(lieu => {
+                if (pointExistePourFond(lieu, fondActif)) {
+                    lieuxCoords.push(lieu.coords);
+                }
             });
-
-            // Clic direct sur une route alternative sur la carte : la sélectionne immédiatement
-            ligneInactive.on('click', () => {
-                selectionnerVarianteRoute(idx);
-            });
-
-            groupeLigne.addLayer(ligneInactive);
         }
     });
 
-    // 3. Traçage de l'itinéraire sélectionné avec effet visuel triple épaisseur
-    const activeRoute = routes[activeIndex] || routes[0];
-    if (activeRoute && activeRoute.latLngs && activeRoute.latLngs.length > 0) {
-        // A. Ombre de contraste sombre (largeur 9px)
-        const bordureFond = L.polyline(activeRoute.latLngs, {
-            color: '#080a0f',
-            weight: 9,
-            opacity: 0.85,
-            lineCap: 'round',
-            lineJoin: 'round'
-        });
-        groupeLigne.addLayer(bordureFond);
-
-        // B. Halo lumineux coloré (largeur 7px)
-        const aura = L.polyline(activeRoute.latLngs, {
-            color: couleur,
-            weight: 7,
-            opacity: 0.45,
-            lineCap: 'round',
-            lineJoin: 'round'
-        });
-        groupeLigne.addLayer(aura);
-
-        // C. Trait central plein et net (largeur 4.5px)
-        const lignePleine = L.polyline(activeRoute.latLngs, {
-            color: couleur,
-            weight: 4.5,
-            opacity: 1,
-            lineCap: 'round',
-            lineJoin: 'round'
-        });
-        groupeLigne.addLayer(lignePleine);
-
-        // 4. Recentrage fluide sur l'itinéraire principal
-        map.fitBounds(lignePleine.getBounds(), {
-            padding: [60, 60],
-            maxZoom: 15
-        });
+    if (lieuxCoords.length === 0) return;
+    if (lieuxCoords.length === 1) {
+        ouvrirPointDansGPS(lieuxCoords[0][0], lieuxCoords[0][1], 'Lieu de Justice');
+        return;
     }
-
-    groupeLigne.addTo(map);
-    coucheLigneItineraire = groupeLigne;
+    ouvrirItineraireMultiPointsDansGPS(lieuxCoords);
 }
 
 /**
- * Lance le trajet dans l'application GPS native ou installée sur l'appareil de l'utilisateur :
- * - Sur appareils Apple (iOS / macOS) : génère une URL universelle pour Apple Maps (Plans)
- * - Sur Android et ordinateurs PC : génère une URL universelle pour Google Maps
- * - Intègre le point de départ, les étapes intermédiaires (waypoints) et le mode de déplacement (marche ou vélo)
+ * Construit l'URL d'itinéraire multi-points pour Google Maps ou Apple Maps.
+ * @param {Array<[number, number]>} coords
  */
-function ouvrirDansAppGPS() {
-    if (!personnageActifId || !dataPersonnes[personnageActifId]) return;
-
-    // 1. Récupération des points de coordonnées du trajet actif
-    const activeRoute = (routesAlternativesRecues && routesAlternativesRecues[varianteActiveIndex]) 
-        ? routesAlternativesRecues[varianteActiveIndex] 
-        : null;
-
-    let coords = activeRoute ? activeRoute.pointsWaypoints : obtenirCoordonneesTrajetActif(dataPersonnes[personnageActifId]);
+function ouvrirItineraireMultiPointsDansGPS(coords) {
     if (!coords || coords.length < 2) return;
 
-    const origin = coords[0];                         // Premier point (départ)
-    const dest = coords[coords.length - 1];           // Dernier point (arrivée)
-    const intermediates = coords.slice(1, -1);        // Points intermédiaires de passage
-
-    // 2. Détection de l'environnement matériel Apple (iPhone, iPad, Mac tactile)
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+    const origin = coords[0];
+    const dest = coords[coords.length - 1];
+    const intermediates = coords.slice(1, -1);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
     let gpsUrl = '';
-    const travelmode = modeTransportActuel === 'bike' ? 'bicycling' : 'walking';
 
-    // 3. Construction de l'URL spécifique au système d'exploitation
     if (isIOS) {
-        // Paramètres Apple Maps : dirflg=w (piéton), dirflg=b (vélo)
-        const dirflg = modeTransportActuel === 'bike' ? 'b' : 'w';
         let daddr = `${dest[0]},${dest[1]}`;
         if (intermediates.length > 0) {
             daddr = intermediates.map(c => `${c[0]},${c[1]}`).join('+to:') + '+to:' + daddr;
         }
-        gpsUrl = `https://maps.apple.com/?saddr=${origin[0]},${origin[1]}&daddr=${daddr}&dirflg=${dirflg}`;
+        gpsUrl = `https://maps.apple.com/?saddr=${origin[0]},${origin[1]}&daddr=${daddr}&dirflg=w`;
     } else {
-        // Paramètres Google Maps
         let waypointsQuery = '';
         if (intermediates.length > 0) {
-            const waypointsStr = intermediates.map(c => `${c[0]},${c[1]}`).join('|');
+            const waypointsStr = intermediates.slice(0, 9).map(c => `${c[0]},${c[1]}`).join('|');
             waypointsQuery = `&waypoints=${encodeURIComponent(waypointsStr)}`;
         }
-        gpsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin[0]},${origin[1]}&destination=${dest[0]},${dest[1]}${waypointsQuery}&travelmode=${travelmode}`;
+        gpsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin[0]},${origin[1]}&destination=${dest[0]},${dest[1]}${waypointsQuery}&travelmode=walking`;
     }
 
-    // 4. Ouverture externe dans un nouvel onglet ou déclenchement de l'application native
     window.open(gpsUrl, '_blank');
 }
 
 /**
- * Calcul de secours (Fallback) activé lorsque le serveur OSRM est inaccessible ou sans connexion internet :
- * - Calcule la distance géodésique orthodromique cumulée entre les étapes (Haversine)
- * - Multiplie par un coefficient de détour urbain de 1.3
- * - Construit une proposition de substitution pour ne jamais laisser l'utilisateur bloqué
- * 
- * @param {Object} personne - Fiche historique du résistant concerné
+ * Alias de compatibilité pour l'ouverture du parcours complet.
  */
-function appliquerFallbackItineraire(personne) {
-    const distEl = document.getElementById('itineraire-distance');
-    const dureeEl = document.getElementById('itineraire-duree');
-    const btn = document.getElementById('btn-calculer-itineraire');
-
-    const coords = obtenirCoordonneesTrajetActif(personne);
-    if (!coords || coords.length < 2) return;
-
-    // Somme des distances géodésiques avec facteur de correction voirie (1300 mètres par km à vol d'oiseau)
-    let distMeters = 0;
-    for (let i = 0; i < coords.length - 1; i++) {
-        const c1 = coords[i];
-        const c2 = coords[i + 1];
-        distMeters += calculerDistanceHaversine(c1[0], c1[1], c2[0], c2[1]) * 1300;
-    }
-
-    const dureeInfo = calculerDureeSelonMode(distMeters, modeTransportActuel);
-
-    if (distEl) distEl.textContent = `${dureeInfo.distKm} km (estimé)`;
-    if (dureeEl) dureeEl.textContent = `~${dureeInfo.dureeTexte}`;
-
-    // Création d'une route de repli directe
-    routesAlternativesRecues = [{
-        nom: "Itinéraire estimé",
-        desc: "Tracé patrimonial direct",
-        estRecommande: true,
-        distanceMetres: distMeters,
-        distKm: dureeInfo.distKm,
-        dureeTexte: dureeInfo.dureeTexte,
-        latLngs: coords,
-        pointsWaypoints: coords
-    }];
-    varianteActiveIndex = 0;
-    afficherCartesPropositions();
-
-    if (itineraireEstVisible) {
-        tracerLigneItineraireSurCarte(routesAlternativesRecues, 0, personne.color);
-    }
-
-    if (btn) {
-        const labelMode = modeTransportActuel === 'foot' ? 'à pied' : 'à vélo';
-        btn.innerHTML = `🗺️ Tracé estimé (${labelMode})`;
-    }
+function ouvrirDansAppGPS() {
+    ouvrirTousPointsDansGPS();
 }
 
 /**
- * Calcule la distance géodésique à la surface de la Terre entre deux coordonnées géographiques :
- * Utilise la formule mathématique de Haversine pour tenir compte de la sphéricité terrestre.
- * 
- * @param {number} lat1 - Latitude du premier point (en degrés décimaux)
- * @param {number} lon1 - Longitude du premier point (en degrés décimaux)
- * @param {number} lat2 - Latitude du second point (en degrés décimaux)
- * @param {number} lon2 - Longitude du second point (en degrés décimaux)
- * @returns {number} Distance en kilomètres
+ * Remplit le sélecteur GPS avec les étapes du personnage actif.
+ * @param {Object} personne
  */
-function calculerDistanceHaversine(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Rayon moyen de la Terre en kilomètres
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
+function peuplerSelectGpsPersonne(personne) {
+    const select = document.getElementById('select-gps-point-personne');
+    if (!select || !personne || !personne.etapes) return;
+
+    select.innerHTML = '';
+    personne.etapes.forEach((etape, index) => {
+        const opt = document.createElement('option');
+        opt.value = index;
+        opt.textContent = `Étape ${index + 1} : ${etape.titre}`;
+        select.appendChild(opt);
+    });
+
+    if (etapeActiveIndex !== null && etapeActiveIndex !== undefined) {
+        select.value = etapeActiveIndex;
+    }
+
+    select.onchange = function() {
+        const idx = parseInt(this.value, 10);
+        if (!isNaN(idx)) focusSurEtape(idx);
+    };
 }
 
-// ==========================================================================
-// 12. GESTES TACTILES DU TIROIR MOBILE (SWIPE DOWN TO CLOSE)
-// ==========================================================================
+function ouvrirPointSelectionneDansGPS() {
+    if (!personnageActifId || !dataPersonnes[personnageActifId]) return;
+    const personne = dataPersonnes[personnageActifId];
+    const select = document.getElementById('select-gps-point-personne');
+    const index = select ? parseInt(select.value, 10) : (etapeActiveIndex || 0);
+    const etape = personne.etapes[index] || personne.etapes[0];
+    if (etape) ouvrirPointDansGPS(etape.coords[0], etape.coords[1], etape.titre);
+}
 
 /**
- * Initialise la reconnaissance des gestes tactiles de glissement (Swipe down) sur smartphone :
- * Permet à l'utilisateur de fermer intuitivement le tiroir inférieur en le tirant vers le bas,
- * à la manière des applications mobiles natives (Google Maps, Citymapper).
+ * Remplit le sélecteur GPS avec les lieux de justice.
+ * @param {string} [filtre='tous']
+ */
+function peuplerSelectGpsJustice(filtre) {
+    const select = document.getElementById('select-gps-point-justice');
+    if (!select) return;
+
+    select.innerHTML = '';
+    const categories = (filtre && filtre !== 'tous') ? [filtre] : ['juridiques', 'carceraux', 'memoire', 'execution'];
+    categories.forEach(catKey => {
+        const cat = dataLieuxJustice[catKey];
+        if (cat) {
+            cat.lieux.forEach((lieu, idx) => {
+                if (!pointExistePourFond(lieu, fondActif)) return;
+                const opt = document.createElement('option');
+                opt.value = `${catKey}_${idx}`;
+                opt.textContent = `${lieu.nom} (${cat.nomCategorie})`;
+                select.appendChild(opt);
+            });
+        }
+    });
+
+    select.onchange = function() {
+        if (!this.value) return;
+        const [catKey, idxStr] = this.value.split('_');
+        const idx = parseInt(idxStr, 10);
+        focusSurLieuJustice(catKey, idx);
+    };
+}
+
+function ouvrirLieuJusticeSelectionneDansGPS() {
+    const select = document.getElementById('select-gps-point-justice');
+    if (!select || !select.value) return;
+    const [catKey, idxStr] = select.value.split('_');
+    const idx = parseInt(idxStr, 10);
+    if (dataLieuxJustice[catKey] && dataLieuxJustice[catKey].lieux[idx]) {
+        const lieu = dataLieuxJustice[catKey].lieux[idx];
+        ouvrirPointDansGPS(lieu.coords[0], lieu.coords[1], lieu.nom);
+    }
+}
+
+// =============================================================================
+// PARTIE 10 : GESTES TACTILES & EXPORTS GLOBAUX
+// =============================================================================
+
+/**
+ * Active le glissement tactile vers le bas (Swipe Down) pour rabattre le volet mobile.
  */
 function initGestesTiroirMobile() {
     const sidebar = document.getElementById('sidebar');
@@ -2511,9 +2261,8 @@ function initGestesTiroirMobile() {
     let isDragging = false;
     let dragInitiated = false;
 
-    // 1. Début du toucher sur écran tactile (touchstart)
     sidebar.addEventListener('touchstart', (e) => {
-        if (window.innerWidth >= 768) return; // Désactivé sur ordinateur (PC)
+        if (window.innerWidth >= 768 || !sidebar.classList.contains('open')) return;
         if (e.touches.length !== 1) return;
 
         const touch = e.touches[0];
@@ -2526,12 +2275,9 @@ function initGestesTiroirMobile() {
         const target = e.target;
         const isHandle = dragArea && (dragArea === target || dragArea.contains(target));
         const isHeader = target.closest('.sidebar-header') !== null;
-
-        // Autorise le glissement si contact sur la poignée, l'en-tête, ou en haut du scroll
         dragInitiated = isHandle || isHeader || (sidebar.scrollTop <= 2);
     }, { passive: true });
 
-    // 2. Déplacement du doigt vers le bas (touchmove)
     sidebar.addEventListener('touchmove', (e) => {
         if (window.innerWidth >= 768 || !dragInitiated) return;
         if (e.touches.length !== 1) return;
@@ -2540,22 +2286,16 @@ function initGestesTiroirMobile() {
         const deltaY = touch.clientY - touchStartY;
         const deltaX = touch.clientX - touchStartX;
 
-        // Vérifie que le glissement est descendant (deltaY > 0) et principalement vertical
         if (deltaY > 0 && Math.abs(deltaY) > Math.abs(deltaX)) {
-            if (sidebar.scrollTop > 2 && !isDragging) {
-                return;
-            }
+            if (sidebar.scrollTop > 2 && !isDragging) return;
 
             isDragging = true;
             currentDeltaY = deltaY;
-
             if (e.cancelable) e.preventDefault();
 
-            // Translation temps réel du tiroir suivant le doigt
             sidebar.style.transition = 'none';
             sidebar.style.transform = `translateY(${deltaY}px)`;
 
-            // Estompe le voile sombre proportionnellement au mouvement
             if (backdrop) {
                 const opacity = Math.max(0, 1 - (deltaY / 280));
                 backdrop.style.opacity = opacity.toString();
@@ -2566,7 +2306,6 @@ function initGestesTiroirMobile() {
         }
     }, { passive: false });
 
-    // 3. Relâchement du doigt (touchend)
     const finGlissement = () => {
         if (!dragInitiated) return;
         dragInitiated = false;
@@ -2581,39 +2320,291 @@ function initGestesTiroirMobile() {
         if (backdrop) backdrop.style.opacity = '';
 
         const elapsedTime = Math.max(1, Date.now() - startTime);
-        const velocity = currentDeltaY / elapsedTime; // Vitesse de déplacement
+        const velocity = currentDeltaY / elapsedTime;
 
-        // Ferme le tiroir si tiré de plus de 50px ou si geste rapide vers le bas
         if (currentDeltaY > 50 || (currentDeltaY > 25 && velocity > 0.35)) {
             fermerMenuMobile();
         } else {
-            sidebar.style.transform = ''; // Effet de ressort rappelant le tiroir
+            sidebar.style.transform = '';
         }
-
         currentDeltaY = 0;
     };
 
     sidebar.addEventListener('touchend', finGlissement, { passive: true });
     sidebar.addEventListener('touchcancel', finGlissement, { passive: true });
+}
 
-    // Raccourci accessibilité : la touche Échap referme le tiroir et les fenêtres modales
+// Initialisation au chargement du DOM
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGestesTiroirMobile);
+} else {
+    initGestesTiroirMobile();
+}
+
+// Exports pour les gestionnaires d'événements HTML inline et Leaflet
+window.dataPersonnes = dataPersonnes;
+window.dataLieuxJustice = dataLieuxJustice;
+window.pointExisteEn1950 = pointExisteEn1950;
+window.pointExistePourFond = pointExistePourFond;
+window.actualiserMarqueursJustice = actualiserMarqueursJustice;
+window.actualiserVisibiliteBoutonTheme = actualiserVisibiliteBoutonTheme;
+window.ouvrirCarte = ouvrirCarte;
+window.ouvrirCarteJustice = ouvrirCarteJustice;
+window.retourAccueil = retourAccueil;
+window.basculerThemeUnique = basculerThemeUnique;
+window.basculerModeSombreClair = basculerModeSombreClair;
+window.changerFondCarte = changerFondCarte;
+window.toggleDropdownFondsPersonne = toggleDropdownFondsPersonne;
+window.toggleDropdownFondsJustice = toggleDropdownFondsJustice;
+window.choisirFondPlan = choisirFondPlan;
+window.filtrerJustice = filtrerJustice;
+window.focusSurLieuJustice = focusSurLieuJustice;
+window.focusSurEtape = focusSurEtape;
+window.toggleMenu = toggleMenu;
+window.fermerSidebarDesktop = fermerSidebarDesktop;
+window.ouvrirSidebarDesktop = ouvrirSidebarDesktop;
+window.fermerMenuMobile = fermerMenuMobile;
+window.ouvrirMenuMobile = ouvrirMenuMobile;
+window.ouvrirModalMentionsLegales = ouvrirModalMentionsLegales;
+window.fermerModalMentionsLegales = fermerModalMentionsLegales;
+window.fermerTousModals = fermerTousModals;
+window.ouvrirPointDansGPS = ouvrirPointDansGPS;
+window.ouvrirTousPointsDansGPS = ouvrirTousPointsDansGPS;
+window.ouvrirTousLieuxJusticeDansGPS = ouvrirTousLieuxJusticeDansGPS;
+window.ouvrirPointSelectionneDansGPS = ouvrirPointSelectionneDansGPS;
+window.ouvrirLieuJusticeSelectionneDansGPS = ouvrirLieuJusticeSelectionneDansGPS;
+window.ouvrirDansAppGPS = ouvrirDansAppGPS;
+window.estVoletFerme = estVoletFerme;
+window.centrerCarteSurPopup = centrerCarteSurPopup;
+window.actualiserTexteMenuToggle = actualiserTexteMenuToggle;
+
+// =============================================================================
+// NOUVELLES FONCTIONNALITÉS : RECHERCHE CONTEXTUELLE
+// =============================================================================
+
+// 1. Recherche Contextuelle (Page active : uniquement les éléments de la page affichée)
+const searchInput = document.getElementById('global-search-input');
+const searchResults = document.getElementById('search-results');
+
+function toggleSearchHeader(forceState) {
+    const modal = document.getElementById('header-search-modal');
+    const btn = document.getElementById('header-search-toggle-btn');
+    const input = document.getElementById('global-search-input');
+    if (!modal) return;
+
+    const isCurrentlyOpen = modal.style.display !== 'none';
+    const willOpen = (typeof forceState === 'boolean') ? forceState : !isCurrentlyOpen;
+
+    if (willOpen) {
+        modal.style.display = 'flex';
+        if (btn) btn.classList.add('active');
+        if (input) {
+            setTimeout(() => {
+                input.focus();
+                input.select();
+            }, 60);
+        }
+    } else {
+        modal.style.display = 'none';
+        if (btn) btn.classList.remove('active');
+        if (searchResults) searchResults.classList.remove('active');
+    }
+}
+window.toggleSearchHeader = toggleSearchHeader;
+
+if (searchInput && searchResults) {
+    searchInput.addEventListener('input', function(e) {
+        const term = e.target.value.toLowerCase().trim();
+        searchResults.innerHTML = '';
+
+        if (term.length < 2) {
+            searchResults.classList.remove('active');
+            return;
+        }
+
+        let results = [];
+
+        // Contexte A : Un personnage résistant est actif -> On ne cherche QUE dans ses étapes
+        if (personnageActifId && dataPersonnes[personnageActifId]) {
+            const perso = dataPersonnes[personnageActifId];
+            perso.etapes.forEach((etape, index) => {
+                const titre = (etape.titre || '').toLowerCase();
+                const lieu = (etape.lieu || '').toLowerCase();
+                const desc = (etape.desc || '').toLowerCase();
+                const date = (etape.date || '').toLowerCase();
+
+                if (titre.includes(term) || lieu.includes(term) || desc.includes(term) || date.includes(term)) {
+                    results.push({
+                        type: 'etape-active',
+                        index: index,
+                        title: `Étape ${index + 1} : ${etape.titre}`,
+                        desc: `📍 ${etape.lieu}${etape.date ? ' • ' + etape.date : ''}`
+                    });
+                }
+            });
+        } 
+        // Contexte B : Page des Lieux de Justice -> On ne cherche QUE dans les lieux de justice
+        else {
+            for (const [catKey, cat] of Object.entries(dataLieuxJustice)) {
+                cat.lieux.forEach((lieu, index) => {
+                    const nom = (lieu.nom || '').toLowerCase();
+                    const adr = (lieu.adresse || '').toLowerCase();
+                    const role = (lieu.role || '').toLowerCase();
+                    const dates = (lieu.dates || '').toLowerCase();
+
+                    if (nom.includes(term) || adr.includes(term) || role.includes(term) || dates.includes(term)) {
+                        results.push({
+                            type: 'lieu-actif',
+                            catKey: catKey,
+                            index: index,
+                            title: lieu.nom,
+                            desc: `${cat.icon || '⚖️'} ${cat.nomCategorie}${lieu.dates ? ' • ' + lieu.dates : ''}`
+                        });
+                    }
+                });
+            }
+        }
+
+        if (results.length > 0) {
+            results.slice(0, 8).forEach(res => {
+                const div = document.createElement('div');
+                div.className = 'search-result-item';
+                div.innerHTML = `<span class="search-result-title">${res.title}</span><span class="search-result-desc">${res.desc}</span>`;
+                div.addEventListener('click', () => {
+                    if (res.type === 'etape-active') {
+                        focusSurEtape(res.index);
+                    } else if (res.type === 'lieu-actif') {
+                        focusSurLieuJustice(res.catKey, res.index);
+                    }
+                    searchInput.value = '';
+                    searchResults.classList.remove('active');
+                    toggleSearchHeader(false);
+                });
+                searchResults.appendChild(div);
+            });
+            searchResults.classList.add('active');
+        } else {
+            searchResults.classList.remove('active');
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        const modal = document.getElementById('header-search-modal');
+        const btn = document.getElementById('header-search-toggle-btn');
+        if (modal && modal.style.display !== 'none') {
+            if (!modal.contains(e.target) && (!btn || !btn.contains(e.target))) {
+                toggleSearchHeader(false);
+            }
+        }
+    });
+
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            fermerMenuMobile();
-            fermerTousModals();
+            toggleSearchHeader(false);
         }
     });
 }
 
-// Initialisation dès que le document HTML est prêt
-if (document.readyState === 'loading') {
-document.addEventListener('DOMContentLoaded', initGestesTiroirMobile);
-} else {
-initGestesTiroirMobile();
+// 2. Recherche Globale sur la Page d'Accueil (Recherche dans TOUT le patrimoine historique)
+const landingSearchInput = document.getElementById('landing-search-input');
+const landingSearchResults = document.getElementById('landing-search-results');
+
+if (landingSearchInput && landingSearchResults) {
+    landingSearchInput.addEventListener('input', function(e) {
+        const term = e.target.value.toLowerCase().trim();
+        landingSearchResults.innerHTML = '';
+
+        if (term.length < 2) {
+            landingSearchResults.classList.remove('active');
+            return;
+        }
+
+        let results = [];
+
+        // Recherche transversale parmi tous les personnages
+        for (const [id, personne] of Object.entries(dataPersonnes)) {
+            if (personne.nom.toLowerCase().includes(term) || (personne.role && personne.role.toLowerCase().includes(term))) {
+                results.push({
+                    type: 'personne',
+                    id: id,
+                    title: personne.nom,
+                    desc: `Parcours • ${personne.role || 'Résistance'}`
+                });
+            }
+
+            // Étapes de chaque personnage
+            personne.etapes.forEach((etape, index) => {
+                const titre = (etape.titre || '').toLowerCase();
+                const lieu = (etape.lieu || '').toLowerCase();
+                const desc = (etape.desc || '').toLowerCase();
+                const date = (etape.date || '').toLowerCase();
+
+                if (titre.includes(term) || lieu.includes(term) || desc.includes(term) || date.includes(term)) {
+                    results.push({
+                        type: 'etape',
+                        id: id,
+                        index: index,
+                        title: etape.titre,
+                        desc: `${personne.nom} • ${etape.date || etape.lieu}`
+                    });
+                }
+            });
+        }
+
+        // Recherche transversale parmi tous les lieux de justice
+        for (const [catKey, cat] of Object.entries(dataLieuxJustice)) {
+            cat.lieux.forEach((lieu, index) => {
+                const nom = (lieu.nom || '').toLowerCase();
+                const adr = (lieu.adresse || '').toLowerCase();
+                const role = (lieu.role || '').toLowerCase();
+                const dates = (lieu.dates || '').toLowerCase();
+
+                if (nom.includes(term) || adr.includes(term) || role.includes(term) || dates.includes(term)) {
+                    results.push({
+                        type: 'lieu',
+                        catKey: catKey,
+                        index: index,
+                        title: lieu.nom,
+                        desc: `${cat.icon || '⚖️'} ${cat.nomCategorie}${lieu.dates ? ' • ' + lieu.dates : ''}`
+                    });
+                }
+            });
+        }
+
+        if (results.length > 0) {
+            results.slice(0, 10).forEach(res => {
+                const div = document.createElement('div');
+                div.className = 'search-result-item';
+                div.innerHTML = `<span class="search-result-title">${res.title}</span><span class="search-result-desc">${res.desc}</span>`;
+                div.addEventListener('click', () => {
+                    executeLandingSearchResult(res);
+                    landingSearchInput.value = '';
+                    landingSearchResults.classList.remove('active');
+                });
+                landingSearchResults.appendChild(div);
+            });
+            landingSearchResults.classList.add('active');
+        } else {
+            landingSearchResults.classList.remove('active');
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!landingSearchInput.contains(e.target) && !landingSearchResults.contains(e.target)) {
+            landingSearchResults.classList.remove('active');
+        }
+    });
 }
 
-// Variables et fonctions globales utiles pour tests et intégration
-window.dataPersonnes = dataPersonnes;
-window.dataLieuxJustice = dataLieuxJustice;
-window.estVoletFerme = estVoletFerme;
-window.assurerVoletOuvert = assurerVoletOuvert;
+function executeLandingSearchResult(res) {
+    if (res.type === 'personne') {
+        ouvrirCarte(res.id);
+    } else if (res.type === 'etape') {
+        ouvrirCarte(res.id);
+        setTimeout(() => focusSurEtape(res.index), 600);
+    } else if (res.type === 'lieu') {
+        ouvrirCarteJustice();
+        setTimeout(() => focusSurLieuJustice(res.catKey, res.index), 600);
+    }
+}
+
