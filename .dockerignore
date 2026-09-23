@@ -1,0 +1,5 @@
+.git
+.copilot
+node_modules
+dist
+AGENTS.md
