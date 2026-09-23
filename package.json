@@ -6,9 +6,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "format": "oxlint-vue src/App.vue src/main.js src/domain tests --format-code",
-    "format:check": "oxlint-vue src/App.vue src/main.js src/domain tests --check-format",
-    "lint": "oxlint-vue src/App.vue src/main.js src/domain tests --strict-templates --max-warnings=0",
+    "format": "oxlint-vue src/App.vue src/main.js src/domain src/features tests --fix --format-code",
+    "format:check": "oxlint-vue src/App.vue src/main.js src/domain src/features tests --check-format",
+    "lint": "oxlint-vue src/App.vue src/main.js src/domain src/features tests --strict-templates --max-warnings=0",
     "test": "vitest run",
     "test:watch": "vitest"
   },

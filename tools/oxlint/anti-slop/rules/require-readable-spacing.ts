@@ -34,9 +34,17 @@ const paddingRule = createPaddingLineRule([
   },
 ]);
 
+function createSpacingRule(context: Parameters<typeof paddingRule.create>[0]) {
+  // This JavaScript statement-spacing rule cannot classify Vue template nodes.
+  if (context.getFilename().includes(".vue")) return {};
+
+  return paddingRule.create(context);
+}
+
 /** Restore structural blank lines with whitespace-only fixes; keep local short bindings and overloads grouped. */
 export const requireReadableSpacingRule: CreateRule = {
   ...paddingRule,
+  create: createSpacingRule,
   meta: {
     ...paddingRule.meta,
     docs: {

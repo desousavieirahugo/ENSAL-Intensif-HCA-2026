@@ -1,10 +1,10 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import './styles/main.css'
-import './legacy/app.js'
+import { createApp } from "vue";
+import App from "./App.vue";
+import "./styles/main.css";
 
-const runtimeRoot = document.getElementById('vue-runtime')
+document.documentElement.style.setProperty(
+  "--landing-image",
+  `url("${import.meta.env.BASE_URL}images/fond_lyon.jpg")`,
+);
 
-if (runtimeRoot) {
-  createApp(App).mount(runtimeRoot)
-}
+createApp(App).mount("#vue-runtime");
