@@ -186,7 +186,7 @@ body {
     background: 
         radial-gradient(ellipse at 50% 30%, rgba(18, 22, 34, 0.75) 0%, rgba(11, 13, 19, 0.98) 90%),
         linear-gradient(rgba(11, 13, 19, 0.75), rgba(11, 13, 19, 0.90)),
-        url('../../public/images/fond_lyon.jpg') no-repeat center center / cover fixed !important;
+        url('images/fond_lyon.jpg') no-repeat center center / cover fixed !important;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -2350,3 +2350,5 @@ body {
         margin: 10px auto 0 auto;
     }
 }
+
+
