@@ -14,30 +14,35 @@ est progressivement migré vers Vue 3 et Vite.
 Bun et les outils JavaScript sont fournis dans l’image du projet. Ils n’ont pas
 à être installés sur la machine hôte.
 
-### Windows
+### Windows, pas à pas
 
-1. Installe Git for Windows et Docker Desktop. Pendant la configuration de
-   Docker Desktop, active le backend WSL 2 et vérifie que Docker utilise les
-   conteneurs Linux. Démarre Docker Desktop avant d’utiliser le projet.
-2. Dans PowerShell, installe GNU Make avec WinGet :
+Aucune connaissance en informatique n’est requise : suis ces étapes dans
+l’ordre.
 
-   ```powershell
-   winget install --id ezwinports.make --exact
-   ```
-
-   Ferme puis rouvre le terminal pour actualiser le `PATH`. Tu peux aussi
-   utiliser Make depuis une distribution WSL. Dans ce cas, place le dépôt dans
-   le système de fichiers Linux (par exemple sous `~/code`) pour éviter les
-   ralentissements liés aux montages Windows.
-3. Ouvre PowerShell ou le terminal WSL dans le dossier du projet et vérifie les
-   outils :
+1. Installe les dépendances en double-cliquant sur `setup-windows.bat` à la
+   racine du projet, puis suis les instructions affichées. Le script installe
+   Git, Docker Desktop et GNU Make avec WinGet. Si WinGet est absent, installe
+   « Programme d’installation d’application » depuis le Microsoft Store puis
+   relance le script.
+2. Si Docker Desktop vient d’être installé, redémarre l’ordinateur.
+3. Démarre « Docker Desktop » et attends qu’il affiche un statut prêt, avec les
+   conteneurs Linux activés (backend WSL 2).
+4. Ouvre un **nouveau** terminal dans le dossier du projet : dans
+   l’Explorateur, clique dans la barre d’adresse du dossier, tape
+   `powershell`, puis Entrée. Vérifie les outils :
 
    ```powershell
    docker compose version
    make --version
    ```
 
-Docker Desktop pour Windows et ses prérequis sont détaillés dans la
+5. Lance le site avec `make up`, puis ouvre <http://localhost:5173/>.
+6. Pour arrêter le site : `make down`.
+
+Notes pour Windows : place de préférence le dépôt dans le système de fichiers
+Linux (par exemple sous `~/code`) si tu travailles depuis une distribution
+WSL, pour éviter les ralentissements liés aux montages Windows. Docker Desktop
+pour Windows et ses prérequis sont détaillés dans la
 [documentation officielle Docker](https://docs.docker.com/desktop/setup/install/windows-install/).
 
 ### Linux et macOS
@@ -153,6 +158,7 @@ hébergement sous un sous-chemin, notamment les pages de projet GitHub Pages.
 ├── index.html           # Entrée de Vite et de l’hébergement statique
 ├── Dockerfile           # Image de développement Bun et makefile2doc
 ├── docker-compose.yml   # Service web et volumes de développement
+├── setup-windows.bat    # Installation des dépendances sur Windows
 └── Makefile             # Commandes du projet
 ```
 
