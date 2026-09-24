@@ -19,33 +19,6 @@ Sur Windows, le fichier `setup-windows.bat` installe ces trois outils (voir « W
 
 Bun et les outils JavaScript sont fournis dans l’image du projet. Ils n’ont pas à être installés sur votre ordinateur.
 
-### Récupérer le projet
-
-Si le projet n’est pas encore sur votre ordinateur, clonez-le puis entrez dans son dossier :
-
-```sh
-git clone https://github.com/desousavieirahugo/ENSAL-Intensif-HCA-2026.git
-cd ENSAL-Intensif-HCA-2026
-```
-
-### Lancer le site
-
-Depuis le dossier du projet, lancez :
-
-```sh
-make up
-```
-
-Cette commande construit l’image si nécessaire et démarre le serveur dans un conteneur en arrière-plan. Ouvrez ensuite <http://localhost:5173/> dans votre navigateur.
-
-Pour arrêter le site :
-
-```sh
-make down
-```
-
-Bon à savoir : le premier lancement peut prendre quelques minutes (construction de l’image). Depuis un autre appareil du même réseau local, utilisez l’adresse IP locale de l’ordinateur suivie du port `5173`, et autorisez ce port dans le pare-feu si nécessaire.
-
 ## Windows pas à pas
 
 Suivez ces étapes dans l’ordre. Aucune connaissance technique n’est requise.
@@ -64,6 +37,33 @@ Suivez ces étapes dans l’ordre. Aucune connaissance technique n’est requise
 6. Pour arrêter le site : `make down`.
 
 Si vous travaillez depuis une distribution WSL, placez de préférence le dépôt dans le système de fichiers Linux (par exemple sous `~/code`) pour éviter les ralentissements liés aux montages Windows. Docker Desktop pour Windows et ses prérequis sont détaillés dans la [documentation officielle Docker](https://docs.docker.com/desktop/setup/install/windows-install/).
+
+## Récupérer le projet
+
+Si le projet n’est pas encore sur votre ordinateur, clonez-le puis entrez dans son dossier :
+
+```sh
+git clone https://github.com/desousavieirahugo/ENSAL-Intensif-HCA-2026.git
+cd ENSAL-Intensif-HCA-2026
+```
+
+## Lancer le site
+
+Depuis le dossier du projet, lancez :
+
+```sh
+make up
+```
+
+Cette commande construit l’image si nécessaire et démarre le serveur dans un conteneur en arrière-plan. Ouvrez ensuite <http://localhost:5173/> dans votre navigateur.
+
+Pour arrêter le site :
+
+```sh
+make down
+```
+
+Bon à savoir : le premier lancement peut prendre quelques minutes (construction de l’image). Depuis un autre appareil du même réseau local, utilisez l’adresse IP locale de l’ordinateur suivie du port `5173`, et autorisez ce port dans le pare-feu si nécessaire.
 
 ## Développer
 
