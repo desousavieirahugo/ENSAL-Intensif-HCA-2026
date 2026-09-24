@@ -1,31 +1,34 @@
 <script setup>
-import { computed } from "vue";
+import { computed } from 'vue'
 
 const props = defineProps({
   categories: { type: Object, required: true },
   places: { type: Array, required: true },
   filter: { type: String, required: true },
   maxGpsPoints: { type: Number, required: true },
-});
+})
 
-const emit = defineEmits(["filter", "itemSelect", "gps"]);
+const emit = defineEmits(['filter', 'itemSelect', 'gps'])
 
 const filters = [
-  { id: "tous", label: "Tous les lieux" },
-  { id: "juridiques", label: "Palais de Justice" },
-  { id: "carceraux", label: "Prisons" },
-  { id: "memoire", label: "Lieux de mémoire" },
-  { id: "execution", label: "Lieux d’exécution" },
-];
+  { id: 'tous', label: 'Tous les lieux' },
+  { id: 'juridiques', label: 'Palais de Justice' },
+  { id: 'carceraux', label: 'Prisons' },
+  { id: 'memoire', label: 'Lieux de mémoire' },
+  { id: 'execution', label: 'Lieux d’exécution' },
+]
 
 const activeFilterLabel = computed(
-  () => filters.find((option) => option.id === props.filter)?.label || "Tous les lieux",
-);
+  () => filters.find(option => option.id === props.filter)?.label || 'Tous les lieux',
+)
 </script>
 
 <template>
-  <section id="sidebar-justice-view" aria-label="Lieux de justice">
-    <div class="profil-hero justice-hero">
+  <section
+    id="sidebar-justice-view"
+    aria-label="Lieux de justice"
+  >
+    <div class="justice-hero profil-hero">
       <div class="profil-info">
         <h3>Lieux de Justice</h3>
         <span>Édifices judiciaires, prisons historiques et lieux de mémoire à Lyon.</span>
@@ -53,7 +56,10 @@ const activeFilterLabel = computed(
       </div>
     </div>
 
-    <section class="etapes-section" aria-label="Liste des édifices historiques">
+    <section
+      class="etapes-section"
+      aria-label="Liste des édifices historiques"
+    >
       <div class="etapes-title">
         <span>{{ activeFilterLabel }}</span>
         <small>Cliquez sur un édifice pour le centrer sur la carte</small>
@@ -69,26 +75,41 @@ const activeFilterLabel = computed(
           <span
             class="lieu-badge"
             :style="`background-color: ${categories[place.category].color}`"
-            >{{ place.index + 1 }}</span
           >
+            {{ place.index + 1 }}
+          </span>
           <span class="lieu-info">
             <span class="lieu-header">
               <span class="lieu-titre">{{ place.nom }}</span>
-              <span class="lieu-cat-tag" :style="`color: ${categories[place.category].color}`">
+              <span
+                class="lieu-cat-tag"
+                :style="`color: ${categories[place.category].color}`"
+              >
                 {{ place.categoryName }}
               </span>
             </span>
-            <span v-if="place.dates" class="lieu-dates-tag">{{ place.dates }}</span>
+            <span
+              v-if="place.dates"
+              class="lieu-dates-tag"
+            >
+              {{ place.dates }}
+            </span>
             <span class="lieu-adresse">{{ place.adresse }}</span>
             <span class="lieu-desc">{{ place.role }}</span>
-            <span v-if="place.sources?.length || place.source" class="point-source-box">
+            <span
+              v-if="place.sources?.length || place.source"
+              class="point-source-box"
+            >
               <span class="point-source-text">
-                <strong>Source :</strong> {{ (place.sources || [place.source]).join(", ") }}
+                <strong>Source :</strong> {{ (place.sources || [place.source]).join(', ') }}
               </span>
             </span>
           </span>
         </button>
-        <p v-if="!places.length" class="empty-state">
+        <p
+          v-if="!places.length"
+          class="empty-state"
+        >
           Aucun lieu n’existe pour cette période et ce filtre.
         </p>
       </div>
@@ -98,10 +119,17 @@ const activeFilterLabel = computed(
       class="sidebar-gps-global-section"
       aria-label="Navigation GPS vers les lieux de justice"
     >
-      <button type="button" class="btn-gps-global" :disabled="!places.length" @click="emit('gps', places)">
-        {{ places.length > maxGpsPoints
-          ? `Itinéraire des ${maxGpsPoints} premiers lieux (sur ${places.length})`
-          : 'Lancer l’itinéraire dans le GPS' }}
+      <button
+        type="button"
+        class="btn-gps-global"
+        :disabled="!places.length"
+        @click="emit('gps', places)"
+      >
+        {{
+          places.length > maxGpsPoints
+            ? `Itinéraire des ${maxGpsPoints} premiers lieux (sur ${places.length})`
+            : 'Lancer l’itinéraire dans le GPS'
+        }}
       </button>
     </section>
   </section>

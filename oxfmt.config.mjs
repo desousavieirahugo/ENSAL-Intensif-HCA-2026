@@ -1,3 +1,3 @@
 import { fmtConfig } from 'oxlint-vue/antfu'
 
-export default fmtConfig
+export default { ...fmtConfig, singleAttributePerLine: true }

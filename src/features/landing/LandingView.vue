@@ -1,33 +1,36 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from 'vue'
 
 defineProps({
   people: { type: Array, required: true },
   results: { type: Array, required: true },
   modelValue: { type: String, required: true },
-});
+})
 
-const emit = defineEmits(["update:modelValue", "choose", "legal"]);
+const emit = defineEmits(['update:modelValue', 'choose', 'legal'])
 
-const baseUrl = import.meta.env.BASE_URL;
-const searchContainer = ref(null);
-const showResults = ref(false);
+const baseUrl = import.meta.env.BASE_URL
+const searchContainer = ref(null)
+const showResults = ref(false)
 
 function updateSearch(event) {
-  emit("update:modelValue", event.target.value);
-  showResults.value = event.target.value.trim().length >= 2;
+  emit('update:modelValue', event.target.value)
+  showResults.value = event.target.value.trim().length >= 2
 }
 
 function closeResultsOutsideSearch(event) {
-  if (!searchContainer.value?.contains(event.target)) showResults.value = false;
+  if (!searchContainer.value?.contains(event.target)) showResults.value = false
 }
 
-onMounted(() => document.addEventListener("click", closeResultsOutsideSearch));
-onUnmounted(() => document.removeEventListener("click", closeResultsOutsideSearch));
+onMounted(() => document.addEventListener('click', closeResultsOutsideSearch))
+onUnmounted(() => document.removeEventListener('click', closeResultsOutsideSearch))
 </script>
 
 <template>
-  <main id="landing" aria-label="Page d'accueil des parcours historiques de Lyon">
+  <main
+    id="landing"
+    aria-label="Page d'accueil des parcours historiques de Lyon"
+  >
     <div class="landing-content">
       <header class="landing-header">
         <span class="landing-badge">Mémoire &amp; Patrimoine</span>
@@ -36,11 +39,20 @@ onUnmounted(() => document.removeEventListener("click", closeResultsOutsideSearc
           Découvrez les parcours de personnes historiques à Lyon, ainsi que le patrimoine carcéral
           et judiciaire lyonnais.
         </p>
-        <div ref="searchContainer" class="landing-search-container">
-          <label class="sr-only" for="landing-search-input">
+        <div
+          ref="searchContainer"
+          class="landing-search-container"
+        >
+          <label
+            class="sr-only"
+            for="landing-search-input"
+          >
             Rechercher dans tout le patrimoine historique
           </label>
-          <span class="search-icon" aria-hidden="true">
+          <span
+            class="search-icon"
+            aria-hidden="true"
+          >
             <svg
               viewBox="0 0 24 24"
               width="17"
@@ -51,8 +63,17 @@ onUnmounted(() => document.removeEventListener("click", closeResultsOutsideSearc
               stroke-linecap="round"
               stroke-linejoin="round"
             >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              <circle
+                cx="11"
+                cy="11"
+                r="8"
+              />
+              <line
+                x1="21"
+                y1="21"
+                x2="16.65"
+                y2="16.65"
+              />
             </svg>
           </span>
           <input
@@ -64,7 +85,7 @@ onUnmounted(() => document.removeEventListener("click", closeResultsOutsideSearc
           />
           <div
             v-if="showResults && results.length"
-            class="search-results landing-search-results active"
+            class="active landing-search-results search-results"
           >
             <button
               v-for="result in results"
@@ -79,7 +100,7 @@ onUnmounted(() => document.removeEventListener("click", closeResultsOutsideSearc
           </div>
           <p
             v-else-if="showResults"
-            class="search-empty search-results landing-search-results active"
+            class="active landing-search-results search-empty search-results"
             role="status"
           >
             Aucun résultat pour cette recherche.
@@ -87,7 +108,10 @@ onUnmounted(() => document.removeEventListener("click", closeResultsOutsideSearc
         </div>
       </header>
 
-      <nav class="buttons-container" aria-label="Sélectionner un parcours historique">
+      <nav
+        class="buttons-container"
+        aria-label="Sélectionner un parcours historique"
+      >
         <button
           type="button"
           class="img-btn img-btn-justice"
@@ -102,7 +126,13 @@ onUnmounted(() => document.removeEventListener("click", closeResultsOutsideSearc
           <span class="btn-overlay">
             <span class="btn-label">Lieux de Justice</span>
             <span class="btn-action">
-              Explorer les lieux <span class="arrow" aria-hidden="true">→</span>
+              Explorer les lieux
+              <span
+                class="arrow"
+                aria-hidden="true"
+              >
+                →
+              </span>
             </span>
           </span>
         </button>
@@ -122,9 +152,15 @@ onUnmounted(() => document.removeEventListener("click", closeResultsOutsideSearc
           />
           <span class="btn-overlay">
             <span class="btn-label">{{ person.nom }}</span>
-              <span class="btn-action">
-                Découvrir le parcours <span class="arrow" aria-hidden="true">→</span>
+            <span class="btn-action">
+              Découvrir le parcours
+              <span
+                class="arrow"
+                aria-hidden="true"
+              >
+                →
               </span>
+            </span>
           </span>
         </button>
       </nav>
@@ -133,7 +169,11 @@ onUnmounted(() => document.removeEventListener("click", closeResultsOutsideSearc
     <footer class="landing-footer">
       <span>© 2026 ENSAL</span>
       <span aria-hidden="true">•</span>
-      <button type="button" class="footer-legal-link" @click="emit('legal')">
+      <button
+        type="button"
+        class="footer-legal-link"
+        @click="emit('legal')"
+      >
         Mentions légales &amp; sources
       </button>
     </footer>

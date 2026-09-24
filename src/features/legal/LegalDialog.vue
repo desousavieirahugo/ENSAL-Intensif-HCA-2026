@@ -1,46 +1,50 @@
 <script setup>
-import { nextTick, ref, watch } from "vue";
+import { nextTick, ref, watch } from 'vue'
 
-const props = defineProps({ open: { type: Boolean, required: true } });
+const props = defineProps({ open: { type: Boolean, required: true } })
 
-const emit = defineEmits(["close"]);
-const closeButton = ref(null);
-let previouslyFocused;
+const emit = defineEmits(['close'])
+const closeButton = ref(null)
+let previouslyFocused
 
 watch(
   () => props.open,
-  async (open) => {
+  async open => {
     if (open) {
-      previouslyFocused = document.activeElement;
-      await nextTick();
-      closeButton.value?.focus();
-      return;
+      previouslyFocused = document.activeElement
+      await nextTick()
+      closeButton.value?.focus()
+      return
     }
 
-    previouslyFocused?.focus?.();
+    previouslyFocused?.focus?.()
   },
-);
+)
 
 function trapFocus(event) {
-  if (event.key !== "Tab") return;
+  if (event.key !== 'Tab') return
 
-  const dialog = event.currentTarget;
-  const focusable = dialog.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]');
-  const first = focusable[0];
-  const last = focusable[focusable.length - 1];
+  const dialog = event.currentTarget
+  const focusable = dialog.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]')
+  const first = focusable[0]
+  const last = focusable[focusable.length - 1]
 
   if (event.shiftKey && document.activeElement === first) {
-    event.preventDefault();
-    last?.focus();
+    event.preventDefault()
+    last?.focus()
   } else if (!event.shiftKey && document.activeElement === last) {
-    event.preventDefault();
-    first?.focus();
+    event.preventDefault()
+    first?.focus()
   }
 }
 </script>
 
 <template>
-  <div v-if="open" class="legal-overlay" @click.self="emit('close')">
+  <div
+    v-show="open"
+    class="legal-overlay"
+    @click.self="emit('close')"
+  >
     <section
       class="floating-panel legal-modal open"
       role="dialog"
@@ -49,7 +53,11 @@ function trapFocus(event) {
       @keydown="trapFocus"
     >
       <header class="panel-header">
-        <h2 id="legal-modal-title">Mentions légales &amp; sources</h2>
+        <!-- Preserve the line break required by vue/singleline-html-element-content-newline. -->
+        <!-- prettier-ignore -->
+        <h2 id="legal-modal-title">
+          Mentions légales &amp; sources
+        </h2>
         <button
           ref="closeButton"
           type="button"
@@ -60,7 +68,7 @@ function trapFocus(event) {
           ×
         </button>
       </header>
-      <div class="panel-body legal-modal-body">
+      <div class="legal-modal-body panel-body">
         <section class="legal-section">
           <h3>Conception &amp; direction scientifique</h3>
           <p>
@@ -79,13 +87,20 @@ function trapFocus(event) {
           <p>Le site est diffusé sous forme statique sur GitHub Pages, GitHub, Inc.</p>
           <p>
             88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA.
-            <a href="https://pages.github.com" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://pages.github.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Site GitHub Pages
             </a>
           </p>
         </section>
 
-        <section id="legal-sources-section" class="legal-section">
+        <section
+          id="legal-sources-section"
+          class="legal-section"
+        >
           <h3>Fonds d’archives &amp; références historiques</h3>
           <ul class="legal-sources-list">
             <li>

@@ -36,6 +36,10 @@ export default {
     ...lintConfig.settings,
     vue: {
       ...lintConfig.settings?.vue,
+      rules: {
+        ...lintConfig.settings?.vue?.rules,
+        'vue/html-self-closing': ['error', { html: { void: 'always' } }],
+      },
       strictTemplates: true,
     },
   },
