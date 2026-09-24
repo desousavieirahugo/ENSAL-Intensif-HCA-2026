@@ -16,11 +16,14 @@ describe("historical search", () => {
     expect(results[0].description).toBe("Parcours • Unificateur des mouvements de la Résistance (M.U.R.)");
   });
 
-  it("matches main's hidden person alias and keeps map marker styling on place results", () => {
+  it("does not duplicate the hidden person alias and keeps map marker styling on place results", () => {
     const people = rechercherPatrimoine("Klaus", "landing", null);
-    const places = rechercherPatrimoine("Prison de Montluc", "landing", null);
+    const places = rechercherPatrimoine("Prison de Montluc", "landing", null, "ign1950");
 
-    expect(people.some((result) => result.id === "chaban_delmas")).toBe(true);
+    expect(people.filter((result) => result.type === "person").map((result) => result.id)).toEqual([
+      "klaus_barbie",
+    ]);
+    expect(people.some((result) => result.id === "chaban_delmas")).toBe(false);
     const place = places.find((result) => result.type === "place");
     expect(place?.item.markerColor).toBeTruthy();
     expect(place?.description).toMatch(/^⚖️ Prisons • /);
@@ -31,6 +34,16 @@ describe("historical search", () => {
 
     expect(results[0].label).toMatch(/^Étape \d+ : /);
     expect(results[0].description).toMatch(/^📍 /);
+  });
+
+  it("only returns markers visible on the selected map era", () => {
+    const historic = rechercherPatrimoine("Tribunal judiciaire", "justice", null, "etatmajor");
+    const present = rechercherPatrimoine("Tribunal judiciaire", "justice", null, "esri");
+    const steps = rechercherPatrimoine("Montluc", "map", "jean_moulin", "etatmajor");
+
+    expect(historic).toEqual([]);
+    expect(present.some((result) => result.type === "place")).toBe(true);
+    expect(steps).toEqual([]);
   });
 
   it("uses the same result caps as main", () => {

@@ -2,6 +2,7 @@
 defineProps({
   person: { type: Object, required: true },
   steps: { type: Array, required: true },
+  maxGpsPoints: { type: Number, required: true },
 });
 
 const emit = defineEmits(["stepSelect", "gps"]);
@@ -65,8 +66,10 @@ const baseUrl = import.meta.env.BASE_URL;
     </section>
 
     <section class="sidebar-gps-global-section" aria-label="Navigation GPS piétonne">
-      <button type="button" class="btn-gps-global" @click="emit('gps', steps)">
-        Lancer l’itinéraire piéton dans le GPS
+      <button type="button" class="btn-gps-global" :disabled="!steps.length" @click="emit('gps', steps)">
+        {{ steps.length > maxGpsPoints
+          ? `Itinéraire des ${maxGpsPoints} premières étapes (sur ${steps.length})`
+          : 'Lancer l’itinéraire piéton dans le GPS' }}
       </button>
     </section>
   </section>

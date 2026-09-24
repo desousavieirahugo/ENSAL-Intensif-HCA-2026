@@ -1941,6 +1941,13 @@ body {
     transform: translateY(-2px);
 }
 
+.btn-gps-global:disabled,
+.btn-gps-global:disabled:hover {
+    cursor: not-allowed;
+    opacity: 0.5;
+    transform: none;
+}
+
 /* Pied de page du volet latéral */
 .sidebar-legal-footer {
     display: flex;

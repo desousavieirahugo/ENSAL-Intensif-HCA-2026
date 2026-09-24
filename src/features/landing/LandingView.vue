@@ -77,6 +77,13 @@ onUnmounted(() => document.removeEventListener("click", closeResultsOutsideSearc
               <span class="search-result-desc">{{ result.description }}</span>
             </button>
           </div>
+          <p
+            v-else-if="showResults"
+            class="search-empty search-results landing-search-results active"
+            role="status"
+          >
+            Aucun résultat pour cette recherche.
+          </p>
         </div>
       </header>
 

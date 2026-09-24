@@ -5,6 +5,7 @@ const props = defineProps({
   categories: { type: Object, required: true },
   places: { type: Array, required: true },
   filter: { type: String, required: true },
+  maxGpsPoints: { type: Number, required: true },
 });
 
 const emit = defineEmits(["filter", "itemSelect", "gps"]);
@@ -97,8 +98,10 @@ const activeFilterLabel = computed(
       class="sidebar-gps-global-section"
       aria-label="Navigation GPS vers les lieux de justice"
     >
-      <button type="button" class="btn-gps-global" @click="emit('gps', places)">
-        Lancer l’itinéraire dans le GPS
+      <button type="button" class="btn-gps-global" :disabled="!places.length" @click="emit('gps', places)">
+        {{ places.length > maxGpsPoints
+          ? `Itinéraire des ${maxGpsPoints} premiers lieux (sur ${places.length})`
+          : 'Lancer l’itinéraire dans le GPS' }}
       </button>
     </section>
   </section>

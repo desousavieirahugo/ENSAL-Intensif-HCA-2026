@@ -28,22 +28,42 @@ const tileUrls = {
 
 let map;
 let tileLayer;
+let tileUrl;
 let markerLayer;
 let resizeObserver;
 let pendingFocus;
+let resizeFrame;
+
+function invalidateMapSize() {
+  if (resizeFrame) cancelAnimationFrame(resizeFrame);
+
+  resizeFrame = requestAnimationFrame(() => {
+    map?.invalidateSize({ pan: false });
+    resizeFrame = undefined;
+  });
+}
 
 function makePopup(item) {
   const content = document.createElement("div");
-  const title = document.createElement("strong");
-  const date = document.createElement("p");
-  const detail = document.createElement("p");
+  const badge = document.createElement("span");
+  const title = document.createElement("h3");
+  const date = document.createElement("div");
+  const detail = document.createElement("div");
   const description = document.createElement("p");
 
+  content.className = "popup-bubble";
+  badge.className = "popup-badge";
+  badge.style.backgroundColor = item.markerColor || "#8b4513";
+  badge.textContent = item.categoryName || `Étape ${(item.index ?? 0) + 1}`;
+  title.className = "popup-title";
   title.textContent = item.titre || item.nom;
+  date.className = "popup-date";
   date.textContent = item.date || item.dates || "";
+  detail.className = "popup-place";
   detail.textContent = item.lieu || item.adresse || "";
+  description.className = "popup-text";
   description.textContent = item.desc || item.role || "";
-  content.append(title);
+  content.append(badge, title);
 
   if (date.textContent) content.append(date);
 
@@ -54,17 +74,19 @@ function makePopup(item) {
   const sources = item.sources || (item.source ? [item.source] : []);
 
   if (sources.length) {
+    const sourceBox = document.createElement("div");
     const sourceButton = document.createElement("button");
-    const sourceText = document.createElement("p");
 
-    sourceText.textContent = sources.join(", ");
+    sourceBox.className = "popup-source-box";
+    sourceBox.textContent = sources.join(", ");
     sourceButton.type = "button";
+    sourceButton.className = "btn-popup-source-link";
     sourceButton.textContent = "Consulter les sources";
     sourceButton.addEventListener("click", (event) => {
       L.DomEvent.stopPropagation(event);
       emit("sourcesSelect");
     });
-    content.append(sourceText, sourceButton);
+    content.append(sourceBox, sourceButton);
   }
 
   return content;
@@ -73,17 +95,23 @@ function makePopup(item) {
 function updateTiles() {
   if (!map) return;
 
-  tileLayer?.remove();
   const url =
     props.era === "esri" ? tileUrls.esri[props.dark ? "dark" : "light"] : tileUrls[props.era];
+  element.value?.classList.toggle("map-dark-filter", props.dark && props.era !== "esri");
+
+  if (tileLayer && tileUrl === url) return;
+
+  tileLayer?.remove();
 
   const nextTileLayer = L.tileLayer(url, {
     attribution: props.era === "esri" ? "&copy; Esri" : "&copy; IGN",
     maxZoom: props.era === "esri" ? 16 : 18,
+    maxNativeZoom: props.era === "esri" ? 16 : 15,
     minZoom: props.era === "esri" ? 1 : 6,
   });
 
   tileLayer = nextTileLayer;
+  tileUrl = url;
   tileStatus.value = "loading";
   nextTileLayer.on("load", () => {
     if (tileLayer === nextTileLayer) tileStatus.value = "ready";
@@ -92,14 +120,12 @@ function updateTiles() {
     if (tileLayer === nextTileLayer) tileStatus.value = "error";
   });
   nextTileLayer.addTo(map);
-
-  element.value?.classList.toggle("map-dark-filter", props.dark && props.era !== "esri");
 }
 
 function updateMarkers() {
   if (!map) return;
 
-  markerLayer?.clearLayers();
+  markerLayer.clearLayers();
   const markers = props.items.map((item) => {
     const icon = L.divIcon({
       className: "history-marker",
@@ -108,12 +134,15 @@ function updateMarkers() {
       iconAnchor: [16, 40],
       popupAnchor: [0, -38],
     });
-    const marker = L.marker(item.coords, { icon }).bindPopup(makePopup(item), { autoPan: false });
+    const marker = L.marker(item.coords, { icon }).bindPopup(makePopup(item), {
+      autoPan: false,
+      className: "custom-leaflet-popup",
+    });
     marker.on("click", () => emit("markerSelect", item));
 
     return marker;
   });
-  markerLayer = L.layerGroup(markers).addTo(map);
+  markers.forEach((marker) => markerLayer.addLayer(marker));
 
   if (props.items.length) {
     const bounds = L.latLngBounds(props.items.map((item) => item.coords));
@@ -129,10 +158,15 @@ function focus(item) {
     return;
   }
 
-  map.setView(item.coords, 16);
+  let selectedMarker;
   markerLayer.eachLayer((marker) => {
-    if (marker.getLatLng().equals(item.coords)) marker.openPopup();
+    if (!selectedMarker && marker.getLatLng().equals(item.coords)) selectedMarker = marker;
   });
+  if (!selectedMarker) return;
+
+  map.setView(item.coords, 16);
+  selectedMarker.openPopup();
+  invalidateMapSize();
 }
 
 defineExpose({ focus });
@@ -153,16 +187,18 @@ onMounted(() => {
   }
 
   if (typeof ResizeObserver !== "undefined") {
-    resizeObserver = new ResizeObserver(() => map?.invalidateSize());
+    resizeObserver = new ResizeObserver(invalidateMapSize);
     resizeObserver.observe(element.value);
   }
 });
 
 onUnmounted(() => {
   resizeObserver?.disconnect();
+  if (resizeFrame) cancelAnimationFrame(resizeFrame);
   map?.remove();
   map = undefined;
   tileLayer = undefined;
+  tileUrl = undefined;
   markerLayer = undefined;
 });
 </script>

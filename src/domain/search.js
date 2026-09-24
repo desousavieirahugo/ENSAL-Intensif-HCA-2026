@@ -1,6 +1,7 @@
 import { dataLieuxJustice, dataPersonnes } from "./datasets.js";
+import { pointExistePourFond } from "./dateFilters.js";
 
-export function rechercherPatrimoine(query, view, personId) {
+export function rechercherPatrimoine(query, view, personId, era = "esri") {
   const term = query.trim().toLocaleLowerCase("fr");
 
   if (term.length < 2) return [];
@@ -9,7 +10,7 @@ export function rechercherPatrimoine(query, view, personId) {
 
   const personEntries =
     view === "landing"
-      ? Object.entries(dataPersonnes)
+      ? Object.entries(dataPersonnes).filter(([id]) => id !== "chaban_delmas")
       : view === "map" && personId && dataPersonnes[personId]
         ? [[personId, dataPersonnes[personId]]]
         : [];
@@ -28,6 +29,8 @@ export function rechercherPatrimoine(query, view, personId) {
     }
 
     person.etapes.forEach((step, index) => {
+      if (!pointExistePourFond(step, era)) return;
+
       const searchableText =
         `${step.titre} ${step.lieu} ${step.desc} ${step.date}`.toLocaleLowerCase("fr");
 
@@ -50,6 +53,8 @@ export function rechercherPatrimoine(query, view, personId) {
   if (view === "landing" || view === "justice" || (view === "map" && !personId)) {
     for (const [category, group] of Object.entries(dataLieuxJustice)) {
       group.lieux.forEach((place, index) => {
+        if (!pointExistePourFond(place, era)) return;
+
         const searchableText =
           `${place.nom} ${place.adresse} ${place.role} ${place.dates || ""}`.toLocaleLowerCase(
             "fr",

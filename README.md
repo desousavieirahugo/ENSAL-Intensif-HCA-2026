@@ -126,11 +126,11 @@ machine hôte x86-64.
 
 La page d’accueil permet de choisir un parcours historique ou la vue des lieux
 de justice. Les parcours s’appuient sur une carte Leaflet et des données
-historiques intégrées à l’application. Les commandes de l’interface, les
-sélecteurs de période et les filtres sont encore principalement gérés par
-l’application historique dans `src/legacy/app.js`. Vue 3 sert de point d’entrée
-à la migration progressive. La logique pure de filtrage par date est isolée
-dans `src/domain/dateFilters.js` et testée dans `tests/`.
+historiques intégrées à l’application. `src/App.vue` gère les vues, la recherche,
+les sélecteurs de période et les filtres ; `src/features/map/MapCanvas.vue` gère
+la carte Leaflet. `src/legacy/app.js` reste dans le dépôt comme référence de
+l’ancienne interface, sans être chargé par le site. La logique de filtrage et
+de recherche est isolée dans `src/domain/` et testée dans `tests/`.
 
 Les cartes, images et polices chargées depuis des services externes nécessitent
 une connexion réseau pour s’afficher. La production est compilée en fichiers

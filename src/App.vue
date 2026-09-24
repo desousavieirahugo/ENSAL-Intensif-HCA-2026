@@ -2,6 +2,7 @@
 import { computed, defineAsyncComponent, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { dataLieuxJustice, dataPersonnes } from "./domain/datasets.js";
 import { pointExistePourFond } from "./domain/dateFilters.js";
+import { createGpsUrl, MAX_GPS_POINTS_DESKTOP, MAX_GPS_POINTS_MOBILE } from "./domain/gps.js";
 import { rechercherPatrimoine } from "./domain/search.js";
 import JusticePanel from "./features/justice/JusticePanel.vue";
 import LandingView from "./features/landing/LandingView.vue";
@@ -29,6 +30,9 @@ const showLegal = ref(false);
 const sidebarOpen = ref(false);
 const activeItem = ref(null);
 const mapCanvas = ref(null);
+const maxGpsPoints = /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent)
+  ? MAX_GPS_POINTS_MOBILE
+  : MAX_GPS_POINTS_DESKTOP;
 const drawerDragOffset = ref(0);
 const isDraggingDrawer = ref(false);
 let drawerTouchStart;
@@ -68,7 +72,7 @@ const eraOptions = [
 ];
 
 const searchResults = computed(() =>
-  rechercherPatrimoine(search.value, view.value, selectedId.value),
+  rechercherPatrimoine(search.value, view.value, selectedId.value, era.value),
 );
 
 function openPerson(id) {
@@ -134,39 +138,11 @@ async function selectResult(result) {
 }
 
 function openGps(items) {
-  const points = items.map((item) => item.coords).filter(Boolean);
-
-  if (!points.length) return;
-
   const isApple =
     /iPad|iPhone|iPod/.test(navigator.userAgent) ||
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-
-  if (points.length === 1) {
-    const [lat, lng] = points[0];
-    const url = isApple
-      ? `https://maps.apple.com/?daddr=${lat},${lng}&dirflg=w`
-      : `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`;
-
-    window.open(url, "_blank", "noopener,noreferrer");
-    return;
-  }
-
-  const [originLat, originLng] = points[0];
-  const [destinationLat, destinationLng] = points.at(-1);
-  const waypoints = points
-    .slice(1, -1)
-    .slice(0, 9)
-    .map((point) => point.join(","))
-    .join("|");
-  const url = isApple
-    ? `https://maps.apple.com/?saddr=${originLat},${originLng}&daddr=${points
-        .slice(1)
-        .map((point) => point.join(","))
-        .join("+to:")}&dirflg=w`
-    : `https://www.google.com/maps/dir/?api=1&origin=${originLat},${originLng}&destination=${destinationLat},${destinationLng}${waypoints ? `&waypoints=${encodeURIComponent(waypoints)}` : ""}&travelmode=walking`;
-
-  window.open(url, "_blank", "noopener,noreferrer");
+  const url = createGpsUrl(items, isApple, maxGpsPoints);
+  if (url) window.open(url, "_blank", "noopener,noreferrer");
 }
 
 function onKeydown(event) {
@@ -425,6 +401,13 @@ onUnmounted(() => {
                 <span class="search-result-desc">{{ result.description }}</span>
               </button>
             </div>
+            <p
+              v-else-if="search.trim().length >= 2"
+              class="search-empty search-results header-search-results active"
+              role="status"
+            >
+              Aucun résultat dans cette vue et pour cette époque.
+            </p>
           </div>
         </section>
 
@@ -456,8 +439,9 @@ onUnmounted(() => {
           <span class="dock-divider" aria-hidden="true" />
           <button
             type="button"
-            class="dock-menu-btn"
-            :aria-expanded="sidebarOpen"
+          class="dock-menu-btn"
+          :aria-expanded="sidebarOpen"
+          aria-controls="sidebar"
             @click="sidebarOpen = !sidebarOpen"
           >
             {{ sidebarOpen ? "Masquer" : person ? "Voir les étapes" : "Voir les lieux" }}
@@ -467,6 +451,7 @@ onUnmounted(() => {
 
       <aside
         id="sidebar"
+        :inert="!sidebarOpen"
         :class="[sidebarOpen ? 'open' : 'desktop-collapsed', { dragging: isDraggingDrawer }]"
         :style="drawerDragOffset ? { transform: `translateY(${drawerDragOffset}px)` } : undefined"
         aria-label="Informations historiques et étapes du parcours"
@@ -494,6 +479,7 @@ onUnmounted(() => {
           v-if="person"
           :person="person"
           :steps="visibleSteps"
+          :max-gps-points="maxGpsPoints"
           @step-select="focusItem"
           @gps="openGps"
         />
@@ -502,6 +488,7 @@ onUnmounted(() => {
           :categories="categories"
           :places="places"
           :filter="justiceFilter"
+          :max-gps-points="maxGpsPoints"
           @filter="justiceFilter = $event"
           @item-select="focusItem"
           @gps="openGps"
